@@ -1,0 +1,10 @@
+version: '3.2'
+
+services:
+  app:
+    build:
+      context: .
+    restart: always
+    user: root
+    ports:
+      - "8000:8000"
