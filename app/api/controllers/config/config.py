@@ -3,21 +3,16 @@ import boto3
 import os
 import json
 from botocore.exceptions import ClientError
+from utils.log import log
 
 from jinja2 import UndefinedError
 
 from settings import settings
 from app.schemas.config.ConfigSchema import ConfigSchema
-import config
 from app.datagenerator.process_template import apply_configuration
 
 from services.AuthService import AuthService
-import logging
 
-logging.basicConfig(level=settings.LOGGING,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
-
-logger = logging.getLogger('Config Api')
 
 router = APIRouter(
     tags=["Config Api"],
@@ -61,7 +56,7 @@ async def read_configuration(env_name: str, key_id: str):
         return "Error Occurred and Handled " + e.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
-            logger.info('No object found - returning empty')
+            log.info(f'No object found - returning empty')
             return ex.response
         else:
             raise
@@ -97,7 +92,7 @@ async def generate_configuration(env_name: str, key_id: str, template_file_name:
         return "Error Occurred and Handled " + e.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
-            logger.info('No object found - returning empty')
+            log.info(f'No object found - returning empty')
             return ex.response
     else:
         raise

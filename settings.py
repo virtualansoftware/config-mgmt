@@ -34,12 +34,13 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY: str = os.getenv("AWS_ACCESS_KEY")
     AWS_SECRET_KEY: str = os.getenv("AWS_SECRET_KEY")
     API_KEY: str = os.getenv("API_KEY")
+    CLIENT_ID: str = os.getenv("CLIENT_ID")
+    CLIENT_SECRET: str = os.getenv("CLIENT_SECRET")
+    OAUTH_TOKEN_URL: str = os.getenv("OAUTH_TOKEN_URL")
     # Creating an object
     LOGGING: int = logging.DEBUG
 
-    CLIENT_ID = "abcde"
-    CLIENT_SECRET = "12345"
-    OAUTH_TOKEN_URL = "https://api.example.com/oauth/access_token"
+
     model_config = SettingsConfigDict(extra=Extra.allow, env_file='.env', env_file_encoding='utf-8')
 
 settings = Settings()

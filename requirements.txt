@@ -8,4 +8,4 @@ asgiref
 loguru
 pytz
 jinja2
-httplib
+boto3
