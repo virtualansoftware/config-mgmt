@@ -23,7 +23,7 @@ router = APIRouter(
 @router.post("/", response_model=dict)
 async def save_configuration(config_info: ConfigSchema):
     try:
-        print(config)
+        log.debug(config_info)
         s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
                                  aws_secret_access_key=settings.AWS_SECRET_KEY)
         json_object = json.dumps(config_info.configMap, indent=4)
@@ -34,7 +34,7 @@ async def save_configuration(config_info: ConfigSchema):
         return "Error Occurred and Handled " + e.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
-            logger.info('No object found - returning empty')
+            log.info('No object found - returning empty')
             return ex.response
         else:
             raise
@@ -44,7 +44,6 @@ async def save_configuration(config_info: ConfigSchema):
 @router.get("/", response_model=ConfigSchema)
 async def read_configuration(env_name: str, key_id: str):
     try:
-        print(config)
         s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
                                  aws_secret_access_key=settings.AWS_SECRET_KEY)
         s3_response_object = s3_client.get_object(Bucket=settings.STORAGE_BUCKET_NAME,
