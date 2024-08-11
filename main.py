@@ -5,6 +5,9 @@ from app.middlewares.loggerMiddleware import LoggerMiddleware
 from routes.api import router
 
 from settings import settings
+import uvicorn
+
+from os import getenv, urandom, path, environ
 
 def initApplication() -> FastAPI:
 
@@ -28,6 +31,12 @@ def initApplication() -> FastAPI:
     )
 
     return fastApiApp
+    app = initApplication()
 
 
-app = initApplication()
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0",
+                port=int(getenv('PORT', 8000)),
+                log_level=getenv('LOG_LEVEL', "info"),
+                debug=getenv('DEBUG', False),
+                proxy_headers=True)
