@@ -3,7 +3,7 @@ runtime: python311
 build:
   commands:
     build:
-      - pip install -r requirements.txt
+      - python3 -m pip install -r requirements.txt
 run:
   command: python3 main.py
   network:
