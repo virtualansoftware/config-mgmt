@@ -6,7 +6,6 @@ build:
     - yum install -y pycairo
     - pip install -r requirements.txt
 run:
-  runtime-version: 3.11
   pre-run:
     - pip3 install pipenv
     - pipenv install
