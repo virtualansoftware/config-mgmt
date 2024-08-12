@@ -7,6 +7,6 @@ build:
       - pipenv install
       - pip3 install -r requirements.txt
 run:
-  command: python main.py
+  command: python3 main.py
   network:
     port: 8000
