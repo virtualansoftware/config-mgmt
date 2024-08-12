@@ -1,8 +1,9 @@
 version: 1.0
-runtime: python311
+runtime: python3
 build:
   commands:
     build:
+    - yum install -y pycairo
     - pip install -r requirements.txt
 run:
   command: python main.py
