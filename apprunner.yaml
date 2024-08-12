@@ -1,14 +1,12 @@
 version: 1.0
-runtime: python3
+runtime: python311
 build:
   commands:
     build:
-    - yum install -y pycairo
-    - pip install -r requirements.txt
+      - python3 -m pip install
+      - pip install pipenv
+      - pip install -r requirements.txt
 run:
-  pre-run:
-    - pip3 install pipenv
-    - pipenv install
   command: python main.py
   network:
     port: 8000
