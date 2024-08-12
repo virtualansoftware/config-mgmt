@@ -32,10 +32,10 @@ def initApplication() -> FastAPI:
 
     return fastApiApp
 
-    app = initApplication()
 
 
 if __name__ == "__main__":
+    app = initApplication()
     uvicorn.run("main:app", host="0.0.0.0",
                 port=int(getenv('PORT', 8000)),
                 log_level=getenv('LOG_LEVEL', "info"),
