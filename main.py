@@ -31,6 +31,7 @@ def initApplication() -> FastAPI:
     )
 
     return fastApiApp
+
     app = initApplication()
 
 
