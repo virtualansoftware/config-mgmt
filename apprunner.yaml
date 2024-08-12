@@ -2,10 +2,10 @@ version: 1.0
 runtime: python311
 build:
   commands:
-  build:
-    - pip3 install pipenv
-    - pipenv install
-    - pip install -r requirements.txt
+    build:
+      - pip3 install pipenv
+      - pipenv install
+      - pip install -r requirements.txt
 run:
   runtime-version: 3.11
   pre-run:
@@ -14,3 +14,4 @@ run:
   command: python main.py
   network:
     port: 8000
+
