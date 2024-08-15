@@ -70,7 +70,7 @@ Clone the project
 Go to the project directory
 
 ```bash
-  cd conf-mgmt
+  cd config-mgmt
 ```
 
 Install dependencies
