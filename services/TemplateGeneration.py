@@ -6,7 +6,7 @@ from botocore.exceptions import ClientError
 import json
 from utils.log import log
 from services.TemplateGeneration import ApplyConfiguration
-from repository.TemplateRepo import SaveConfigurationRepo,GetConfigurationRepo,GetConfigurationTemplateRepo,GenerateObject,GetObjectRepo
+from repository.TemplateRepo import SaveConfigurationRepo,GenerateObjectRepo,GetObjectRepo
 
 def ApplyConfiguration(key_Id: str, raw_data: str, template_file_content: str):
     output = apply_configuration(key_Id,raw_data,template_file_content)
@@ -31,7 +31,7 @@ async def GenerateConfiguration(env_name: str, key_id: str, template_file_name: 
 
     templateGenerated = ApplyConfiguration(key_id, json.loads(object_content), template_file_content.decode('UTF-8'))
 
-    GenerateObject(env_name,key_id,template_file_name,templateGenerated)
+    GenerateObjectRepo(env_name,key_id,template_file_name,templateGenerated)
 
     return {"template_generated": templateGenerated }
 
