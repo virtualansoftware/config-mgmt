@@ -13,18 +13,6 @@ async def SaveConfigurationRepo(config_info: ConfigSchema):
     s3_client.put_object(Body=json_object, Bucket=settings.STORAGE_BUCKET_NAME,
                              Key=config_info.envName + '/' + config_info.keyId + '.json')
 
-async def GetConfigurationRepo(env_name: str, key_id: str):
-   # s3_client = GetS3Client()
-    #s3_response_object = s3_client.get_object(Bucket=settings.STORAGE_BUCKET_NAME,Key=env_name + '/' + key_id + '.json')
-    #return s3_response_object['Body'].read()
-    return GetObjectRepo(env_name + '/' + key_id + '.json')
-
-async def GetConfigurationTemplateRepo(template_file: str):
-   # s3_client = GetS3Client()
-   # s3_response_object = s3_client.get_object(Bucket=settings.STORAGE_BUCKET_NAME, Key=template_file)
-   # return s3_response_object['Body'].read()
-    return GetObjectRepo(template_file)
-
 async def GetObjectRepo(file: str):
     s3_client = GetS3Client()
     s3_response_object = s3_client.get_object(Bucket=settings.STORAGE_BUCKET_NAME, Key=file)
