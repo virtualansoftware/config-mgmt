@@ -21,7 +21,7 @@ router = APIRouter(
 
 
 @router.post("/", response_model=dict)
-async def save_configuration(config_info: ConfigSchema):
+def save_configuration(config_info: ConfigSchema):
     try:
         log.debug(config_info)
         s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -42,7 +42,7 @@ async def save_configuration(config_info: ConfigSchema):
 
 
 @router.get("/all", response_model=dict)
-async def read_configuration():
+def read_configuration():
     try:
         print("start")
         s3_client = boto3.client('s3', aws_access_key_id=settings.AWS_ACCESS_KEY,
@@ -84,7 +84,7 @@ async def read_configuration():
 
 
 @router.get("/", response_model=ConfigSchema)
-async def read_configuration(env_name: str, key_id: str):
+def read_configuration(env_name: str, key_id: str):
     try:
         configInfo = ReadConfiguration(env_name, key_id)
     except UndefinedError as e:
@@ -99,15 +99,15 @@ async def read_configuration(env_name: str, key_id: str):
     return configInfo
 
 
-async def get_config(env_name, key_id):
+def get_config(env_name, key_id):
     object_content = GetConfig(env_name, key_id)
     return object_content
 
 
 @router.post("/generate", response_model=dict)
-async def generate_configuration(env_name: str, key_id: str, template_file_name: str):
+def generate_configuration(env_name: str, key_id: str, template_file_name: str,app_name: str):
     try:
-        templateGenerated = GenerateConfiguration(env_name, key_id, template_file_name)
+        templateGenerated = GenerateConfiguration(env_name, key_id, template_file_name,app_name)
         return {"template_generated": templateGenerated}
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)

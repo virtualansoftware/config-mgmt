@@ -9,20 +9,20 @@ def GetS3Client():
                         aws_secret_access_key=settings.AWS_SECRET_KEY)
 
 
-async def SaveConfigurationRepo(config_info: ConfigSchema):
+def SaveConfigurationRepo(config_info: ConfigSchema):
     s3_client = GetS3Client()
     json_object = json.dumps(config_info.configMap, indent=4)
     s3_client.put_object(Body=json_object, Bucket=settings.STORAGE_BUCKET_NAME,
                          Key=settings.PREFIX + config_info.envName + '/' + config_info.keyId + '/' + config_info.appName +'.json')
 
 
-async def GetObjectRepo(file: str):
+def GetObjectRepo(file: str):
     s3_client = GetS3Client()
     s3_response_object = s3_client.get_object(Bucket=settings.STORAGE_BUCKET_NAME, Key=file)
     return s3_response_object['Body'].read()
 
 
-async def get_all_configuration():
+def get_all_configuration():
     s3_client = GetS3Client()
     print(settings.STORAGE_BUCKET_NAME)
 
@@ -37,7 +37,7 @@ async def get_all_configuration():
        my_map(object_summary.key, my_list)
     return my_map
 
-async def GenerateObjectRepo(env_name: str, key_id: str, template_file_name: str, templateGenerated: str):
+def GenerateObjectRepo(env_name: str, key_id: str, template_file_name: str, templateGenerated: str):
     s3_client = GetS3Client()
     s3_client.put_object(Body=templateGenerated, Bucket=settings.STORAGE_BUCKET_NAME,
                          Key=settings.PREFIX  + env_name + '/' + key_id + '/generated/' + template_file_name)

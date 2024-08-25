@@ -10,23 +10,23 @@ def ApplyConfiguration(key_Id: str, raw_data: str, template_file_content: str):
     return output
 
 
-async def SaveConfiguration(config_info: ConfigSchema):
+def SaveConfiguration(config_info: ConfigSchema):
     SaveConfigurationRepo(config_info)
 
 
-async def read_configuration_all():
+def read_configuration_all():
     print("start-services")
     return get_all_configuration()
 
 
-async def ReadConfiguration(env_name: str, key_id: str, file_name: str):
+def ReadConfiguration(env_name: str, key_id: str, file_name: str):
     object_content = GetObjectRepo()
     configInfo = ConfigSchema(json.loads(object_content), key_id, env_name, file_name)
     return configInfo
 
 
-async def GenerateConfiguration(env_name: str, key_id: str, template_file_name: str, file_name: str):
-    object_content = GetObjectRepo('config-mgmt/'  + key_id + '/' + + env_name + '/' + file_name+'.json')
+def GenerateConfiguration(env_name: str, key_id: str, template_file_name: str, file_name: str):
+    object_content = GetObjectRepo('config-mgmt/application/'  + key_id + '/' + env_name + '/' + file_name+'.json')
 
     TEMPLATE_FILE = 'config-mgmt/templates/applications/' + key_id + '/' + template_file_name
 
@@ -39,6 +39,6 @@ async def GenerateConfiguration(env_name: str, key_id: str, template_file_name: 
     return {"template_generated": templateGenerated}
 
 
-async def GetConfig(env_name, key_id, file_name):
+def GetConfig(env_name, key_id, file_name):
     object_content = GetObjectRepo('config-mgmt/'  + key_id + '/' + + env_name + '/' + file_name+ '.json')
     return object_content
