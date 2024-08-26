@@ -37,8 +37,9 @@ class Settings(BaseSettings):
     CLIENT_ID: str = os.getenv("CLIENT_ID")
     CLIENT_SECRET: str = os.getenv("CLIENT_SECRET")
     OAUTH_TOKEN_URL: str = os.getenv("OAUTH_TOKEN_URL")
-    PREFIX: str = 'config-mgmt/application/'
-
+    APPLICATION_PREFIX: str = 'config-mgmt/application/'
+    TEMPLATE_PREFIX: str = 'config-mgmt/templates/'
+    GENERATED_PREFIX: str = 'config-mgmt/generated/'
     model_config = SettingsConfigDict(extra=Extra.allow, env_file='.env', env_file_encoding='utf-8')
 
 settings = Settings()
