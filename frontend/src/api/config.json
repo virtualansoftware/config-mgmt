@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "operationId": "createConfig",
+    "httpStatusCode": "201",
+    "url": "/config",
+    "type": "RESPONSE",
+    "requestType": "REST",
+    "usageCount": 0,
+    "priority": 0,
+    "method": "POST",
+    "output": "{\n  \"category\": {\n    \"id\": 0,\n    \"name\": \"string\"\n  },\n  \"id\": 101,\n  \"name\": \"doggie\",\n  \"photoUrls\": [\n    \"string\"\n  ],\n  \"status\": \"available\",\n  \"tags\": [\n    {\n      \"id\": 0,\n      \"name\": \"string\"\n    }\n  ]\n}",
+    "availableParams": [{ "key": "virtu", "value": "dev1" }],
+    "headerParams": [],
+    "resource": "config",
+    "lastUsedDateTime": "2023-10-09T19:48:18.938+00:00"
+  }
+]

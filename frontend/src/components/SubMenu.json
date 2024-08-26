@@ -1,0 +1,14 @@
+[
+    {
+        "title": "Config",
+        "key": "keyvalue",
+        "links": [
+            {
+                "text": "Virtualan",
+                "path": "/keyvalue",
+                "env_name": ["dev01","dev02","dev03"],
+                "key_id": "virtu"
+            }
+        ]
+    }
+]

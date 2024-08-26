@@ -1,0 +1,189 @@
+* {
+  text-align: center;
+  box-sizing: border-box;
+  font-family: 'Mulish', sans-serif;
+  font-weight: 400;
+}
+/* B5E61D - Green
+800040 - Brown
+004080 - Blue */
+body{
+  background-color: #dee9f980;
+}
+.btn:focus {
+  outline: none;
+  box-shadow: none;
+}
+.welcome {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.welcome h3{
+  font-weight: bold;
+}
+/* Header */
+.navbar{
+  display: flex;
+  justify-content: flex-end;
+  background-color: white;
+  padding: 10px 20px;
+  box-shadow: 1px 1px 5px #afaeae;
+  z-index: 2;
+}
+.navbar h5{
+  margin-top: 5px;
+}
+.navbar h5 a {
+  color: #243E85;
+  text-decoration: none;
+  font-weight: bold;
+}
+/* Side Bar */
+.sidebar{
+  position: absolute;
+  top: 1;
+  left: 0;
+  width: 200px;
+  height: 100%;
+  background-color: white;
+  box-shadow: 2px 2px 4px #e7e5e566;
+  z-index: 1;
+}
+.sidebar .breadcrumbs ul{
+  display: flex;
+  justify-content: left;
+  padding: 0;
+}
+.sidebar .breadcrumbs ul li{
+  padding: 0 5px;
+}
+.sidebar ul li{
+  color: #004080;
+  text-align: left;
+  list-style: none;
+  margin: 40px 0;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+.sidebar ul li.selected a{
+  color: white;
+}
+.sidebar ul li.selected{
+  background-color: #004080;
+  padding: 5px;
+  border-radius: 5px;
+  margin-left: -5px;
+}
+.sidebar .sublist li{
+  font-size: 12px;
+  margin: 15px 0;
+  text-align: left;
+}
+.sidebar .sublist li a{
+  color: #004080;
+  text-decoration: none;
+}
+.sidebar .generateList li{
+  margin: 15px 0;
+}
+.sidebar .uploadList li{
+  margin: 15px 0;
+}
+.sidebar .generateList a, .uploadList a{
+  color: #004080;
+  font-weight: bold;
+  text-decoration: none;
+}
+/* Key & Value Pair */
+.config {
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+}
+.config .form-group{
+  padding: 20px;
+  width: 500px;
+  min-height: 450px;
+  display: inline-block;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px #e7e5e5;
+}
+.config .form-group h5{
+  color: #004080;
+  font-weight: bold;
+  padding: 5px;
+}
+.config .keyId-group{
+  margin: 0 10px 10px 5px;
+}
+.config .keyId-group label{
+  font-size: 12px;
+  margin-bottom: -10px;
+  font-weight: bold;
+}
+.config .keyId-group input{
+  width: 100%;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+.config .keyValue-group input {
+  margin: -10px 5px 10px 0;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+}
+.config input:focus{
+  outline-color: #004080;
+}
+.config img{
+  width: 30px;
+  cursor: pointer;
+  align-self: center;
+}
+.config .error{
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+  font-style: italic;
+}
+.config .success {
+  color: green;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 10px 0;
+  font-style: italic;
+}
+.config .cards li {
+  font-size: 14px;
+  padding: 8px 0;
+  display: flex;
+  align-items: stretch;
+  margin-left: 10px;
+}
+.config .cards .card{
+  width: 100%;
+  max-width: 200px;
+  color: #004080;
+  background-color: #c0d3e2;
+  text-align: left;
+  margin-right: 5px;
+  padding: 4px;
+  border-radius: 4px;
+  word-wrap: break-word;
+  display: inline-block;
+}
+.config .cards .card span{
+  font-weight: bold;
+}
+/* Generate Config */
+
+/* Upload Config */
