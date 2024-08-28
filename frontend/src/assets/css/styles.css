@@ -4,11 +4,27 @@
   font-family: 'Mulish', sans-serif;
   font-weight: 400;
 }
+@font-face {
+  font-family: 'Mulish';
+  src: url('../fonts/Mulish-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  src: url('webfonts/fa-solid-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
 /* B5E61D - Green
 800040 - Brown
 004080 - Blue */
-body{
+html body{
   background-color: #dee9f980;
+}
+.btn{
+  font-size: 12px;
+  /* width: 100%; */
 }
 .btn:focus {
   outline: none;
@@ -24,18 +40,19 @@ body{
   font-weight: bold;
 }
 /* Header */
-.navbar{
+.nav{
   display: flex;
   justify-content: flex-end;
+  position: relative;
   background-color: white;
   padding: 10px 20px;
   box-shadow: 1px 1px 5px #afaeae;
-  z-index: 2;
+  z-index: 10;
 }
-.navbar h5{
+.nav h5{
   margin-top: 5px;
 }
-.navbar h5 a {
+.nav h5 a {
   color: #243E85;
   text-decoration: none;
   font-weight: bold;
@@ -68,12 +85,17 @@ body{
   font-weight: bold;
   font-size: 14px;
 }
+.sidebar ul li a{
+  color: #004080;
+  font-weight: bold;
+  text-decoration: none;
+}
 .sidebar ul li.selected a{
   color: white;
 }
 .sidebar ul li.selected{
   background-color: #004080;
-  padding: 5px;
+  padding: 2px 5px;
   border-radius: 5px;
   margin-left: -5px;
 }
@@ -91,11 +113,6 @@ body{
 }
 .sidebar .uploadList li{
   margin: 15px 0;
-}
-.sidebar .generateList a, .uploadList a{
-  color: #004080;
-  font-weight: bold;
-  text-decoration: none;
 }
 /* Key & Value Pair */
 .config {
@@ -120,6 +137,9 @@ body{
 .config .keyId-group{
   margin: 0 10px 10px 5px;
 }
+.config .keyId-group div{
+  padding: 5px 0;
+}
 .config .keyId-group label{
   font-size: 12px;
   margin-bottom: -10px;
@@ -134,7 +154,7 @@ body{
   font-size: 14px;
 }
 .config .keyValue-group input {
-  margin: -10px 5px 10px 0;
+  margin: -10px 10px 10px 0;
   padding: 4px;
   border: 1px solid gray;
   border-radius: 4px;
@@ -167,7 +187,7 @@ body{
   padding: 8px 0;
   display: flex;
   align-items: stretch;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 .config .cards .card{
   width: 100%;
@@ -175,8 +195,8 @@ body{
   color: #004080;
   background-color: #c0d3e2;
   text-align: left;
-  margin-right: 5px;
-  padding: 4px;
+  margin-right: 10px;
+  padding: 6px;
   border-radius: 4px;
   word-wrap: break-word;
   display: inline-block;

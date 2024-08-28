@@ -4,7 +4,7 @@ export default function Header(){
 
     return (
         <div>
-            <nav className="navbar">
+            <nav className="nav">
                 <h5><Link to="/config-ui">Configuration Management</Link></h5>
             </nav>
         </div>
