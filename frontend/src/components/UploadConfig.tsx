@@ -10,7 +10,6 @@ export default function UploadConfig() {
 
     // POST METHOD
     async function upload() {
-
         if (!applicationName || !configurationFileName || !file) {
             setMessage({ text: "Please fill in all fields and select a file", type: "error" });
             setTimeout(() => {

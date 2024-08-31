@@ -8,8 +8,8 @@ export default function GenerateConfig() {
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[message, setMessage] = useState({text:"", type:""});
 
+    // POST METHOD
     async function generate(){
-
         if (!applicationName || !envName || !configurationFileName) {
             setMessage({ text: "Please fill in all fields", type: "error" });
             setTimeout(() => {
@@ -77,31 +77,3 @@ export default function GenerateConfig() {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-{/*                 <div className='envName text-left'>
-                        <label>Dropdown 1</label>
-                        <select id="dropdown1" className="form-control"  value={dropdown1} onChange={(e) => setDropdown1(e.target.value)}>
-                            <option value="">Select</option>
-                            <option value="One">One</option>
-                            <option value="Two">Two</option>
-                            <option value="Three">Three</option>
-                        </select>
-                    </div>
-                    <div className="envName text-left">
-                        <label>Dropdown 2</label>
-                        <select id="dropdown1" className="form-control"  value={dropdown2} onChange={(e) => setDropdown2(e.target.value)}>
-                            <option value="">Select</option>
-                            <option value="One">One</option>
-                            <option value="Two">Two</option>
-                            <option value="Three">Three</option>
-                        </select>
-                    </div> */}

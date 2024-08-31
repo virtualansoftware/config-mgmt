@@ -13,7 +13,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
-    path: "/config-ui",
+    path: "/config-mgmt",
     element: (
       <>
         <Header/>
@@ -26,7 +26,7 @@ const router = createBrowserRouter([
     ),
   },
   {
-    path: "/keyvalue",
+    path: "/config",
     element: (
       <>
         <Header/>

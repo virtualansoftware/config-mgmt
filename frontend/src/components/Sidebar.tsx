@@ -18,17 +18,24 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [firstSubMenu, setFirstSubMenu] = useState(null);
     const [secondSubMenu, setSecondSubMenu] = useState(null);
     const [thirdSubMenu, setThirdSubMenu] = useState(null);
-    const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
     const [subMenuData, setSubMenuData] = useState<MenuItem>({});
+    // const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
-    const updateBreadcrumbs = (newCrumb: string) => {
-        setBreadcrumbs(prevBreadcrumbs => {
-            if (prevBreadcrumbs.includes(newCrumb)) {
-                return prevBreadcrumbs.slice(0, prevBreadcrumbs.indexOf(newCrumb) + 1);
-            }
-            return [...prevBreadcrumbs, newCrumb];
-        });
-    };
+    // const updateBreadcrumbs = (newCrumb: string) => {
+    //     setBreadcrumbs(prevBreadcrumbs => {
+    //         if (prevBreadcrumbs.includes(newCrumb)) {
+    //             return prevBreadcrumbs.slice(0, prevBreadcrumbs.indexOf(newCrumb) + 1);
+    //         }
+    //         return [...prevBreadcrumbs, newCrumb];
+    //     });
+    // };
+
+    // const handleBreadcrumbClick = (index: number) => {
+    //     setBreadcrumbs(breadcrumbs.slice(0, index + 1));
+    //     if (index === 0) {
+    //         setThirdSubMenu(null);
+    //     }
+    // }
 
     const toggleSubMenu = (item: string) => {
         setSubMenu(subMenu === item ? null : item);
@@ -47,35 +54,33 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const toggleSecondSubMenu = (index: number, sublistTitle: string, e: React.MouseEvent<HTMLAnchorElement | HTMLLIElement>) => {
         e.stopPropagation();
         setSecondSubMenu(secondSubMenu === index ? null : index);
-        updateBreadcrumbs(sublistTitle);
+        // updateBreadcrumbs(sublistTitle);
         setThirdSubMenu(null);
     };
 
     const toggleThirdSubMenu = (link: string, e: React.MouseEvent<HTMLLIElement>) => {
         e.stopPropagation();
-        updateBreadcrumbs(link);
+        // updateBreadcrumbs(link);
         const [application_name, env_name, configuration_file_name] = link.split('/');
         onRetrieve(application_name, env_name, configuration_file_name);
         setThirdSubMenu(link);
     };
 
-    const toggleGenerateList = (e: React.MouseEvent<HTMLLIElement>) => {
-        e.stopPropagation();
+    const toggleGenerateList = () => {
         setSubMenu(null);
         setFirstSubMenu(null);
         setSecondSubMenu(null);
         setThirdSubMenu(null);
     };
     
-    const toggleUploadList = (e: React.MouseEvent<HTMLLIElement>) => {
-        e.stopPropagation();
+    const toggleUploadList = () => {
         setSubMenu(null);
         setFirstSubMenu(null);
         setSecondSubMenu(null);
         setThirdSubMenu(null);
     };
     
-
+    // GET METHOD
     async function buildMenu() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_ALL);
@@ -91,6 +96,20 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
 
     return (
         <div className="sidebar">
+            {/* <div className="breadcrumbs">
+                <ul>
+                    {breadcrumbs.map((crumb, index) => (
+                        <li key={index}>
+                            {index < breadcrumbs.length - 1 ? (
+                                <Link to="#" onClick={() => handleBreadcrumbClick(index)}>{crumb}</Link>
+                            ) : (
+                                <span>{crumb}</span>
+                            )}
+                            {index < breadcrumbs.length - 1 && " > "}
+                        </li>
+                    ))}
+                </ul>
+            </div> */}
             <ul className="col-md-12">
                 {/* Main Menu */}
                 <li onClick={(e) => toggleSubMenu("Config")}>
@@ -114,8 +133,8 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                                     {secondSubMenu === index && (
                                                         <ul>
                                                             {links.map((link, linkIndex) => (
-                                                                <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)}>
-                                                                    <Link to={{ pathname: "/keyvalue", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.split(".")[0]}` }}>{link}</Link>
+                                                                <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
+                                                                    <Link to={{ pathname: "/config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.split(".")[0]}` }}>{link}</Link>
                                                                 </li>
                                                             ))}
                                                         </ul>
@@ -130,12 +149,12 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     )}
                 </li>
                 {/* Generate List */}
-                <li className="generateList" onClick={toggleGenerateList}>
-                    <Link to={"/generate-config"} onClick={(e) => e.stopPropagation()}>Generate Config</Link>
+                <li className="generateList">
+                    <Link to={"/generate-config"} onClick={toggleGenerateList}>Generate Config</Link>
                 </li>
                 {/* Upload List */}
-                <li className="uploadList" onClick={toggleUploadList}>
-                    <Link to={"/upload-template"} onClick={(e) => e.stopPropagation()}>Upload Template</Link>
+                <li className="uploadList">
+                    <Link to={"/upload-template"} onClick={toggleUploadList}>Upload Template</Link>
                 </li>
             </ul>
         </div>

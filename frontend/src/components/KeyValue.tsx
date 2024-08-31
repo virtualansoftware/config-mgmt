@@ -44,6 +44,14 @@ export default function KeyValue(){
 
     // POST METHOD
     async function submit(){
+        if (!applicationName || !envName || !configurationFileName) {
+            setMessage({ text: "Please fill in all fields", type: "error" });
+            setTimeout(() => {
+                setMessage({text:"", type:""});
+            }, 3000);
+            return;
+        }
+
         const requestData ={
             configMap: {
                 ...Object.fromEntries(pairs.map(pair => [pair.key, pair.value]))    
@@ -73,15 +81,14 @@ export default function KeyValue(){
 
     // GET METHOD
     async function retrieve() {
-
-        const authResult = new URLSearchParams(window.location.search); 
+        const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
         const env_name = authResult.get('env_name')
         const configuration_file_name = authResult.get('configuration_file_name');
+
         setApplicationName(application_name);
         setEnvName(env_name);
         setConfigurationFileName(configuration_file_name);
-        console.log("Retrieve called with:", application_name, env_name, configuration_file_name);
 
         try {
             const response = await axios.get(API_GET_ENDPOINT, {
