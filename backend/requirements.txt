@@ -10,3 +10,4 @@ pytz
 jinja2
 boto3
 python-multipart
+PyGithub
