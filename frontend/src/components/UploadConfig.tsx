@@ -30,7 +30,8 @@ export default function UploadConfig() {
             setApplicationName("");
             setConfigurationFileName("");
             setFile(null);
-            console.log(response);
+            const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+            if (fileInput) fileInput.value = "";
         } catch (error) {
             console.error("Error sending data: ", error);
             setMessage({ text: "Failed to send data", type: "error" });
@@ -44,7 +45,7 @@ export default function UploadConfig() {
     return (
         <div className="config">    
             <div className="form-group">
-                <h5>Upload Config</h5>
+                <h5>Upload Template</h5>
                 <div className='keyId-group'>
                     <div className='text-left mt-3'>
                         <label>Application Name</label>

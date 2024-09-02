@@ -14,6 +14,7 @@ interface MenuItem {
 }
 
 export default function Sidebar({ onRetrieve }: SidebarProps) {
+    const [loading, setLoading] = useState(false);
     const [subMenu, setSubMenu] = useState(null);
     const [firstSubMenu, setFirstSubMenu] = useState(null);
     const [secondSubMenu, setSecondSubMenu] = useState(null);
@@ -83,8 +84,10 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     // GET METHOD
     async function buildMenu() {
         try {
+            setLoading(true);
             const response = await axios.get(API_GET_ENDPOINT_ALL);
             setSubMenuData(response.data);
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -113,38 +116,44 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             <ul className="col-md-12">
                 {/* Main Menu */}
                 <li onClick={(e) => toggleSubMenu("Config")}>
-                    <i className={`fa-solid ${subMenu === "Config" ? "fa-caret-down" : "fa-caret-right"}`}></i> Config
+                    <Link to={"/config"}>
+                        <i className={`fa-solid ${subMenu === "Config" ? "fa-caret-down" : "fa-caret-right"}`}></i> Config
+                    </Link>
                     {/* First Sub Menu */}
                     {subMenu === "Config" && (
                         <ul className="sublist">
-                            {Object.keys(subMenuData).map((key) => (
-                                <li key={key} onClick={(e) => toggleFirstSubMenu(key, e)}>
-                                    <i className={`fa-solid ${firstSubMenu === key ? "fa-caret-down" : "fa-caret-right"}`}></i> {key}
-                                    {/* Second Sub Menu */}
-                                    {firstSubMenu === key && (
-                                        <ul className="sublist">
-                                            {Object.entries(subMenuData[key]).map(([env_name, links], index) => (
-                                                <li key={env_name}>
-                                                    <Link to={{ pathname: links[1], search: `?env_name=${env_name}` }}
-                                                        onClick={(e) => toggleSecondSubMenu(index, env_name, e)}>
-                                                        <i className={`fa-solid ${secondSubMenu === index ? "fa-caret-down" : "fa-caret-right"}`}></i> {env_name}
-                                                    </Link>
-                                                    {/* Third Sub Menu */}
-                                                    {secondSubMenu === index && (
-                                                        <ul>
-                                                            {links.map((link, linkIndex) => (
-                                                                <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
-                                                                    <Link to={{ pathname: "/config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.split(".")[0]}` }}>{link}</Link>
-                                                                </li>
-                                                            ))}
-                                                        </ul>
-                                                    )}
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    )}
-                                </li>
-                            ))}
+                            {loading ? (
+                                <img className="sidebarSpinner" src='/images/spinner.svg' alt='spinner'/>
+                            ) : (
+                                <>
+                                    {Object.keys(subMenuData).map((key) => (
+                                        <li key={key} onClick={(e) => toggleFirstSubMenu(key, e)}>
+                                            <i className={`fa-solid ${firstSubMenu === key ? "fa-caret-down" : "fa-caret-right"}`}></i> {key}
+                                            {/* Second Sub Menu */}
+                                            {firstSubMenu === key && (
+                                                <ul className="sublist">
+                                                    {Object.entries(subMenuData[key]).map(([env_name, links], index) => (
+                                                        <li key={env_name} onClick={(e) => toggleSecondSubMenu(index, env_name, e)}>
+                                                            <i className={`fa-solid ${secondSubMenu === index ? "fa-caret-down" : "fa-caret-right"}`}></i> {env_name}
+                                                            {/* Third Sub Menu */}
+                                                            {secondSubMenu === index && (
+                                                                <ul className="lastlist">
+                                                                    {links.map((link, linkIndex) => (
+                                                                        <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
+                                                                            {/* <Link to={{ pathname: "/config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.split(".")[0]}` }}>{link}</Link> */}
+                                                                            <Link to={{ pathname: "/config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.replace(/\.json$/, "")}` }}>{link}</Link>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            )}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    ))}
+                                </>
+                            )}
                         </ul>
                     )}
                 </li>
@@ -152,6 +161,13 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                 <li className="generateList">
                     <Link to={"/generate-config"} onClick={toggleGenerateList}>Generate Config</Link>
                 </li>
+                {/* <ul>
+                    {generatedData.map((item, index) => (
+                        <li key={index}>
+                            <Link to={{ pathname: "/generate-config", search: `?application_name=${application_name}&env_name=${env_name}&configuration_file_name=${configuration_file_name.replace(/\.json$/, "")}` }}>{item.trim()}</Link>
+                        </li>
+                    ))}
+                </ul> */}
                 {/* Upload List */}
                 <li className="uploadList">
                     <Link to={"/upload-template"} onClick={toggleUploadList}>Upload Template</Link>

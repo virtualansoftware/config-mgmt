@@ -17,6 +17,7 @@ export default function KeyValue(){
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[pairs, setPairs] = useState<any[]>([]);
     const[message, setMessage] = useState({text:"", type:""});
+    const [loading, setLoading] = useState(false);
 
     function handleAdd(){
         if(key && value){
@@ -91,6 +92,7 @@ export default function KeyValue(){
         setConfigurationFileName(configuration_file_name);
 
         try {
+            setLoading(true);
             const response = await axios.get(API_GET_ENDPOINT, {
                 params: {
                     application_name,
@@ -102,6 +104,7 @@ export default function KeyValue(){
             const newPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
             setPairs(newPairs);
             setMessage({ text: "Data fetched successfully", type: "success" });
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
@@ -149,21 +152,25 @@ export default function KeyValue(){
                             />
                         </div>
                     </div>
-                    <div className='cards'>
-                        <ul className="list-unstyled">
-                            {pairs.map((pair, index) => (
-                                <li key={index}>
-                                    <div className='card'>
-                                        <span>{pair.key}</span>
-                                    </div>
-                                    <div className='card'>
-                                        <span>{pair.value}</span>
-                                    </div>
-                                    <img src="/images/minus-img.png" alt="minus" onClick={() => handleRemove(index)} />
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                    {loading ? (
+                        <img className="configSpinner" src='/images/spinner.svg' alt='spinner'/>
+                    ) : (
+                        <div className='cards'>
+                            <ul className="list-unstyled">
+                                {pairs.map((pair, index) => (
+                                    <li key={index}>
+                                        <div className='card'>
+                                            <span>{pair.key}</span>
+                                        </div>
+                                        <div className='card'>
+                                            <span>{pair.value}</span>
+                                        </div>
+                                        <img src="/images/minus-img.png" alt="minus" onClick={() => handleRemove(index)} />
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                     <div className='keyValue-group'>
                         <input 
                             type="text"
