@@ -40,9 +40,9 @@ class Settings(BaseSettings):
     GITHUB_REPO_NAME: str = os.getenv("GITHUB_REPO_NAME")
     GITHUP_TOKEN: str = os.getenv("GITHUP_TOKEN")
     GITHUB_HOST_URL: str = os.getenv("GITHUB_HOST_URL")
-    APPLICATION_PREFIX: str = 'config-mgmt/application/'
-    TEMPLATE_PREFIX: str = 'config-mgmt/templates/'
-    GENERATED_PREFIX: str = 'config-mgmt/generated/'
+    APPLICATION_PREFIX: str = 'config-mgmt/application'
+    TEMPLATE_PREFIX: str = 'config-mgmt/templates'
+    GENERATED_PREFIX: str = 'config-mgmt/generated'
     model_config = SettingsConfigDict(extra=Extra.allow, env_file='.env', env_file_encoding='utf-8')
 
 settings = Settings()

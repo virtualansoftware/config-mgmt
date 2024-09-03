@@ -24,7 +24,7 @@ class GitRepository:
     def get_all_configuration():
         g = loginGitHub()
         repo = g.get_repo(settings.GITHUB_REPO_NAME)
-        contents = repo.get_contents("")
+        contents = repo.get_contents(settings.APPLICATION_PREFIX)
         my_map = dict()
         while contents:
             file_content = contents.pop(0)
@@ -33,7 +33,7 @@ class GitRepository:
                 contents.extend(repo.get_contents(file_content.path))
             else:
                 if settings.APPLICATION_PREFIX in file_content.path:
-                    appList = file_content.path.replace(settings.APPLICATION_PREFIX, "").split("/")
+                    appList = file_content.path.replace(settings.APPLICATION_PREFIX+"/", "").split("/")
                     if my_map.get(appList[0]) is None:
                         my_child_map = dict()
                         my_list = [appList[2]]
@@ -64,7 +64,7 @@ class GitRepository:
             print("Updated successfully!")
         except GithubException as ex:
             try:
-                repo.create_file(fileName, commitMessage, json.dumps(content))
+                repo.create_file(fileName, commitMessage, json.dumps(content, sort_keys=True, indent=2))
             except GithubException as ex:
                 print("Not found " + print(ex))
                 raise
