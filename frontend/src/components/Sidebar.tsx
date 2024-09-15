@@ -161,13 +161,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                 <li className="generateList">
                     <Link to={"/generate-config"} onClick={toggleGenerateList}>Generate Config</Link>
                 </li>
-                {/* <ul>
-                    {generatedData.map((item, index) => (
-                        <li key={index}>
-                            <Link to={{ pathname: "/generate-config", search: `?application_name=${application_name}&env_name=${env_name}&configuration_file_name=${configuration_file_name.replace(/\.json$/, "")}` }}>{item.trim()}</Link>
-                        </li>
-                    ))}
-                </ul> */}
                 {/* Upload List */}
                 <li className="uploadList">
                     <Link to={"/upload-template"} onClick={toggleUploadList}>Upload Template</Link>
