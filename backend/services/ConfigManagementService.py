@@ -18,6 +18,12 @@ class ConfigManagement:
     def get_all_configuration():
         return GitRepository.get_all_configuration()
 
+    def get_all_template():
+        return GitRepository.get_all_template()
+
+    def get_all_generated_configurations():
+        return GitRepository.get_all_generated_configurations()
+
     def read_configuration(application_name: str, env_name: str, configuration_file_name: str):
         dummy:  dict = {}
         configInfo_request = ConfigSchema(dummy, application_name, env_name, configuration_file_name)

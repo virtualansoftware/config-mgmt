@@ -39,6 +39,7 @@ class Settings(BaseSettings):
     OAUTH_TOKEN_URL: str = os.getenv("OAUTH_TOKEN_URL")
     GITHUB_REPO_NAME: str = os.getenv("GITHUB_REPO_NAME")
     GITHUP_TOKEN: str = os.getenv("GITHUP_TOKEN")
+    BRANCH: str = os.getenv("BRANCH")
     GITHUB_HOST_URL: str = os.getenv("GITHUB_HOST_URL")
     APPLICATION_PREFIX: str = 'config-mgmt/application'
     TEMPLATE_PREFIX: str = 'config-mgmt/templates'

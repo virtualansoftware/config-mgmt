@@ -37,14 +37,29 @@ def save_configuration(config_info: ConfigSchema):
     return {"status": "Added successfully"}
 
 
-@router.get("/all", response_model=dict)
+@router.get("/configs", response_model=dict)
 def read_configuration():
     try:
-        return ConfigManagement.get_all_configuration();
+        return ConfigManagement.get_all_configuration()
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
     return "Error Occurred and Handled " + e.message
 
+@router.get("/templates", response_model=dict)
+def read_configuration():
+    try:
+        return ConfigManagement.get_all_template()
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+    return "Error Occurred and Handled " + e.message
+
+@router.get("/generated-config", response_model=dict)
+def read_configuration():
+    try:
+        return ConfigManagement.get_all_generated_configurations()
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+    return "Error Occurred and Handled " + e.message
 
 @router.get("/")
 def read_configuration(application_name: str, env_name: str, configuration_file_name: str):
