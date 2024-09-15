@@ -1,12 +1,17 @@
 from app.datagenerator.TemplateGenerator import TemplateGenerator
 from app.schemas.config.ConfigSchema import ConfigSchema
 import json
+from settings import settings
 from repository.GitRepository import GitRepository
 from services.Utility import get_config_file, get_template_file, get_template_generated
 from app.schemas.config.ConfigTemplateSchema import ConfigTemplateSchema
 from app.schemas.config.TemplateCreateSchema import TemplateCreateSchema
 
 class ConfigManagement:
+
+    def read_configuration_columns():
+        return settings.COLUMNS
+
 
     def apply_configuration(self, config_info: ConfigSchema):
         output = TemplateGenerator.apply_configuration(config_info)

@@ -18,6 +18,16 @@ router = APIRouter(
 )
 
 
+
+@router.get("/columns")
+def read_configuration_columns():
+    try:
+        return ConfigManagement.read_configuration_columns()
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+    return "Error Occurred and Handled " + e.message
+
+
 @router.post("/", response_model=dict)
 def save_configuration(config_info: ConfigSchema):
     try:
@@ -68,9 +78,6 @@ def read_configuration(application_name: str, env_name: str, configuration_file_
     except Exception as e:
         return HTTPException(status_code=400, detail="Item not found")
     return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
-
-
-
 
 @router.post("/generate", response_model=dict)
 def generate_configuration(config_info: ConfigTemplateSchema):
