@@ -12,7 +12,7 @@ export default function UploadConfig() {
 
     // POST METHOD
     async function upload() {
-        if (!applicationName || !configurationFileName || !file) {
+        if (!applicationName || !configurationFileName || (!file && !textArea)) {
             setMessage({ text: "Please fill in all fields and select a file", type: "error" });
             setTimeout(() => {
                 setMessage({text:"", type:""});
@@ -32,6 +32,7 @@ export default function UploadConfig() {
             setApplicationName("");
             setConfigurationFileName("");
             setFile(null);
+            setTextArea("");
             const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
             if (fileInput) fileInput.value = "";
         } catch (error) {
@@ -111,7 +112,7 @@ export default function UploadConfig() {
                             <div className='text-left mt-3'>
                                 <label>Text Template</label><br/>
                                 <textarea
-                                    className='textarea'
+                                    className="textarea"
                                     rows={4}
                                     value={textArea}
                                     onChange={(e) => setTextArea(e.target.value)}

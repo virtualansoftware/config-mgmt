@@ -7,6 +7,7 @@ export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
+    const [textArea, setTextArea] = useState("");
     const[message, setMessage] = useState({text:"", type:""});
     const[generatedData, setGeneratedData] = useState({ application_name: "", env_name: "", configuration_file_name: "" });
 
@@ -32,6 +33,7 @@ export default function GenerateConfig() {
             setApplicationName("");
             setConfigurationFileName("");
             setEnvName("");
+            setTextArea("");
         } catch(error){
             console.error("Error sending data: ", error);
             setMessage({text:"Failed to send data", type:"error"});
@@ -61,6 +63,7 @@ export default function GenerateConfig() {
                     configuration_file_name
                 }
             });
+            setTextArea(response.data);
             setMessage({ text: "Data fetched successfully", type: "success" });
         } catch (error) {
             console.error("Error fetching pairs:", error);
@@ -103,6 +106,18 @@ export default function GenerateConfig() {
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
                             />
                         </div>
+                        {textArea && (
+                            <div className='text-left mt-3'>
+                                <label>Text Template</label><br/>
+                                <textarea
+                                    className="textarea"
+                                    readOnly
+                                    rows={5}
+                                    value={textArea}
+                                    onChange={(e) => setTextArea(e.target.value)}
+                                />
+                            </div>
+                       )}
                     </div>
                     <p className={message.type === "success" ? "success" : "error" }>{message.text}</p>
                     <button className='btn btn-success' onClick={generateConfig}>Generate</button>
