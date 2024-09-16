@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { API_POST_ENDPOINT, API_GET_ENDPOINT } from '../constants';
 import Sidebar from './Sidebar';
@@ -17,7 +17,7 @@ export default function KeyValue(){
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[pairs, setPairs] = useState<any[]>([]);
     const[message, setMessage] = useState({text:"", type:""});
-    const [loading, setLoading] = useState(false);
+    const[loading, setLoading] = useState(false);
 
     function handleAdd(){
         if(key && value){
@@ -126,8 +126,8 @@ export default function KeyValue(){
             <div className="config">    
                 <div className="form-group">
                     <h5>Configuration</h5>
-                    <div className='keyId-group'>
-                        <div className='text-left'>
+                    <div className="input-container">
+                        <div>
                             <label>Application Name</label>
                             <input 
                                 type="text"
@@ -135,7 +135,7 @@ export default function KeyValue(){
                                 onChange={(e) => setApplicationName(e.target.value)}
                             />
                         </div>
-                        <div className='text-left'>
+                        <div>
                             <label>ENV Name</label><br/>
                             <input 
                                 type="text"
@@ -143,7 +143,7 @@ export default function KeyValue(){
                                 onChange={(e) => setEnvName(e.target.value)}
                             />
                         </div>
-                        <div className='text-left'>
+                        <div>
                             <label>Configuration File Name</label><br/>
                             <input 
                                 type="text"
@@ -153,7 +153,9 @@ export default function KeyValue(){
                         </div>
                     </div>
                     {loading ? (
-                        <img className="configSpinner" src='/images/spinner.svg' alt='spinner'/>
+                        <div className='spin-con'>
+                            <img className="spinner" src='/images/spinner.svg' alt='spinner'/>
+                        </div>
                     ) : (
                         <div className='cards'>
                             <ul className="list-unstyled">

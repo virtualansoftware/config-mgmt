@@ -13,6 +13,10 @@ interface MenuItem {
     };
 }
 
+interface UploadMenuItem {
+    [key: string]: string[];
+}
+
 export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [loading, setLoading] = useState(false);
     const [subMenu, setSubMenu] = useState(null);
@@ -21,7 +25,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [thirdSubMenu, setThirdSubMenu] = useState(null);
     const [subMenuDataConfig, setSubMenuDataConfig] = useState<MenuItem>({});
     const [subMenuDataGenerate, setSubMenuDataGenerate] = useState<MenuItem>({});
-    const [subMenuDataUpload, setSubMenuDataUpload] = useState<MenuItem>({});
+    const [subMenuDataUpload, setSubMenuDataUpload] = useState<UploadMenuItem>({});
     // const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
     // const updateBreadcrumbs = (newCrumb: string) => {

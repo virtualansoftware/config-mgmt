@@ -7,9 +7,10 @@ export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
-    const [textArea, setTextArea] = useState("");
+    const[textArea, setTextArea] = useState("");
     const[message, setMessage] = useState({text:"", type:""});
     const[generatedData, setGeneratedData] = useState({ application_name: "", env_name: "", configuration_file_name: "" });
+    const[loading, setLoading] = useState(false);
 
     // POST METHOD
     async function generateConfig(){
@@ -56,6 +57,7 @@ export default function GenerateConfig() {
         setConfigurationFileName(configuration_file_name);
 
         try {
+            setLoading(true);
             const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
                 params: {
                     application_name,
@@ -65,6 +67,7 @@ export default function GenerateConfig() {
             });
             setTextArea(response.data);
             setMessage({ text: "Data fetched successfully", type: "success" });
+            setLoading(false);
         } catch (error) {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
@@ -81,8 +84,8 @@ export default function GenerateConfig() {
             <div className="config">
                 <div className="form-group">
                     <h5>Generate Config</h5>
-                    <div className="keyId-group">
-                        <div className='text-left mt-3'>
+                    <div className="input-container">
+                        <div>
                             <label>Application Name</label>
                             <input 
                                 type="text"
@@ -90,7 +93,7 @@ export default function GenerateConfig() {
                                 onChange={(e) => setApplicationName(e.target.value)}
                             />
                         </div>
-                        <div className='text-left mt-3'>
+                        <div>
                             <label>ENV Name</label>
                             <input 
                                 type="text"
@@ -98,7 +101,7 @@ export default function GenerateConfig() {
                                 onChange={(e) => setEnvName(e.target.value)}
                             />
                         </div>
-                        <div className='text-left mt-3'>
+                        <div>
                             <label>Configuration File Name</label><br/>
                             <input 
                                 type="text"
@@ -106,18 +109,26 @@ export default function GenerateConfig() {
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
                             />
                         </div>
-                        {textArea && (
-                            <div className='text-left mt-3'>
-                                <label>Text Template</label><br/>
-                                <textarea
-                                    className="textarea"
-                                    readOnly
-                                    rows={5}
-                                    value={textArea}
-                                    onChange={(e) => setTextArea(e.target.value)}
-                                />
+                        {loading ? (
+                            <div className='spin-con'>
+                                <img className="spinner" src='/images/spinner.svg' alt='spinner'/>
                             </div>
-                       )}
+                        ) : (
+                            <>
+                                {textArea && (
+                                    <div>
+                                        <label>Text Template</label><br/>
+                                        <textarea
+                                            className="textarea"
+                                            readOnly
+                                            rows={5}
+                                            value={textArea}
+                                            onChange={(e) => setTextArea(e.target.value)}
+                                        />
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </div>
                     <p className={message.type === "success" ? "success" : "error" }>{message.text}</p>
                     <button className='btn btn-success' onClick={generateConfig}>Generate</button>
