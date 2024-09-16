@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
-import { API_GET_ENDPOINT_ALL } from "../constants";
+import { API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE_ALL, API_GET_ENDPOINT_UPLOAD_ALL } from "../constants";
 
 interface SidebarProps {
     onRetrieve: (application_name: string, env_name: string, configuration_file_name: string) => void;
@@ -19,7 +19,9 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [firstSubMenu, setFirstSubMenu] = useState(null);
     const [secondSubMenu, setSecondSubMenu] = useState(null);
     const [thirdSubMenu, setThirdSubMenu] = useState(null);
-    const [subMenuData, setSubMenuData] = useState<MenuItem>({});
+    const [subMenuDataConfig, setSubMenuDataConfig] = useState<MenuItem>({});
+    const [subMenuDataGenerate, setSubMenuDataGenerate] = useState<MenuItem>({});
+    const [subMenuDataUpload, setSubMenuDataUpload] = useState<MenuItem>({});
     // const [breadcrumbs, setBreadcrumbs] = useState<string[]>([]);
 
     // const updateBreadcrumbs = (newCrumb: string) => {
@@ -43,6 +45,14 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
         setFirstSubMenu(null);
         setSecondSubMenu(null);
         setThirdSubMenu(null); 
+
+        if (item === "Config") {
+            buildConfigMenu();
+        } else if (item === "Generate") {
+            buildGenerateMenu();
+        } else if (item === "Upload") {
+            buildUploadMenu();
+        }
     };
 
     const toggleFirstSubMenu = (item: string, e: React.MouseEvent<HTMLLIElement>) => {
@@ -66,36 +76,42 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
         onRetrieve(application_name, env_name, configuration_file_name);
         setThirdSubMenu(link);
     };
-
-    const toggleGenerateList = () => {
-        setSubMenu(null);
-        setFirstSubMenu(null);
-        setSecondSubMenu(null);
-        setThirdSubMenu(null);
-    };
     
-    const toggleUploadList = () => {
-        setSubMenu(null);
-        setFirstSubMenu(null);
-        setSecondSubMenu(null);
-        setThirdSubMenu(null);
-    };
-    
-    // GET METHOD
-    async function buildMenu() {
+    // GET CONFIG METHOD
+    async function buildConfigMenu() {
         try {
             setLoading(true);
-            const response = await axios.get(API_GET_ENDPOINT_ALL);
-            setSubMenuData(response.data);
+            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
+            setSubMenuDataConfig(response.data);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     }
 
-    useEffect(() => {
-        buildMenu();
-    }, []);
+    // GET GENERATE METHOD
+    async function buildGenerateMenu() {
+        try {
+            setLoading(true);
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE_ALL);
+            setSubMenuDataGenerate(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    // GET UPLOAD METHOD
+    async function buildUploadMenu() {
+        try {
+            setLoading(true);
+            const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
+            setSubMenuDataUpload(response.data);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
 
     return (
         <div className="sidebar">
@@ -114,7 +130,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                 </ul>
             </div> */}
             <ul className="col-md-12">
-                {/* Main Menu */}
+                {/* Config Menu */}
                 <li onClick={(e) => toggleSubMenu("Config")}>
                     <Link to={"/config"}>
                         <i className={`fa-solid ${subMenu === "Config" ? "fa-caret-down" : "fa-caret-right"}`}></i> Config
@@ -126,13 +142,13 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                 <img className="sidebarSpinner" src='/images/spinner.svg' alt='spinner'/>
                             ) : (
                                 <>
-                                    {Object.keys(subMenuData).map((key) => (
+                                    {Object.keys(subMenuDataConfig).map((key) => (
                                         <li key={key} onClick={(e) => toggleFirstSubMenu(key, e)}>
                                             <i className={`fa-solid ${firstSubMenu === key ? "fa-caret-down" : "fa-caret-right"}`}></i> {key}
                                             {/* Second Sub Menu */}
                                             {firstSubMenu === key && (
                                                 <ul className="sublist">
-                                                    {Object.entries(subMenuData[key]).map(([env_name, links], index) => (
+                                                    {Object.entries(subMenuDataConfig[key]).map(([env_name, links], index) => (
                                                         <li key={env_name} onClick={(e) => toggleSecondSubMenu(index, env_name, e)}>
                                                             <i className={`fa-solid ${secondSubMenu === index ? "fa-caret-down" : "fa-caret-right"}`}></i> {env_name}
                                                             {/* Third Sub Menu */}
@@ -140,7 +156,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                                                 <ul className="lastlist">
                                                                     {links.map((link, linkIndex) => (
                                                                         <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
-                                                                            {/* <Link to={{ pathname: "/config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.split(".")[0]}` }}>{link}</Link> */}
                                                                             <Link to={{ pathname: "/config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.replace(/\.json$/, "")}` }}>{link}</Link>
                                                                         </li>
                                                                     ))}
@@ -157,13 +172,79 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                         </ul>
                     )}
                 </li>
-                {/* Generate List */}
-                <li className="generateList">
-                    <Link to={"/generate-config"} onClick={toggleGenerateList}>Generate Config</Link>
+                {/* Generate Menu */}
+                <li onClick={(e) => toggleSubMenu("Generate")}>
+                    <Link to={"/generate-config"}>
+                        <i className={`fa-solid ${subMenu === "Generate" ? "fa-caret-down" : "fa-caret-right"}`}></i> Generate Config
+                    </Link>
+                    {/* First Sub Menu */}
+                    {subMenu === "Generate" && (
+                        <ul className="sublist">
+                            {loading ? (
+                                <img className="sidebarSpinner" src='/images/spinner.svg' alt='spinner'/>
+                            ) : (
+                                <>
+                                    {Object.keys(subMenuDataGenerate).map((key) => (
+                                        <li key={key} onClick={(e) => toggleFirstSubMenu(key, e)}>
+                                            <i className={`fa-solid ${firstSubMenu === key ? "fa-caret-down" : "fa-caret-right"}`}></i> {key}
+                                            {/* Second Sub Menu */}
+                                            {firstSubMenu === key && (
+                                                <ul className="sublist">
+                                                    {Object.entries(subMenuDataGenerate[key]).map(([env_name, links], index) => (
+                                                        <li key={env_name} onClick={(e) => toggleSecondSubMenu(index, env_name, e)}>
+                                                            <i className={`fa-solid ${secondSubMenu === index ? "fa-caret-down" : "fa-caret-right"}`}></i> {env_name}
+                                                            {/* Third Sub Menu */}
+                                                            {secondSubMenu === index && (
+                                                                <ul className="lastlist">
+                                                                    {links.map((link, linkIndex) => (
+                                                                        <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
+                                                                            <Link to={{ pathname: "/generate-config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.replace(/\.json$/, "")}` }}>{link}</Link>
+                                                                        </li>
+                                                                    ))}
+                                                                </ul>
+                                                            )}
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    ))}
+                                </>
+                            )}
+                        </ul>
+                    )}
                 </li>
-                {/* Upload List */}
-                <li className="uploadList">
-                    <Link to={"/upload-template"} onClick={toggleUploadList}>Upload Template</Link>
+                {/* Upload Menu */}
+                <li onClick={(e) => toggleSubMenu("Upload")}>
+                    <Link to={"/upload-template"}>
+                        <i className={`fa-solid ${subMenu === "Upload" ? "fa-caret-down" : "fa-caret-right"}`}></i> Upload Template
+                    </Link>
+                    {/* First Sub Menu */}
+                    {subMenu === "Upload" && (
+                        <ul className="sublist">
+                            {loading ? (
+                                <img className="sidebarSpinner" src='/images/spinner.svg' alt='spinner'/>
+                            ) : (
+                                <>
+                                    {Object.keys(subMenuDataUpload).map((key) => (
+                                        <li key={key} onClick={(e) => toggleFirstSubMenu(key, e)}>
+                                            <i className={`fa-solid ${firstSubMenu === key ? "fa-caret-down" : "fa-caret-right"}`}></i> {key}
+                                            {/* Second Sub Menu */}
+                                            {firstSubMenu === key && (
+                                                <ul className="sublist">
+                                                    {subMenuDataUpload[key].map((configFile, index) => (
+                                                        <li key={index} onClick={(e) => toggleThirdSubMenu(configFile, e)} className={thirdSubMenu === configFile ? "selected" : ""}>
+                                                            <Link to={{ pathname: "/upload-template", search: `?application_name=${key}&configuration_file_name=${configFile.replace(/\.tpl$/, "")}` }}>{configFile}</Link>
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </li>
+                                    ))}
+                                </>
+                            )}
+                        </ul>
+                    )}
                 </li>
             </ul>
         </div>

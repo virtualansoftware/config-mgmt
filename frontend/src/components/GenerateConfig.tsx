@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT_GENERATE } from '../constants';
+import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE } from '../constants';
 import Sidebar from './Sidebar';
 
 export default function GenerateConfig() {
@@ -32,8 +32,6 @@ export default function GenerateConfig() {
             setApplicationName("");
             setConfigurationFileName("");
             setEnvName("");
-            fetchConfig();
-            console.log(response);
         } catch(error){
             console.error("Error sending data: ", error);
             setMessage({text:"Failed to send data", type:"error"});
@@ -45,27 +43,38 @@ export default function GenerateConfig() {
     }
 
     // GET METHOD
-    async function fetchConfig() {
+    async function retrieve() {
+        const authResult = new URLSearchParams(window.location.search);
+        const application_name = authResult.get('application_name')
+        const env_name = authResult.get('env_name')
+        const configuration_file_name = authResult.get('configuration_file_name');
+
+        setApplicationName(application_name);
+        setEnvName(env_name);
+        setConfigurationFileName(configuration_file_name);
+
         try {
-            const response = {
-                application_name: applicationName,
-                env_name: envName,
-                configuration_file_name: configurationFileName
-            };
-            setGeneratedData(response);
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
+                params: {
+                    application_name,
+                    env_name,
+                    configuration_file_name
+                }
+            });
             setMessage({ text: "Data fetched successfully", type: "success" });
         } catch (error) {
-            console.error("Error fetching data:", error);
+            console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
         }
+
         setTimeout(() => {
-            setMessage({ text: "", type: "" });
+            setMessage({text:"", type:""});
         }, 3000);
     }
 
     return (
         <>
-            {/* <Sidebar onRetrieve={fetchConfig} generatedData={generatedData} /> */}
+            <Sidebar onRetrieve={retrieve}/>
             <div className="config">
                 <div className="form-group">
                     <h5>Generate Config</h5>

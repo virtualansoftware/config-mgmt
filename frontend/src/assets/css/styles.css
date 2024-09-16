@@ -17,9 +17,6 @@
   font-style: normal;
   font-display: swap; 
 }
-/* B5E61D - Green
-800040 - Brown
-004080 - Blue */
 html body{
   background-color: #dee9f980;
 }
@@ -230,3 +227,11 @@ html body{
   font-size: 14px;
 }
 /* Upload Config */
+.textarea{
+  width: 100%;
+  border-radius: 4px;
+  font-size: 13px;
+}
+.textarea:focus{
+  outline-color: #004080;
+}
