@@ -1,6 +1,6 @@
 import json
 
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Response, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, File, Form, UploadFile, Response, HTTPException
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from botocore.exceptions import ClientError
@@ -16,8 +16,6 @@ router = APIRouter(
     tags=["Config Api"],
     prefix='/config'
 )
-
-
 
 @router.get("/columns")
 def read_configuration_columns():
@@ -99,19 +97,24 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     return {"Error Occurred and Handled ": ex.message}
 
 @router.post("/upload-template")
-def upload(application_name: str, configuration_file_name: str, file: UploadFile = File(...)):
+def upload(application_name: str = Form(...), configuration_file_name: str = Form(...), file: UploadFile = File(None), template: str = Form(None)):
     try:
-        with open(file.filename, 'wb') as f:
-            while contents := file.file.read(1024 * 1024):
-                ConfigManagement.create_template(contents, config_info=TemplateCreateSchema(application_name, configuration_file_name))
+        if file and file.filename:
+            with open(file.filename, 'wb') as f:
+                while contents := file.file.read(1024 * 1024):
+                    ConfigManagement.create_template(contents, config_info=TemplateCreateSchema(application_name, configuration_file_name))
+            return {"message": f"Successfully uploaded {file.filename}"}
+        elif template:
+            ConfigManagement.create_template(template.encode(), config_info=TemplateCreateSchema(application_name, configuration_file_name))
+            return {"message": "Successfully uploaded template"}
+        else:
+            return {"error": "No file or template provided"}
     except Exception as error:
         traceback.print_exception(error)
-        return "Error Occurred and Handled ${error.message}"
+        return f"Error Occurred and Handled {error}"
     finally:
-        file.file.close()
-
-    return {"message": f"Successfully uploaded {file.filename}"}
-
+        if file:
+            file.file.close()
 
 @router.get("/get-template", response_model=str )
 def get_template(application_name: str,  configuration_file_name: str):

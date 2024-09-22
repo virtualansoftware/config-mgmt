@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE } from '../constants';
 import Sidebar from './Sidebar';
@@ -9,10 +9,35 @@ export default function GenerateConfig() {
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[textArea, setTextArea] = useState("");
     const[message, setMessage] = useState({text:"", type:""});
-    const[generatedData, setGeneratedData] = useState({ application_name: "", env_name: "", configuration_file_name: "" });
     const[loading, setLoading] = useState(false);
+    const[isDisabled, setIsDisabled] = useState(false);
 
-    // POST METHOD
+    // CLEAR ALL FIELDS
+    useEffect(() => {
+        const authResult = new URLSearchParams(window.location.search);
+        const application_name = authResult.get('application_name');
+        const env_name = authResult.get('env_name');
+        const configuration_file_name = authResult.get('configuration_file_name');
+
+        if (application_name && env_name && configuration_file_name) {
+            setApplicationName(application_name);
+            setEnvName(env_name);
+            setConfigurationFileName(configuration_file_name);
+        } else {
+            resetState();
+        }
+    }, [window.location.search]);
+
+    const resetState = () => {
+        setApplicationName("");
+        setEnvName("");
+        setConfigurationFileName("");
+        setTextArea("");
+        setMessage({ text: "", type: "" });
+        setIsDisabled(false);
+    };
+
+    // POST METHOD - GENERATE CONFIG
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
             setMessage({ text: "Please fill in all fields", type: "error" });
@@ -35,6 +60,7 @@ export default function GenerateConfig() {
             setConfigurationFileName("");
             setEnvName("");
             setTextArea("");
+            setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
             setMessage({text:"Failed to send data", type:"error"});
@@ -45,7 +71,7 @@ export default function GenerateConfig() {
         }, 3000);
     }
 
-    // GET METHOD
+    // GET METHOD - GET GENERATE CONFIG
     async function retrieve() {
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
@@ -68,6 +94,7 @@ export default function GenerateConfig() {
             setTextArea(response.data);
             setMessage({ text: "Data fetched successfully", type: "success" });
             setLoading(false);
+            setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
@@ -91,6 +118,7 @@ export default function GenerateConfig() {
                                 type="text"
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
+                                disabled={isDisabled}
                             />
                         </div>
                         <div>
@@ -99,6 +127,7 @@ export default function GenerateConfig() {
                                 type="text"
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
+                                disabled={isDisabled}
                             />
                         </div>
                         <div>
@@ -107,6 +136,7 @@ export default function GenerateConfig() {
                                 type="text"
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
+                                disabled={isDisabled}
                             />
                         </div>
                         {loading ? (
@@ -120,10 +150,10 @@ export default function GenerateConfig() {
                                         <label>Text Template</label><br/>
                                         <textarea
                                             className="textarea"
-                                            readOnly
                                             rows={5}
                                             value={textArea}
                                             onChange={(e) => setTextArea(e.target.value)}
+                                            disabled={isDisabled}
                                         />
                                     </div>
                                 )}
@@ -131,7 +161,9 @@ export default function GenerateConfig() {
                         )}
                     </div>
                     <p className={message.type === "success" ? "success" : "error" }>{message.text}</p>
-                    <button className='btn btn-success' onClick={generateConfig}>Generate</button>
+                    {!isDisabled && (
+                        <button className='btn btn-success' onClick={generateConfig}>Generate</button>
+                    )}
                 </div>
             </div>
         </>

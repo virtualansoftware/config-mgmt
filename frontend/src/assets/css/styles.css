@@ -55,12 +55,16 @@ html body{
   position: absolute;
   top: 1;
   left: 0;
-  width: 200px;
-  height: 100%;
+  width: 230px;
+  height: 850px;
   background-color: white;
   box-shadow: 2px 2px 4px #e7e5e566;
   z-index: 1;
   overflow-x: auto;
+}
+.sidebar ul{
+  position: relative;
+  left: -15px;
 }
 .sidebar .sidebarSpinner{
   width: 40px;
@@ -98,12 +102,11 @@ html body{
   text-decoration: none;
 }
 .sidebar ul li.selected{
-  display: inline-block;
-  width: auto;
+  width: 130%;
+  display: block;
   background-color: #004080;
   padding: 2px 5px;
   border-radius: 5px;
-  margin-left: -5px;
 }
 .sidebar ul li.selected a{
   color: white;
@@ -117,7 +120,7 @@ html body{
 }
 .config .form-group{
   padding: 20px;
-  width: 500px;
+  width: 600px;
   min-height: 450px;
   display: inline-block;
   background-color: white;
@@ -152,6 +155,7 @@ html body{
   font-size: 14px;
 }
 .config .keyValue-group input {
+  width: 45%;
   margin: -10px 10px 10px 0;
   padding: 4px;
   border: 1px solid gray;
@@ -163,6 +167,7 @@ html body{
 }
 .config img{
   width: 30px;
+  margin: -2px 5px 0 -10px;
   cursor: pointer;
   align-self: center;
 }
@@ -181,12 +186,11 @@ html body{
   margin-left: 5px;
 }
 .config .cards .card{
-  width: 100%;
-  max-width: 200px;
+  width: 45%;
+  margin: 0 13px 0 0;
   color: #004080;
   background-color: #c0d3e2;
   text-align: left;
-  margin-right: 10px;
   padding: 6px;
   border-radius: 4px;
   word-wrap: break-word;
@@ -213,6 +217,8 @@ html body{
   width: 100%;
   border-radius: 4px;
   font-size: 13px;
+  overflow-x: auto;
+  white-space: pre;
 }
 .config .textarea:focus{
   outline-color: #004080;

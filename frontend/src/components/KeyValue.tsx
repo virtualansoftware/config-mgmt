@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_POST_ENDPOINT, API_GET_ENDPOINT } from '../constants';
 import Sidebar from './Sidebar';
@@ -18,7 +18,36 @@ export default function KeyValue(){
     const[pairs, setPairs] = useState<any[]>([]);
     const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
+    const[isDisabled, setIsDisabled] = useState(false);
 
+    // CLEAR ALL FIELDS
+    useEffect(() => {
+        const authResult = new URLSearchParams(window.location.search);
+        const application_name = authResult.get('application_name');
+        const env_name = authResult.get('env_name');
+        const configuration_file_name = authResult.get('configuration_file_name');
+
+        if (application_name && env_name && configuration_file_name) {
+            setApplicationName(application_name);
+            setEnvName(env_name);
+            setConfigurationFileName(configuration_file_name);
+        } else {
+            resetState();
+        }
+    }, [window.location.search]);
+
+    const resetState = () => {
+        setApplicationName("");
+        setEnvName("");
+        setConfigurationFileName("");
+        setMessage({ text: "", type: "" });
+        setIsDisabled(false);
+        setPairs([]);
+        setKey("");
+        setValue("");
+    };
+
+    // ADDING KEY & VALUE PAIRS
     function handleAdd(){
         if(key && value){
             const newPairs = [...pairs, {key, value}];
@@ -34,6 +63,7 @@ export default function KeyValue(){
         }, 3000);
     }
 
+    // REMOVING KEY & VALUE PAIRS
     function handleRemove(index: number){
         const newPairs = pairs.filter((_, i) => i !== index);
         setPairs(newPairs);
@@ -43,7 +73,7 @@ export default function KeyValue(){
         }, 3000);
     }
 
-    // POST METHOD
+    // POST METHOD - UPLOAD CONFIG
     async function submit(){
         if (!applicationName || !envName || !configurationFileName) {
             setMessage({ text: "Please fill in all fields", type: "error" });
@@ -70,6 +100,7 @@ export default function KeyValue(){
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
+            setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
             setMessage({text:"Failed to send data", type:"error"});
@@ -80,8 +111,8 @@ export default function KeyValue(){
         }, 3000);
     }
 
-    // GET METHOD
-    async function retrieve() {
+    // GET METHOD - GET CONFIG
+    async function retrieve() { 
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
         const env_name = authResult.get('env_name')
@@ -105,6 +136,7 @@ export default function KeyValue(){
             setPairs(newPairs);
             setMessage({ text: "Data fetched successfully", type: "success" });
             setLoading(false);
+            setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
@@ -125,7 +157,7 @@ export default function KeyValue(){
             <Sidebar onRetrieve={retrieve}/>
             <div className="config">    
                 <div className="form-group">
-                    <h5>Configuration</h5>
+                    <h5>{isDisabled ? "Re-Configuration" : "Configuration"}</h5>
                     <div className="input-container">
                         <div>
                             <label>Application Name</label>
@@ -133,6 +165,7 @@ export default function KeyValue(){
                                 type="text"
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
+                                disabled={isDisabled}
                             />
                         </div>
                         <div>
@@ -141,6 +174,7 @@ export default function KeyValue(){
                                 type="text"
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
+                                disabled={isDisabled}
                             />
                         </div>
                         <div>
@@ -149,6 +183,7 @@ export default function KeyValue(){
                                 type="text"
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
+                                disabled={isDisabled}
                             />
                         </div>
                     </div>
