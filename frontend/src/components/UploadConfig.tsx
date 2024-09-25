@@ -47,12 +47,14 @@ export default function UploadConfig() {
             return;
         }
         
-        if (textArea === originalTextArea){
-            setMessage({ text: "No changes made to the template", type: "error" });
-            setTimeout(() => {
-                setMessage({ text: "", type: "" });
-            }, 3000);
-            return;
+        if (textArea){
+            if (textArea === originalTextArea){
+                setMessage({ text: "No changes made to the template", type: "error" });
+                setTimeout(() => {
+                    setMessage({ text: "", type: "" });
+                }, 3000);
+                return;
+            }
         }
 
         const formData = new FormData();

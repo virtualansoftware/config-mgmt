@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT } from '../constants';
+import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL } from '../constants';
 import Sidebar from './Sidebar';
 
 interface Props{
     application_name: string,
     env_name: string,
     configuration_file_name: string
+}
+
+interface SubMenuData {
+    [applicationName: string]: {
+        [envName: string]: string[];
+    };
 }
 
 export default function KeyValue(){
@@ -19,6 +25,8 @@ export default function KeyValue(){
     const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
+    const[editablePairs, setEditablePairs] = useState(false);
+    const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -45,6 +53,61 @@ export default function KeyValue(){
         setPairs([]);
         setKey("");
         setValue("");
+    };
+
+    async function allMenus() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
+            setSubMenuData(response.data);
+            console.log(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    // GET METHOD - GET KEY
+    async function fetch(application_name: string, env_name: string, configuration_file_name: string) { 
+        if (!applicationName || !envName || !configurationFileName) return;
+        allMenus();
+        
+        const configFileName = configurationFileName.replace(/\.json$/, '');
+        if (subMenuData[applicationName]?.[envName]?.some(file => file.replace(/\.json$/, '') === configFileName)) {
+            console.log("Data Already Exists");
+        } else {
+            return;
+        }
+        
+        try {
+            setLoading(true);
+            setEditablePairs(true);
+            const response = await axios.get(API_GET_ENDPOINT, {
+                params: {
+                    application_name,
+                    env_name,
+                    configuration_file_name
+                }
+            });
+            const data = response.data.configMap;
+            const newPairs = data ? Object.entries(data).map(([key]) => ({ key })) : [];
+            setPairs(newPairs);
+            setMessage({ text: "Key fetched successfully", type: "success" });
+            setLoading(false);
+            setIsDisabled(true);
+        } catch (error) {
+            console.error("Error fetching key:", error);
+            setMessage({ text: "Failed to fetch key", type: "error" });
+        }
+        setTimeout(() => {
+            setMessage({ text: "", type: "" });
+        }, 3000);
+    }
+
+    const handleBlur = () => {
+        fetch(applicationName, envName, configurationFileName);
+    };
+
+    const toggleEditMode = () => {
+        setEditablePairs(!editablePairs);
     };
 
     // ADDING KEY & VALUE PAIRS
@@ -124,6 +187,7 @@ export default function KeyValue(){
 
         try {
             setLoading(true);
+            setEditablePairs(false);
             const response = await axios.get(API_GET_ENDPOINT, {
                 params: {
                     application_name,
@@ -166,6 +230,7 @@ export default function KeyValue(){
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
                                 disabled={isDisabled}
+                                onBlur={handleBlur}
                             />
                         </div>
                         <div>
@@ -175,6 +240,7 @@ export default function KeyValue(){
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
                                 disabled={isDisabled}
+                                onBlur={handleBlur}
                             />
                         </div>
                         <div>
@@ -184,6 +250,7 @@ export default function KeyValue(){
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
                                 disabled={isDisabled}
+                                onBlur={handleBlur}
                             />
                         </div>
                     </div>
@@ -192,15 +259,35 @@ export default function KeyValue(){
                             <img className="spinner" src='/images/spinner.svg' alt='spinner'/>
                         </div>
                     ) : (
-                        <div className='cards'>
+                        <div className="cards">
                             <ul className="list-unstyled">
                                 {pairs.map((pair, index) => (
                                     <li key={index}>
-                                        <div className='card'>
-                                            <span>{pair.key}</span>
-                                        </div>
-                                        <div className='card'>
-                                            <span>{pair.value}</span>
+                                        <div className={editablePairs ? "editable" : "card"}>
+                                            {editablePairs ? (
+                                                <input type="text" value={pair.key} 
+                                                    onChange={(e) => {
+                                                        const newPairs = [...pairs];
+                                                        newPairs[index].key = e.target.value;
+                                                        setPairs(newPairs);
+                                                    }} 
+                                                />
+                                            ) : (
+                                                <span>{pair.key}</span>
+                                            )}
+                                        </div>  
+                                        <div className={editablePairs ? "editable" : "card"}>
+                                            {editablePairs ? (
+                                                <input type="text" value={pair.value}
+                                                    onChange={(e) => {
+                                                        const newPairs = [...pairs];
+                                                        newPairs[index].value = e.target.value;
+                                                        setPairs(newPairs);
+                                                    }} 
+                                                />
+                                            ) : (
+                                                <span>{pair.value}</span>
+                                            )}
                                         </div>
                                         <img src="/images/minus-img.png" alt="minus" onClick={() => handleRemove(index)} />
                                     </li>
@@ -227,7 +314,10 @@ export default function KeyValue(){
                     </div>
                     <p className={message.type === "success" ? "success" : "error" }>{message.text}</p>
                     {pairs.length > 0 && (
-                        <button className='btn btn-success' onClick={submit}>Submit</button>
+                        <>
+                            <button className='btn btn-success me-2' onClick={submit}>Submit</button>
+                            <button className='btn btn-primary' onClick={toggleEditMode}>{editablePairs ? "Save Changes" : "Edit"}</button>
+                        </>
                     )}
                 </div>
             </div>

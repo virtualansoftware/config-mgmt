@@ -199,6 +199,20 @@ html body{
 .config .cards .card span{
   font-weight: bold;
 }
+.config .cards .editable{
+  width: 47%;
+  margin: -5px 7px -5px -5px;
+  color: #004080;
+  text-align: left;
+  padding: 6px;
+  border-radius: 4px;
+  word-wrap: break-word;
+  display: inline-block;
+}
+.config .cards .editable input{
+  width: 100%;
+  padding: 4px;
+}
 .config .error{
   color: red;
   font-size: 14px;
