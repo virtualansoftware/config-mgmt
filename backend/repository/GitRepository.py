@@ -125,6 +125,22 @@ class GitRepository:
                 print("Not found " + print(ex))
                 raise
             print("created successfully!")
+
+    def save_common_configuration(fileName: str, content: str, commitMessage: str):
+        g = loginGitHub()
+        repo = g.get_repo(settings.GITHUB_REPO_NAME)
+        try:
+            fileContents = repo.get_contents(f"./{fileName}", settings.BRANCH)
+            repo.update_file(fileName, commitMessage, content, fileContents.sha, settings.BRANCH)
+            print("Updated successfully!")
+        except GithubException as ex:
+            try:
+                repo.create_file(fileName, commitMessage, json.dumps(content, sort_keys=True, indent=2), settings.BRANCH)
+            except GithubException as ex:
+                print("Not found " + print(ex))
+                raise
+            print("created successfully!")
+
     def updateFile(filePathName: str, fileName: str, newContent: str, commitMessage: str):
         g = loginGitHub()
         repo = g.get_repo(settings.GITHUB_REPO_NAME)

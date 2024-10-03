@@ -7,6 +7,7 @@ from botocore.exceptions import ClientError
 from utils.log import log
 from jinja2 import UndefinedError
 from app.schemas.config.ConfigSchema import ConfigSchema
+from app.schemas.config.CommonSchema import CommonSchema
 from app.schemas.config.ConfigTemplateSchema import ConfigTemplateSchema
 from services.ConfigManagementService import ConfigManagement
 from app.schemas.config.TemplateCreateSchema import TemplateCreateSchema
@@ -44,6 +45,23 @@ def save_configuration(config_info: ConfigSchema):
             raise
     return {"status": "Added successfully"}
 
+@router.post("/common", response_model=dict)
+def common_configuration(config_info: CommonSchema):
+    try:
+        ConfigManagement.save_common_configuration(config_info)
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+        return "Error Occurred and Handled " + e.message
+    except Exception as error:
+        traceback.print_exception(error)
+        return "Error Occurred and Handled ${error.message}"
+    except ClientError as ex:
+        if ex.response['Error']['Code'] == 'NoSuchKey':
+            log.info('No object found - returning empty')
+            return ex.response
+        else:
+            raise
+    return {"status": "Added successfully"}
 
 @router.get("/configs", response_model=dict)
 def read_configuration():
@@ -73,6 +91,14 @@ def read_configuration():
 def read_configuration(application_name: str, env_name: str, configuration_file_name: str):
     try:
         configInfo = ConfigManagement.read_configuration(application_name, env_name, configuration_file_name)
+    except Exception as e:
+        return HTTPException(status_code=400, detail="Item not found")
+    return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
+
+@router.get("/common")
+def read_common_configuration(env_name: str):
+    try:
+        configInfo = ConfigManagement.read_common_configuration(env_name)
     except Exception as e:
         return HTTPException(status_code=400, detail="Item not found")
     return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
