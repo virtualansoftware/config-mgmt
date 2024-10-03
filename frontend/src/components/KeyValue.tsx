@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_COMMON, API_POST_ENDPOINT_COMMON } from '../constants';
+import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_COMMON } from '../constants';
 import Sidebar from './Sidebar';
 
 interface SubMenuData {
@@ -35,132 +35,26 @@ export default function KeyValue(){
             setEnvName(env_name);
             setConfigurationFileName(configuration_file_name);
         } else {
-            resetState();
+            setApplicationName("");
+            setEnvName("");
+            setConfigurationFileName("");
+            setMessage({ text: "", type: "" });
+            setIsDisabled(false);
+            setPairs([]);
+            setKey("");
+            setValue("");
         }
     }, [window.location.search]);
 
-    const resetState = () => {
-        setApplicationName("");
-        setEnvName("");
-        setConfigurationFileName("");
-        setMessage({ text: "", type: "" });
-        setIsDisabled(false);
-        setPairs([]);
-        setKey("");
-        setValue("");
-    };
-
-    async function allMenus() {
-        try {
-            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
-            setSubMenuData(response.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
+    // CLEARS THE MESSAGE AFTER 3 SEC
+    useEffect(() => {
+        if (message.text) {
+            const timer = setTimeout(() => {
+                setMessage({ text: "", type: "" });
+            }, 3000);
+            return () => clearTimeout(timer);
         }
-    }
-
-    // GET METHOD - GET COMMON PAIRS
-    async function fetchCommonPairs(env_name:string) {
-        if (!env_name) return;
-
-        try {
-            setLoading(true);
-            setEditablePairs(true);
-
-            const response = await axios.get(API_GET_ENDPOINT_COMMON, {
-                params: { env_name },
-            });
-
-            if (response.data.env_name === env_name) {
-                const data = response.data.commonMap;
-                const commonPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
-
-                setPairs(commonPairs);
-                setCommonPairs(commonPairs);
-                setMessage({ text: "Common pairs fetched successfully", type: "success" });
-                setLoading(false);
-            } else {
-                setLoading(false);
-                return;
-            }
-        } catch (error) {
-            console.error("Error fetching common pairs:", error);
-            setMessage({ text: "Failed to fetch common pairs", type: "error" });
-        }
-        setTimeout(() => {
-            setMessage({ text: "", type: "" });
-        }, 3000);
-    }  
-
-    // GET METHOD - GET KEY
-    async function fetchKey(application_name: string, env_name: string, configuration_file_name: string) { 
-        if (!applicationName || !envName || !configurationFileName) return;
-        // await allMenus();
-
-        const configFileName = configurationFileName.replace(/\.json$/, '');
-        if (subMenuData[applicationName]?.[envName]?.some(file => file.replace(/\.json$/, '') === configFileName)) {
-            // console.log("Data Already Exists");
-            setLoading(true);
-        } else {
-            return;
-        }
-        
-        try {
-            setEditablePairs(true);
-            const response = await axios.get(API_GET_ENDPOINT, {
-                params: {
-                    application_name,
-                    env_name,
-                    configuration_file_name
-                }
-            });
-
-            const data = response.data.configMap;
-            const keyPairs = data ? Object.entries(data).map(([key]) => ({ key })) : [];
-            
-            const commonKeysSet = new Set(commonPairs.map(pair => pair.key));
-            const filteredKeyPairs = keyPairs.filter(pair => !commonKeysSet.has(pair.key));
-            const mergedPairs = [...commonPairs, ...filteredKeyPairs];
-
-            setPairs(mergedPairs);
-            setMessage({ text: "Key fetched successfully", type: "success" });
-            setLoading(false);
-            setIsDisabled(true);
-        } catch (error) {
-            console.error("Error fetching key:", error);
-            setMessage({ text: "Failed to fetch key", type: "error" });
-        }
-        setTimeout(() => {
-            setMessage({ text: "", type: "" });
-        }, 3000);
-    }
-
-    async function handleInput(type:any) {
-        switch (type) {
-            case 'appName':
-                allMenus();
-                break;
-    
-            case 'envName':
-                if (envName) {
-                    await fetchCommonPairs(envName);
-                }
-                break;
-    
-            case 'fileName':
-                if (configurationFileName) {
-                    await fetchKey(applicationName, envName, configurationFileName);
-                }
-                break;
-    
-            default:
-                break;
-        }
-    }    
-
-    const toggleEditMode = () => {
-        setEditablePairs(!editablePairs);
-    };
+    }, [message]);
 
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
@@ -172,29 +66,29 @@ export default function KeyValue(){
         } else {
             setMessage({text:"Please enter both key and value", type:"error"});
         }
+    }
 
-        setTimeout(() => {
-            setMessage({text:"", type:""});
-        }, 3000);
+    // CLICK ENTER TO ADD PAIRS
+    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>){
+        if(e.key === "Enter"){
+            handleAdd();
+        }
     }
 
     // REMOVING KEY & VALUE PAIRS
     function handleRemove(index: number){
         const newPairs = pairs.filter((_, i) => i !== index);
         setPairs(newPairs);
-
-        setTimeout(() => {
-            setMessage({text:"", type:""});
-        }, 3000);
     }
 
     // POST METHOD - UPLOAD CONFIG
     async function submit(){
+        if(editablePairs){
+            setMessage({ text: "Please save before proceeding", type: "error" });
+            return;
+        }
         if (!applicationName || !envName || !configurationFileName) {
             setMessage({ text: "Please fill in all fields", type: "error" });
-            setTimeout(() => {
-                setMessage({text:"", type:""});
-            }, 3000);
             return;
         }
 
@@ -220,10 +114,6 @@ export default function KeyValue(){
             console.error("Error sending data: ", error);
             setMessage({text:"Failed to send data", type:"error"});
         }
-
-        setTimeout(() => {
-            setMessage({text:"", type:""});
-        }, 3000);
     }
 
     // GET METHOD - GET CONFIG
@@ -257,16 +147,87 @@ export default function KeyValue(){
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
         }
-        setTimeout(() => {
-            setMessage({ text: "", type: "" });
-        }, 3000);
     }
-
-    function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>){
-        if(e.key === "Enter"){
-            handleAdd();
+    
+    // GET METHOD - GET ALL CONFIG DATA
+    async function allMenus() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
+            setSubMenuData(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
         }
     }
+
+    // GET METHOD - GET COMMON PAIRS
+    async function fetchCommonPairs(env_name:string) {
+        if (!env_name) return;
+
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_COMMON, {
+                params: { env_name },
+            });
+
+            if (response.data.env_name === env_name) {
+                const data = response.data.commonMap;
+                const commonPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
+                setCommonPairs(commonPairs);
+            } else {
+                return;
+            }
+        } catch (error) {
+            console.error("Error fetching common pairs:", error);
+        }
+    }  
+
+    // GET METHOD - GET KEY ONLY
+    async function fetchKey(application_name: string, env_name: string, configuration_file_name: string) { 
+        if (!applicationName || !envName || !configurationFileName) return;
+        if (subMenuData[applicationName]?.[envName]?.some(file => file.replace(/\.json$/, '') === configurationFileName)) {
+            setLoading(true);
+            setEditablePairs(true);
+            try {
+                const response = await axios.get(API_GET_ENDPOINT, {
+                    params: {
+                        application_name,
+                        env_name,
+                        configuration_file_name
+                    }
+                });
+
+                const data = response.data.configMap;
+                const keyPairs = data ? Object.entries(data).map(([key]) => ({ key })) : [];
+                
+                const commonKeysSet = new Set(commonPairs.map(pair => pair.key));
+                const filteredKeyPairs = keyPairs.filter(pair => !commonKeysSet.has(pair.key));
+                const mergedPairs = [...commonPairs, ...filteredKeyPairs];
+
+                setPairs(mergedPairs);
+                setMessage({ text: "Key fetched successfully", type: "success" });
+                setLoading(false);
+                setIsDisabled(true);
+            } catch (error) {
+                console.error("Error fetching key:", error);
+                setMessage({ text: "Failed to fetch key", type: "error" });
+            }
+        } else {
+            return;
+        }
+    }
+
+    // CALLING FUNCTIONS - COMMONPAIRS & KEYPAIRS
+    async function handleInputs() {
+        allMenus();
+        fetchCommonPairs(envName);
+        if (configurationFileName) {
+            await fetchKey(applicationName, envName, configurationFileName);
+        }
+    }
+
+    // ENABLE EDITABLE PAIRS
+    const toggleEditMode = () => {
+        setEditablePairs(!editablePairs);
+    };
 
     return (
         <>
@@ -282,7 +243,7 @@ export default function KeyValue(){
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={() => handleInput("appName")}
+                                onBlur={handleInputs}
                             />
                         </div>
                         <div>
@@ -292,7 +253,7 @@ export default function KeyValue(){
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={() => handleInput("envName")}
+                                onBlur={handleInputs}
                             />
                         </div>
                         <div>
@@ -302,7 +263,7 @@ export default function KeyValue(){
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={() => handleInput("fileName")}
+                                onBlur={handleInputs}
                             />
                         </div>
                     </div>
