@@ -1,13 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL } from '../constants';
+import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_COMMON, API_POST_ENDPOINT_COMMON } from '../constants';
 import Sidebar from './Sidebar';
-
-interface Props{
-    application_name: string,
-    env_name: string,
-    configuration_file_name: string
-}
 
 interface SubMenuData {
     [applicationName: string]: {
@@ -27,6 +21,7 @@ export default function KeyValue(){
     const[isDisabled, setIsDisabled] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
     const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
+    const[commonPairs, setCommonPairs] = useState<any[]>([]);
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -59,26 +54,58 @@ export default function KeyValue(){
         try {
             const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
             setSubMenuData(response.data);
-            console.log(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     }
 
+    // GET METHOD - GET COMMON PAIRS
+    async function fetchCommonPairs(env_name:string) {
+        if (!env_name) return;
+
+        try {
+            setLoading(true);
+            setEditablePairs(true);
+
+            const response = await axios.get(API_GET_ENDPOINT_COMMON, {
+                params: { env_name },
+            });
+
+            if (response.data.env_name === env_name) {
+                const data = response.data.commonMap;
+                const commonPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
+
+                setPairs(commonPairs);
+                setCommonPairs(commonPairs);
+                setMessage({ text: "Common pairs fetched successfully", type: "success" });
+                setLoading(false);
+            } else {
+                setLoading(false);
+                return;
+            }
+        } catch (error) {
+            console.error("Error fetching common pairs:", error);
+            setMessage({ text: "Failed to fetch common pairs", type: "error" });
+        }
+        setTimeout(() => {
+            setMessage({ text: "", type: "" });
+        }, 3000);
+    }  
+
     // GET METHOD - GET KEY
-    async function fetch(application_name: string, env_name: string, configuration_file_name: string) { 
+    async function fetchKey(application_name: string, env_name: string, configuration_file_name: string) { 
         if (!applicationName || !envName || !configurationFileName) return;
-        allMenus();
-        
+        // await allMenus();
+
         const configFileName = configurationFileName.replace(/\.json$/, '');
         if (subMenuData[applicationName]?.[envName]?.some(file => file.replace(/\.json$/, '') === configFileName)) {
-            console.log("Data Already Exists");
+            // console.log("Data Already Exists");
+            setLoading(true);
         } else {
             return;
         }
         
         try {
-            setLoading(true);
             setEditablePairs(true);
             const response = await axios.get(API_GET_ENDPOINT, {
                 params: {
@@ -87,9 +114,15 @@ export default function KeyValue(){
                     configuration_file_name
                 }
             });
+
             const data = response.data.configMap;
-            const newPairs = data ? Object.entries(data).map(([key]) => ({ key })) : [];
-            setPairs(newPairs);
+            const keyPairs = data ? Object.entries(data).map(([key]) => ({ key })) : [];
+            
+            const commonKeysSet = new Set(commonPairs.map(pair => pair.key));
+            const filteredKeyPairs = keyPairs.filter(pair => !commonKeysSet.has(pair.key));
+            const mergedPairs = [...commonPairs, ...filteredKeyPairs];
+
+            setPairs(mergedPairs);
             setMessage({ text: "Key fetched successfully", type: "success" });
             setLoading(false);
             setIsDisabled(true);
@@ -102,9 +135,28 @@ export default function KeyValue(){
         }, 3000);
     }
 
-    const handleBlur = () => {
-        fetch(applicationName, envName, configurationFileName);
-    };
+    async function handleInput(type:any) {
+        switch (type) {
+            case 'appName':
+                allMenus();
+                break;
+    
+            case 'envName':
+                if (envName) {
+                    await fetchCommonPairs(envName);
+                }
+                break;
+    
+            case 'fileName':
+                if (configurationFileName) {
+                    await fetchKey(applicationName, envName, configurationFileName);
+                }
+                break;
+    
+            default:
+                break;
+        }
+    }    
 
     const toggleEditMode = () => {
         setEditablePairs(!editablePairs);
@@ -230,7 +282,7 @@ export default function KeyValue(){
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={handleBlur}
+                                onBlur={() => handleInput("appName")}
                             />
                         </div>
                         <div>
@@ -240,7 +292,7 @@ export default function KeyValue(){
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={handleBlur}
+                                onBlur={() => handleInput("envName")}
                             />
                         </div>
                         <div>
@@ -250,7 +302,7 @@ export default function KeyValue(){
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={handleBlur}
+                                onBlur={() => handleInput("fileName")}
                             />
                         </div>
                     </div>
