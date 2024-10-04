@@ -1,42 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON } from '../constants';
 import Sidebar from './Sidebar';
+import { API_GET_ENDPOINT_COMMON, API_POST_ENDPOINT_COMMON } from '../constants';
+import KeyValue from './KeyValue';
 
-interface SubMenuData {
-    [applicationName: string]: {
-        [envName: string]: string[];
-    };
-}
-
-export default function KeyValue(){
+export default function Common(){
     const[key, setKey] = useState("");
     const[value, setValue] = useState("");
-    const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
-    const[configurationFileName, setConfigurationFileName] = useState("");
     const[pairs, setPairs] = useState<any[]>([]);
     const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
-    const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
 
     // CLEAR ALL FIELDS
     useEffect(() => {
         const authResult = new URLSearchParams(window.location.search);
-        const application_name = authResult.get('application_name');
         const env_name = authResult.get('env_name');
-        const configuration_file_name = authResult.get('configuration_file_name');
 
-        if (application_name && env_name && configuration_file_name) {
-            setApplicationName(application_name);
+        if (env_name) {
             setEnvName(env_name);
-            setConfigurationFileName(configuration_file_name);
         } else {
-            setApplicationName("");
             setEnvName("");
-            setConfigurationFileName("");
             setMessage({ text: "", type: "" });
             setIsDisabled(false);
             setPairs([]);
@@ -80,34 +66,30 @@ export default function KeyValue(){
         setPairs(newPairs);
     }
 
-    // POST METHOD - UPLOAD CONFIG
+    // POST METHOD - UPLOAD COMMON
     async function submit(){
         if(editablePairs){
             setMessage({ text: "Please save before proceeding", type: "error" });
             return;
         }
-        if (!applicationName || !envName || !configurationFileName) {
+        if (!envName) {
             setMessage({ text: "Please fill in all fields", type: "error" });
             return;
         }
 
         const requestData ={
-            configMap: {
+            commonMap: {
                 ...Object.fromEntries(pairs.map(pair => [pair.key, pair.value]))    
             },
-            application_name: applicationName,
-            env_name: envName,
-            configuration_file_name: configurationFileName
+            env_name: envName
         };
         try{
-            const response = await axios.post(API_POST_ENDPOINT, requestData, {
+            const response = await axios.post(API_POST_ENDPOINT_COMMON, requestData, {
                 headers: { "Content-Type": "application/json" },
             });
             setMessage({text:"Data sent successfully", type:"success"});
             setPairs([]);
-            setApplicationName("");
             setEnvName("");
-            setConfigurationFileName("");
             setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
@@ -115,28 +97,22 @@ export default function KeyValue(){
         }
     }
 
-    // GET METHOD - GET CONFIG
+    // GET METHOD - GET UPLOADED COMMON
     async function retrieve() { 
         const authResult = new URLSearchParams(window.location.search);
-        const application_name = authResult.get('application_name')
         const env_name = authResult.get('env_name')
-        const configuration_file_name = authResult.get('configuration_file_name');
 
-        setApplicationName(application_name);
         setEnvName(env_name);
-        setConfigurationFileName(configuration_file_name);
 
         try {
             setLoading(true);
             setEditablePairs(false);
-            const response = await axios.get(API_GET_ENDPOINT, {
+            const response = await axios.get(API_GET_ENDPOINT_COMMON, {
                 params: {
-                    application_name,
-                    env_name,
-                    configuration_file_name
+                    env_name
                 }
             });
-            const data = response.data.configMap;
+            const data = response.data.commonMap;
             const newPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
             setPairs(newPairs);
             setMessage({ text: "Data fetched successfully", type: "success" });
@@ -145,76 +121,6 @@ export default function KeyValue(){
         } catch (error) {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
-        }
-    }
-    
-    // GET METHOD - GET ALL CONFIG DATA
-    async function allMenus() {
-        try {
-            const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
-            setSubMenuData(response.data);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    }
-
-    // GET METHOD - GET UPLOADED TEMPLATE
-    async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
-        if(!applicationName || !envName || !configurationFileName) return;
-
-        if (Array.isArray(subMenuData[application_name]) && 
-            subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
-            setLoading(true);
-            setEditablePairs(true);
-        } else {
-            return;
-        }
-
-        try {
-            const response = await axios.get(API_GET_ENDPOINT_UPLOAD, {
-                params: { application_name, configuration_file_name },
-            });
-            
-            let data = response.data;
-            let regex = /\{\{ [a-zA-Z0-9]+ \}\}/g;
-            let matches = data.match(regex); 
-    
-            const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
-                params: { env_name },
-            });
-    
-            const commonData: string = commonResponse.data.commonMap;
-            const pairs: { key: string; value: string }[] = [];
-    
-            if (commonData) {
-                const newPairs: Record<string, string> = Object.entries(commonData).reduce((acc, [key, value]) => {
-                    acc[key.trim()] = value;
-                    return acc;
-                }, {} as Record<string, string>);
-        
-                if (matches) {
-                    for (let match of matches) {
-                        const key = match.replace(/\{\{|\}\}/g, '').trim();
-                        pairs.push({ key, value: newPairs[key] });
-                    }
-                }
-            }
-            setPairs(pairs);
-            setMessage({ text: "Data fetched successfully", type: "success" });
-        } catch (error) {
-            console.error("Error fetching pairs:", error);
-            setMessage({ text: "Failed to fetch data", type: "error" });
-        } finally {
-            setLoading(false);
-            setIsDisabled(true);
-        }
-    }
-
-    // CALLING FUNCTIONS
-    async function handleInputs() {
-        allMenus();
-        if (configurationFileName) {
-            await fetchUploadTemplate(applicationName, envName, configurationFileName);
         }
     }
 
@@ -228,18 +134,8 @@ export default function KeyValue(){
             <Sidebar onRetrieve={retrieve}/>
             <div className="config">    
                 <div className="form-group">
-                    <h5>{isDisabled ? "Re-Configuration" : "Configuration"}</h5>
+                    <h5>{isDisabled ? "Re-Configure Common Files" : "Common Files"}</h5>
                     <div className="input-container">
-                        <div>
-                            <label>Application Name</label>
-                            <input 
-                                type="text"
-                                value={applicationName}
-                                onChange={(e) => setApplicationName(e.target.value)}
-                                disabled={isDisabled}
-                                onBlur={handleInputs}
-                            />
-                        </div>
                         <div>
                             <label>ENV Name</label><br/>
                             <input 
@@ -247,17 +143,6 @@ export default function KeyValue(){
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
                                 disabled={isDisabled}
-                                onBlur={handleInputs}
-                            />
-                        </div>
-                        <div>
-                            <label>Configuration File Name</label><br/>
-                            <input 
-                                type="text"
-                                value={configurationFileName}
-                                onChange={(e) => setConfigurationFileName(e.target.value)}
-                                disabled={isDisabled}
-                                onBlur={handleInputs}
                             />
                         </div>
                     </div>
