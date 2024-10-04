@@ -71,6 +71,14 @@ def read_configuration():
         print("Error Occurred and Handled" + e.message)
     return "Error Occurred and Handled " + e.message
 
+@router.get("/commons", response_model=dict)
+def read_configuration():
+    try:
+        return ConfigManagement.get_all_common()
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+    return "Error Occurred and Handled " + e.message
+
 @router.get("/templates", response_model=dict)
 def read_configuration():
     try:

@@ -89,6 +89,28 @@ class GitRepository:
                         my_map[appList[0]] = my_child_map
         return my_map
 
+    def get_all_common():
+        g = loginGitHub()
+        repo = g.get_repo(settings.GITHUB_REPO_NAME)
+        contents = repo.get_contents(settings.COMMON_PREFIX, settings.BRANCH)
+        my_map = dict()
+        while contents:
+            file_content = contents.pop(0)
+            my_child_map = dict()
+            if file_content.type == "dir":
+                contents.extend(repo.get_contents(file_content.path, settings.BRANCH))
+            else:
+                if settings.COMMON_PREFIX in file_content.path:
+                    appList = file_content.path.replace(settings.COMMON_PREFIX+"/", "").split("/")
+                    env_name = appList[0]
+                    common_file = appList[1]
+
+                    if env_name not in my_map:
+                        my_map[env_name] = []
+
+                    my_map[env_name].append(common_file)
+        return my_map
+
     def get_all_template():
         g = loginGitHub()
         repo = g.get_repo(settings.GITHUB_REPO_NAME)

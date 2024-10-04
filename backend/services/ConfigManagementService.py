@@ -27,6 +27,9 @@ class ConfigManagement:
     def get_all_configuration():
         return GitRepository.get_all_configuration()
 
+    def get_all_common():
+        return GitRepository.get_all_common()
+
     def get_all_template():
         return GitRepository.get_all_template()
 
