@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_COMMON } from '../constants';
+import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_UPLOAD } from '../constants';
 import Sidebar from './Sidebar';
 
 interface SubMenuData {
@@ -21,6 +21,7 @@ export default function KeyValue(){
     const[isDisabled, setIsDisabled] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
     const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
+    const[uploadData, setuploadData] = useState<SubMenuData>({})
     const[commonPairs, setCommonPairs] = useState<any[]>([]);
 
     // CLEAR ALL FIELDS
@@ -159,68 +160,61 @@ export default function KeyValue(){
         }
     }
 
-    // GET METHOD - GET COMMON PAIRS
-    async function fetchCommonPairs(env_name:string) {
-        if (!env_name) return;
-
+    // GET METHOD - GET UPLOADED TEMPLATE
+    async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         try {
-            const response = await axios.get(API_GET_ENDPOINT_COMMON, {
-                params: { env_name },
-            });
-
-            if (response.data.env_name === env_name) {
-                const data = response.data.commonMap;
-                const commonPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
-                setCommonPairs(commonPairs);
-            } else {
-                return;
-            }
-        } catch (error) {
-            console.error("Error fetching common pairs:", error);
-        }
-    }  
-
-    // GET METHOD - GET KEY ONLY
-    async function fetchKey(application_name: string, env_name: string, configuration_file_name: string) { 
-        if (!applicationName || !envName || !configurationFileName) return;
-        if (subMenuData[applicationName]?.[envName]?.some(file => file.replace(/\.json$/, '') === configurationFileName)) {
             setLoading(true);
-            setEditablePairs(true);
-            try {
-                const response = await axios.get(API_GET_ENDPOINT, {
-                    params: {
-                        application_name,
-                        env_name,
-                        configuration_file_name
+            const response = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+                params: {
+                    application_name,
+                    configuration_file_name,
+                },
+            });
+            
+            let data = response.data;
+            let regex = /\{\{ [a-zA-Z0-9]+ \}\}/g;
+            let matches = data.match(regex); 
+    
+            const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
+                params: {
+                    env_name,
+                },
+            });
+    
+            const commonData: string = commonResponse.data.commonMap;
+    
+            const pairs: { key: string; value: string }[] = [];
+    
+            if (commonData) {
+                const newPairs: Record<string, string> = Object.entries(commonData).reduce((acc, [key, value]) => {
+                    acc[key.trim()] = value;
+                    return acc;
+                }, {} as Record<string, string>);
+        
+                if (matches) {
+                    for (let match of matches) {
+                        const key = match.replace(/\{\{|\}\}/g, '').trim();
+                        pairs.push({ key, value: newPairs[key] });
                     }
-                });
-
-                const data = response.data.configMap;
-                const keyPairs = data ? Object.entries(data).map(([key]) => ({ key })) : [];
-                
-                const commonKeysSet = new Set(commonPairs.map(pair => pair.key));
-                const filteredKeyPairs = keyPairs.filter(pair => !commonKeysSet.has(pair.key));
-                const mergedPairs = [...commonPairs, ...filteredKeyPairs];
-
-                setPairs(mergedPairs);
-                setMessage({ text: "Key fetched successfully", type: "success" });
-                setLoading(false);
-                setIsDisabled(true);
-            } catch (error) {
-                console.error("Error fetching key:", error);
-                setMessage({ text: "Failed to fetch key", type: "error" });
+                }
             }
-        } else {
-            return;
+            setPairs(pairs);
+            setMessage({ text: "Data fetched successfully", type: "success" });
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+            setMessage({ text: "Failed to fetch data", type: "error" });
+        } finally {
+            setLoading(false);
+            setIsDisabled(true);
         }
     }
+    
 
-    // CALLING FUNCTIONS - COMMONPAIRS & KEYPAIRS
+    // CALLING FUNCTIONS
     async function handleInputs() {
         allMenus();
-        fetchCommonPairs(envName);
         if (configurationFileName) {
-            await fetchKey(applicationName, envName, configurationFileName);
+            await fetchUploadTemplate(applicationName, envName, configurationFileName);
         }
     }
 

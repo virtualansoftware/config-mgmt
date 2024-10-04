@@ -24,26 +24,27 @@ export default function GenerateConfig() {
             setEnvName(env_name);
             setConfigurationFileName(configuration_file_name);
         } else {
-            resetState();
+            setApplicationName("");
+            setEnvName("");
+            setConfigurationFileName("");
+            setMessage({ text: "", type: "" });
+            setIsDisabled(false);
         }
     }, [window.location.search]);
 
-    const resetState = () => {
-        setApplicationName("");
-        setEnvName("");
-        setConfigurationFileName("");
-        setTextArea("");
-        setMessage({ text: "", type: "" });
-        setIsDisabled(false);
-    };
+    // CLEARS THE MESSAGE AFTER 3 SEC
+    useEffect(() => {
+        if (message.text) {
+            const timer = setTimeout(() => {
+                setMessage({ text: "", type: "" });
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
 
     // POST METHOD - GENERATE CONFIG
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
-            setMessage({ text: "Please fill in all fields", type: "error" });
-            setTimeout(() => {
-                setMessage({text:"", type:""});
-            }, 3000);
             return;
         }
 
@@ -65,13 +66,9 @@ export default function GenerateConfig() {
             console.error("Error sending data: ", error);
             setMessage({text:"Failed to send data", type:"error"});
         }
-
-        setTimeout(() => {
-            setMessage({text:"", type:""});
-        }, 3000);
     }
 
-    // GET METHOD - GET GENERATE CONFIG
+    // GET METHOD - GET GENERATED CONFIG
     async function retrieve() {
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
@@ -99,10 +96,6 @@ export default function GenerateConfig() {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
         }
-
-        setTimeout(() => {
-            setMessage({text:"", type:""});
-        }, 3000);
     }
 
     return (

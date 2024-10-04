@@ -23,36 +23,35 @@ export default function UploadConfig() {
             setApplicationName(application_name);
             setConfigurationFileName(configuration_file_name);
         } else {
-            resetState();
+            setApplicationName("");
+            setConfigurationFileName("");
+            setFile(null);
+            setTextArea("");
+            setOriginalTextArea("");
+            setMessage({ text: "", type: "" });
+            setIsDisabled(false);
         }
     }, [window.location.search]);
 
-    const resetState = () => {
-        setApplicationName("");
-        setConfigurationFileName("");
-        setFile(null);
-        setTextArea("");
-        setOriginalTextArea("");
-        setMessage({ text: "", type: "" });
-        setIsDisabled(false);
-    };
+    // CLEARS THE MESSAGE AFTER 3 SEC
+    useEffect(() => {
+        if (message.text) {
+            const timer = setTimeout(() => {
+                setMessage({ text: "", type: "" });
+            }, 3000);
+            return () => clearTimeout(timer);
+        }
+    }, [message]);
 
     // POST METHOD - UPLOAD TEMPLATE
     async function upload() {
         if (!applicationName || !configurationFileName || (!file && !textArea)) {
-            setMessage({ text: "Please fill in all fields and select a file", type: "error" });
-            setTimeout(() => {
-                setMessage({text:"", type:""});
-            }, 3000);
             return;
         }
         
         if (textArea){
             if (textArea === originalTextArea){
                 setMessage({ text: "No changes made to the template", type: "error" });
-                setTimeout(() => {
-                    setMessage({ text: "", type: "" });
-                }, 3000);
                 return;
             }
         }
@@ -79,13 +78,9 @@ export default function UploadConfig() {
             console.error("Error sending data: ", error);
             setMessage({ text: "Failed to send data", type: "error" });
         }
-
-        setTimeout(() => {
-            setMessage({ text: "", type: "" });
-        }, 3000);
     }
 
-    // GET METHOD - GET TEMPLATE
+    // GET METHOD - GET UPLOADED TEMPLATE
     async function retrieve() {
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
@@ -104,8 +99,14 @@ export default function UploadConfig() {
                     configuration_file_name
                 }
             });
-            setTextArea(response.data);
-            setOriginalTextArea(response.data);
+            const data = response.data;
+            if (typeof data === "string") {
+                setTextArea(data);
+                setOriginalTextArea(data);
+            } else if (typeof data === "object") {
+                setTextArea(JSON.stringify(data, null, 2));
+                setOriginalTextArea(JSON.stringify(data, null, 2));
+            }
             setMessage({ text: "Data fetched successfully", type: "success" });
             setLoading(false);
             setIsDisabled(true);
@@ -113,10 +114,6 @@ export default function UploadConfig() {
             console.error("Error fetching pairs:", error);
             setMessage({ text: "Failed to fetch data", type: "error" });
         }
-
-        setTimeout(() => {
-            setMessage({text:"", type:""});
-        }, 3000);
     }
 
     return (

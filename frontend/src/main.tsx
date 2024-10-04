@@ -9,6 +9,7 @@ import Sidebar from "./components/Sidebar";
 import KeyValue from "./components/KeyValue";
 import GenerateConfig from './components/GenerateConfig';
 import UploadConfig from './components/UploadConfig';
+import Common from './components/Common';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -52,6 +53,16 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <UploadConfig />
+      </>
+    ),
+  },
+  {
+    path: "/common-config",
+    element: (
+      <>
+        <Header/>
+        <Sidebar onRetrieve={() => {}} />
+        <Common />
       </>
     ),
   },
