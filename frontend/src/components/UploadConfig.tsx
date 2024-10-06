@@ -9,7 +9,6 @@ export default function UploadConfig() {
     const [configurationFileName, setConfigurationFileName] = useState("");
     const [file, setFile] = useState(null);
     const [textArea, setTextArea] = useState("");
-    // const [message, setMessage] = useState({ text: "", type: "" });
     const [loading, setLoading] = useState(false);
     const [isDisabled, setIsDisabled] = useState(false);
     const [originalTextArea, setOriginalTextArea] = useState("");
@@ -29,20 +28,9 @@ export default function UploadConfig() {
             setFile(null);
             setTextArea("");
             setOriginalTextArea("");
-            // setMessage({ text: "", type: "" });
             setIsDisabled(false);
         }
     }, [window.location.search]);
-
-    // CLEARS THE MESSAGE AFTER 3 SEC
-    // useEffect(() => {
-    //     if (message.text) {
-    //         const timer = setTimeout(() => {
-    //             setMessage({ text: "", type: "" });
-    //         }, 3000);
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [message]);
 
     // POST METHOD - UPLOAD TEMPLATE
     async function upload() {
@@ -52,7 +40,6 @@ export default function UploadConfig() {
         
         if (textArea){
             if (textArea === originalTextArea){
-                // setMessage({ text: "No changes made to the template", type: "error" });
                 toast.error("No changes made to the template");
                 return;
             }
@@ -68,7 +55,6 @@ export default function UploadConfig() {
             const response = await axios.post(API_POST_ENDPOINT_UPLOAD, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
-            // setMessage({ text: "Data uploaded successfully", type: "success" });
             toast.success("Data uploaded successfully");
             setApplicationName("");
             setConfigurationFileName("");
@@ -79,7 +65,6 @@ export default function UploadConfig() {
             if (fileInput) fileInput.value = "";
         } catch (error) {
             console.error("Error sending data: ", error);
-            // setMessage({ text: "Failed to send data", type: "error" });
             toast.error("Failed to send data");
         }
     }
@@ -111,13 +96,11 @@ export default function UploadConfig() {
                 setTextArea(JSON.stringify(data, null, 2));
                 setOriginalTextArea(JSON.stringify(data, null, 2));
             }
-            // setMessage({ text: "Data fetched successfully", type: "success" });
             toast.success("Data fetched successfully");
             setLoading(false);
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            // setMessage({ text: "Failed to fetch data", type: "error" });
             toast.error("Failed to send data");
         }
     }
@@ -176,7 +159,6 @@ export default function UploadConfig() {
                             </>
                         )}
                     </div>
-                    {/* <p className={message.type === "success" ? "success" : "error" }>{message.text}</p> */}
                     <button className='btn btn-success' onClick={upload}>Upload</button>
                 </div>
             </div>
