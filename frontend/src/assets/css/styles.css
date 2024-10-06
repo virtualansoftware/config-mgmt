@@ -32,6 +32,10 @@ html body{
 .welcome h3{
   font-weight: bold;
 }
+.toaster {
+  font-size: 14px;
+  width: 300px !important;
+}
 /* Header */
 .nav{
   display: flex;

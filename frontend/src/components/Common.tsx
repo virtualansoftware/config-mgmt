@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Sidebar from './Sidebar';
 import { API_GET_ENDPOINT_COMMON, API_POST_ENDPOINT_COMMON } from '../constants';
-import KeyValue from './KeyValue';
+import { toast } from 'react-toastify';
 
 export default function Common(){
     const[key, setKey] = useState("");
     const[value, setValue] = useState("");
     const[envName, setEnvName] = useState("");
     const[pairs, setPairs] = useState<any[]>([]);
-    const[message, setMessage] = useState({text:"", type:""});
+    // const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
@@ -23,7 +23,7 @@ export default function Common(){
             setEnvName(env_name);
         } else {
             setEnvName("");
-            setMessage({ text: "", type: "" });
+            // setMessage({ text: "", type: "" });
             setIsDisabled(false);
             setPairs([]);
             setKey("");
@@ -32,14 +32,14 @@ export default function Common(){
     }, [window.location.search]);
 
     // CLEARS THE MESSAGE AFTER 3 SEC
-    useEffect(() => {
-        if (message.text) {
-            const timer = setTimeout(() => {
-                setMessage({ text: "", type: "" });
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [message]);
+    // useEffect(() => {
+    //     if (message.text) {
+    //         const timer = setTimeout(() => {
+    //             setMessage({ text: "", type: "" });
+    //         }, 3000);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [message]);
 
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
@@ -49,7 +49,8 @@ export default function Common(){
             setKey("");
             setValue("");
         } else {
-            setMessage({text:"Please enter key or value", type:"error"});
+            // setMessage({text:"Please enter key or value", type:"error"});
+            toast.error("Please enter key or value");
         }
     }
 
@@ -69,11 +70,13 @@ export default function Common(){
     // POST METHOD - UPLOAD COMMON
     async function submit(){
         if(editablePairs){
-            setMessage({ text: "Please save before proceeding", type: "error" });
+            // setMessage({ text: "Please save before proceeding", type: "error" });
+            toast.error("Please save before proceeding");
             return;
         }
         if (!envName) {
-            setMessage({ text: "Please fill in all fields", type: "error" });
+            // setMessage({ text: "Please fill in all fields", type: "error" });
+            toast.error("Please fill in all fields");
             return;
         }
 
@@ -87,13 +90,15 @@ export default function Common(){
             const response = await axios.post(API_POST_ENDPOINT_COMMON, requestData, {
                 headers: { "Content-Type": "application/json" },
             });
-            setMessage({text:"Data sent successfully", type:"success"});
+            // setMessage({text:"Data sent successfully", type:"success"});
+            toast.success("Data fetched successfully");
             setPairs([]);
             setEnvName("");
             setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
-            setMessage({text:"Failed to send data", type:"error"});
+            // setMessage({text:"Failed to send data", type:"error"});
+            toast.error("Failed to send data");
         }
     }
 
@@ -115,12 +120,14 @@ export default function Common(){
             const data = response.data.commonMap;
             const newPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
             setPairs(newPairs);
-            setMessage({ text: "Data fetched successfully", type: "success" });
+            // setMessage({ text: "Data fetched successfully", type: "success" });
+            toast.success("Data fetched successfully");
             setLoading(false);
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            setMessage({ text: "Failed to fetch data", type: "error" });
+            // setMessage({ text: "Failed to fetch data", type: "error" });
+            toast.error("Failed to send data");
         }
     }
 
@@ -204,7 +211,7 @@ export default function Common(){
                         />
                         <img src="/images/plus-img.png" alt="plus" onClick={handleAdd} />
                     </div>
-                    <p className={message.type === "success" ? "success" : "error" }>{message.text}</p>
+                    {/* <p className={message.type === "success" ? "success" : "error" }>{message.text}</p> */}
                     {pairs.length > 0 && (
                         <>
                             <button className='btn btn-success me-2' onClick={submit}>Submit</button>

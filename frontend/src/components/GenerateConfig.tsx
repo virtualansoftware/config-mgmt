@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE } from '../constants';
 import Sidebar from './Sidebar';
+import { toast } from 'react-toastify';
 
 export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[textArea, setTextArea] = useState("");
-    const[message, setMessage] = useState({text:"", type:""});
+    // const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
 
@@ -27,20 +28,20 @@ export default function GenerateConfig() {
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            setMessage({ text: "", type: "" });
+            // setMessage({ text: "", type: "" });
             setIsDisabled(false);
         }
     }, [window.location.search]);
 
     // CLEARS THE MESSAGE AFTER 3 SEC
-    useEffect(() => {
-        if (message.text) {
-            const timer = setTimeout(() => {
-                setMessage({ text: "", type: "" });
-            }, 3000);
-            return () => clearTimeout(timer);
-        }
-    }, [message]);
+    // useEffect(() => {
+    //     if (message.text) {
+    //         const timer = setTimeout(() => {
+    //             setMessage({ text: "", type: "" });
+    //         }, 3000);
+    //         return () => clearTimeout(timer);
+    //     }
+    // }, [message]);
 
     // POST METHOD - GENERATE CONFIG
     async function generateConfig(){
@@ -56,7 +57,8 @@ export default function GenerateConfig() {
             }, {
                 headers: { "Content-Type": "application/json" },
             });
-            setMessage({text:"Data generated successfully", type:"success"});
+            // setMessage({text:"Data generated successfully", type:"success"});
+            toast.success("Data generated successfully");
             setApplicationName("");
             setConfigurationFileName("");
             setEnvName("");
@@ -64,7 +66,8 @@ export default function GenerateConfig() {
             setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
-            setMessage({text:"Failed to send data", type:"error"});
+            // setMessage({text:"Failed to send data", type:"error"});
+            toast.error("Failed to send data");
         }
     }
 
@@ -89,12 +92,14 @@ export default function GenerateConfig() {
                 }
             });
             setTextArea(response.data);
-            setMessage({ text: "Data fetched successfully", type: "success" });
+            // setMessage({ text: "Data fetched successfully", type: "success" });
+            toast.success("Data fetched successfully");
             setLoading(false);
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            setMessage({ text: "Failed to fetch data", type: "error" });
+            // setMessage({ text: "Failed to fetch data", type: "error" });
+            toast.error("Failed to send data");
         }
     }
 
@@ -153,7 +158,7 @@ export default function GenerateConfig() {
                             </>
                         )}
                     </div>
-                    <p className={message.type === "success" ? "success" : "error" }>{message.text}</p>
+                    {/* <p className={message.type === "success" ? "success" : "error" }>{message.text}</p> */}
                     {!isDisabled && (
                         <button className='btn btn-success' onClick={generateConfig}>Generate</button>
                     )}
