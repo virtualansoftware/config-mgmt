@@ -45,6 +45,22 @@ def save_configuration(config_info: ConfigSchema):
             raise
     return {"status": "Added successfully"}
 
+@router.get("/")
+def read_configuration(application_name: str, env_name: str, configuration_file_name: str):
+    try:
+        configInfo = ConfigManagement.read_configuration(application_name, env_name, configuration_file_name)
+    except Exception as e:
+        return HTTPException(status_code=400, detail="Item not found")
+    return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
+
+@router.get("/configs", response_model=dict)
+def read_configuration():
+    try:
+        return ConfigManagement.get_all_configuration()
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+    return "Error Occurred and Handled " + e.message
+
 @router.post("/common", response_model=dict)
 def common_configuration(config_info: CommonSchema):
     try:
@@ -63,13 +79,13 @@ def common_configuration(config_info: CommonSchema):
             raise
     return {"status": "Added successfully"}
 
-@router.get("/configs", response_model=dict)
-def read_configuration():
+@router.get("/common")
+def read_common_configuration(env_name: str):
     try:
-        return ConfigManagement.get_all_configuration()
-    except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-    return "Error Occurred and Handled " + e.message
+        configInfo = ConfigManagement.read_common_configuration(env_name)
+    except Exception as e:
+        return HTTPException(status_code=400, detail="Item not found")
+    return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
 
 @router.get("/commons", response_model=dict)
 def read_configuration():
@@ -79,40 +95,9 @@ def read_configuration():
         print("Error Occurred and Handled" + e.message)
     return "Error Occurred and Handled " + e.message
 
-@router.get("/templates", response_model=dict)
-def read_configuration():
-    try:
-        return ConfigManagement.get_all_template()
-    except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-    return "Error Occurred and Handled " + e.message
-
-@router.get("/generated-config", response_model=dict)
-def read_configuration():
-    try:
-        return ConfigManagement.get_all_generated_configurations()
-    except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-    return "Error Occurred and Handled " + e.message
-
-@router.get("/")
-def read_configuration(application_name: str, env_name: str, configuration_file_name: str):
-    try:
-        configInfo = ConfigManagement.read_configuration(application_name, env_name, configuration_file_name)
-    except Exception as e:
-        return HTTPException(status_code=400, detail="Item not found")
-    return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
-
-@router.get("/common")
-def read_common_configuration(env_name: str):
-    try:
-        configInfo = ConfigManagement.read_common_configuration(env_name)
-    except Exception as e:
-        return HTTPException(status_code=400, detail="Item not found")
-    return JSONResponse(content=jsonable_encoder(configInfo), status_code=200)
-
 @router.post("/generate", response_model=dict)
 def generate_configuration(config_info: ConfigTemplateSchema):
+    log.info("Received a POST request for /generate")
     try:
         templateGenerated = ConfigManagement.generate_configuration(config_info)
         return {"template_generated": templateGenerated}
@@ -129,6 +114,26 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     else:
         raise
     return {"Error Occurred and Handled ": ex.message}
+
+@router.get("/generated-config", response_model=dict)
+def read_configuration():
+    try:
+        return ConfigManagement.get_all_generated_configurations()
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+    return "Error Occurred and Handled " + e.message
+
+@router.get("/get-generated-config")
+def get_template(application_name: str, env_name: str,  configuration_file_name: str):
+    try:
+        configInfo_request = ConfigTemplateSchema(application_name, env_name, configuration_file_name)
+        response =  ConfigManagement.read_generated_template(configInfo_request)
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+        return "Error Occurred and Handled " + e.message
+    except Exception as ex:
+          return HTTPException(status_code=400, detail="Item not found")
+    return Response(content=response, media_type="text/plain")
 
 @router.post("/upload-template")
 def upload(application_name: str = Form(...), configuration_file_name: str = Form(...), file: UploadFile = File(None), template: str = Form(None)):
@@ -165,14 +170,10 @@ def get_template(application_name: str,  configuration_file_name: str):
             raise
     return Response(content=response, media_type="text/plain")
 
-@router.get("/get-generated-config")
-def get_template(application_name: str, env_name: str,  configuration_file_name: str):
+@router.get("/templates", response_model=dict)
+def read_configuration():
     try:
-        configInfo_request = ConfigTemplateSchema(application_name, env_name, configuration_file_name)
-        response =  ConfigManagement.read_generated_template(configInfo_request)
+        return ConfigManagement.get_all_template()
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
-        return "Error Occurred and Handled " + e.message
-    except Exception as ex:
-          return HTTPException(status_code=400, detail="Item not found")
-    return Response(content=response, media_type="text/plain")
+    return "Error Occurred and Handled " + e.message

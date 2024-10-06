@@ -191,6 +191,7 @@ class GitRepository:
             return base64.b64decode(fileContents.content)
         except GithubException as ex:
             raise
+
     def createFileBranch(fileName, branch, contents, commitMessage: str):
         g = loginGitHub()
         repo = g.get_repo(settings.GITHUB_REPO_NAME)
