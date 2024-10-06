@@ -91,7 +91,7 @@ export default function GenerateConfig() {
                     configuration_file_name
                 }
             });
-            setTextArea(response.data);
+            setTextArea(JSON.stringify(response.data, null, 4));
             // setMessage({ text: "Data fetched successfully", type: "success" });
             toast.success("Data fetched successfully");
             setLoading(false);

@@ -183,8 +183,8 @@ export default function KeyValue(){
                 params: { application_name, configuration_file_name },
             });
             
-            let data = response.data;
-            let regex = /\{\{ [a-zA-Z0-9]+ \}\}/g;
+            let data = JSON.stringify(response.data);
+            let regex = /\{\{[a-zA-Z0-9]+\}\}/g;
             let matches = data.match(regex); 
     
             const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
