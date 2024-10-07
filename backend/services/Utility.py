@@ -8,16 +8,19 @@
 
 from settings import settings
 from app.schemas.config.ConfigSchema import ConfigSchema
+from app.schemas.config.CommonSchema import CommonSchema
 from app.schemas.config.TemplateCreateSchema import TemplateCreateSchema
 from app.schemas.config.ConfigTemplateSchema import ConfigTemplateSchema
 
 def get_config_file(config_info: ConfigSchema):
-    return settings.APPLICATION_PREFIX + config_info.application_name + '/' + config_info.env_name + '/' + config_info.configuration_file_name + '.json'
+    return settings.APPLICATION_PREFIX + '/' + config_info.application_name + '/' + config_info.env_name + '/' + config_info.configuration_file_name + '.json'
 
+def get_common_file(config_info: CommonSchema):
+    return settings.COMMON_PREFIX + '/' + config_info.env_name + '/common.json'
 
 def get_template_file(config_info: TemplateCreateSchema):
-    return settings.TEMPLATE_PREFIX + config_info.application_name+'/'+config_info.configuration_file_name + '.tpl'
+    return settings.TEMPLATE_PREFIX + '/' +config_info.application_name+'/'+config_info.configuration_file_name + '.tpl'
 
 def get_template_generated(config_info: ConfigTemplateSchema):
-    return settings.GENERATED_PREFIX + config_info.application_name + '/' + config_info.env_name + '/' + config_info.configuration_file_name
+    return settings.GENERATED_PREFIX + '/' + config_info.application_name + '/' + config_info.env_name + '/' + config_info.configuration_file_name
 

@@ -1,0 +1,243 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Mulish', sans-serif;
+  font-weight: 400;
+}
+@font-face {
+  font-family: 'Mulish';
+  src: url('src/assets/fonts/Mulish-Regular.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  src: url('src/assets/icons/fa-solid-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap; 
+}
+html body{
+  background-color: #dee9f980;
+}
+.config .btn{
+  font-size: 12px;
+}
+.welcome {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.welcome h3{
+  font-weight: bold;
+}
+.toaster {
+  font-size: 14px;
+  width: 300px !important;
+}
+/* Header */
+.nav{
+  display: flex;
+  justify-content: flex-end;
+  position: relative;
+  background-color: white;
+  padding: 10px 20px;
+  box-shadow: 1px 1px 5px #afaeae;
+  z-index: 10;
+}
+.nav h5{
+  margin-top: 5px;
+}
+.nav h5 a {
+  color: #243E85;
+  text-decoration: none;
+  font-weight: bold;
+}
+/* Side Bar */
+.sidebar{
+  position: absolute;
+  top: 1;
+  left: 0;
+  width: 230px;
+  height: 850px;
+  background-color: white;
+  box-shadow: 2px 2px 4px #e7e5e566;
+  z-index: 1;
+  overflow-x: auto;
+}
+.sidebar ul{
+  position: relative;
+  left: -15px;
+}
+.sidebar .sidebarSpinner{
+  width: 40px;
+  margin: 10px 0 0 20px;
+}
+.sidebar .breadcrumbs ul{
+  display: flex;
+  justify-content: left;
+  padding: 0;
+}
+.sidebar .breadcrumbs ul li{
+  padding: 0 5px;
+}
+.sidebar ul li{
+  color: #004080;
+  text-align: left;
+  list-style: none;
+  margin: 40px 0;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+}
+.sidebar ul li a{
+  color: #004080;
+  font-weight: bold;
+  text-decoration: none;
+}
+.sidebar .sublist li{
+  font-size: 12px;
+  margin: 15px 0;
+  text-align: left;
+}
+.sidebar .sublist li a{
+  color: #004080;
+  text-decoration: none;
+}
+.sidebar ul li.selected{
+  width: 130%;
+  display: block;
+  background-color: #004080;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+.sidebar ul li.selected a{
+  color: white;
+}
+/* Config, Generate & Upload */
+.config {
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  height: 100%;
+}
+.config .form-group{
+  padding: 20px;
+  width: 600px;
+  min-height: 450px;
+  display: inline-block;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px #e7e5e5;
+}
+.config .form-group h5{
+  text-align: center;
+  color: #004080;
+  font-weight: bold;
+  padding: 5px;
+}
+.config .input-container{
+  text-align: left;
+  margin: 0 10px 10px 5px;
+}
+.config .input-container div{
+  padding: 5px 0;
+  margin-top: 5px;
+}
+.config .input-container label{
+  font-size: 12px;
+  margin-bottom: -10px;
+  font-weight: bold;
+}
+.config .input-container input{
+  width: 100%;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+.config .keyValue-group input {
+  width: 45%;
+  margin: -10px 10px 10px 0;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+}
+.config input:focus{
+  outline-color: #004080;
+}
+.config img{
+  width: 30px;
+  margin: -2px 5px 0 -10px;
+  cursor: pointer;
+  align-self: center;
+}
+.config .spin-con{
+  text-align: center;
+}
+.config .spin-con .spinner{
+  width: 80px;
+  margin: 0 0 10px 0;
+}
+.config .cards li {
+  font-size: 14px;
+  padding: 8px 0;
+  display: flex;
+  align-items: stretch;
+  margin-left: 5px;
+}
+.config .cards .card{
+  width: 45%;
+  margin: 0 13px 0 0;
+  color: #004080;
+  background-color: #c0d3e2;
+  text-align: left;
+  padding: 6px;
+  border-radius: 4px;
+  word-wrap: break-word;
+  display: inline-block;
+}
+.config .cards .card span{
+  font-weight: bold;
+}
+.config .cards .editable{
+  width: 47%;
+  margin: -5px 7px -5px -5px;
+  color: #004080;
+  text-align: left;
+  padding: 6px;
+  border-radius: 4px;
+  word-wrap: break-word;
+  display: inline-block;
+}
+.config .cards .editable input{
+  width: 100%;
+  padding: 4px;
+}
+.config .error{
+  color: red;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 10px 0;
+  font-style: italic;
+}
+.config .success {
+  color: green;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 10px 0;
+  font-style: italic;
+}
+.config .textarea{
+  width: 100%;
+  border-radius: 4px;
+  font-size: 13px;
+  overflow-x: auto;
+  white-space: pre;
+}
+.config .textarea:focus{
+  outline-color: #004080;
+}
