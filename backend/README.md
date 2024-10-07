@@ -44,23 +44,26 @@ backend/
 └── requirements.txt
 ```
 
-## Directory Descriptions
 
-app: The main application package.
-api: Contains API-related code and endpoints.
-controllers: Individual API Controllers (endpoints) are defined here.
-models: Contains data models or Pydantic models.
-services: Houses business logic or service layer components.
-utils: Contains utility functions or helper modules.
-database: Handles database-related code, such as database connection and schemas.
-dependencies: Contains dependencies or dependency providers.
-main.py: Entry point of the application.
-routes/api.py: Base Routes Configuration.
-settings.py: Configuration settings for the application.
-tests: Contains test modules and test cases.
-.env: Environment variables for the project.
-.gitignore: Specifies the files and directories to be ignored by Git.
-requirements.txt: List of project dependencies.
+### Directory Descriptions
+
+- **app**: The main application package.
+  - **api**: Contains API-related code and endpoints.
+    - **controllers**: Individual API Controllers (endpoints) are defined here.
+  - **schemas**: Contains data models or Pydantic models.
+  - **services**: Houses business logic or service layer components.
+  - **utils**: Contains utility functions or helper modules.
+- **database**: Handles database-related code, such as database connection and schemas.
+- **dependencies**: Contains dependencies or dependency providers.
+- **main.py**: Entry point of the application.
+- **routes**: Base Routes Configuration.
+- **settings.py**: Configuration settings for the application.
+- **logs**: Directory for application logs.
+- **tests**: Contains test modules and test cases.
+- **.env**: Environment variables for the project.
+- **.gitignore**: Specifies the files and directories to be ignored by Git.
+- **requirements.txt**: List of project dependencies.
+
 
 ## Technologies Used
 
