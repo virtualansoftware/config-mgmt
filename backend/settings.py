@@ -38,9 +38,12 @@ class Settings(BaseSettings):
     CLIENT_SECRET: str = os.getenv("CLIENT_SECRET")
     OAUTH_TOKEN_URL: str = os.getenv("OAUTH_TOKEN_URL")
     GITHUB_REPO_NAME: str = os.getenv("GITHUB_REPO_NAME")
-    GITHUP_TOKEN: str = os.getenv("GITHUP_TOKEN")
+    GITHUP_TOKEN: str = os.getenv("GITHUB_TOKEN")
+    BRANCH: str = os.getenv("BRANCH")
+    COLUMNS: str = os.getenv("COLUMNS")
     GITHUB_HOST_URL: str = os.getenv("GITHUB_HOST_URL")
     APPLICATION_PREFIX: str = 'config-mgmt/application'
+    COMMON_PREFIX: str = 'config-mgmt/common'
     TEMPLATE_PREFIX: str = 'config-mgmt/templates'
     GENERATED_PREFIX: str = 'config-mgmt/generated'
     model_config = SettingsConfigDict(extra=Extra.allow, env_file='.env', env_file_encoding='utf-8')
