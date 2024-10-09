@@ -35,6 +35,7 @@ export default function UploadConfig() {
     // POST METHOD - UPLOAD TEMPLATE
     async function upload() {
         if (!applicationName || !configurationFileName || (!file && !textArea)) {
+            toast.error("Please fill in all the fields");
             return;
         }
         
@@ -52,6 +53,7 @@ export default function UploadConfig() {
         if (textArea) formData.append('template', textArea);
 
         try {
+            setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT_UPLOAD, formData, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
@@ -61,11 +63,13 @@ export default function UploadConfig() {
             setFile(null);
             setTextArea("");
             setIsDisabled(false);
+            setLoading(false);
             const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
             if (fileInput) fileInput.value = "";
         } catch (error) {
             console.error("Error sending data: ", error);
             toast.error("Failed to send data");
+            setLoading(false);
         }
     }
 
@@ -101,7 +105,8 @@ export default function UploadConfig() {
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            toast.error("Failed to send data");
+            toast.error("Failed to fetch data");
+            setLoading(false);
         }
     }
 

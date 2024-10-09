@@ -27,12 +27,14 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [subMenuDataGenerate, setSubMenuDataGenerate] = useState<MenuItem>({});
     const [subMenuDataUpload, setSubMenuDataUpload] = useState<UploadMenuItem>({});
     const [subMenuDataCommon, setSubMenuDataCommon] = useState<UploadMenuItem>({});
+    const [subMenuDataHarness, setSubMenuDataHarness] = useState(null);
 
     const toggleSubMenu = (item: string) => {
         setSubMenu(subMenu === item ? null : item);
         setFirstSubMenu(null);
         setSecondSubMenu(null);
         setThirdSubMenu(null); 
+        setSubMenuDataHarness(null);
 
         if (item === "Config") {
             buildConfigMenu();
@@ -42,6 +44,8 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             buildUploadMenu();
         } else if (item === "Common") {
             buildCommonMenu();
+        } else if (item === "Harness") {
+            setSubMenuDataHarness(subMenuDataHarness === null ? "Harness" : null);
         }
     };
 

@@ -31,13 +31,16 @@ export default function GenerateConfig() {
         }
     }, [window.location.search]);
 
+
     // POST METHOD - GENERATE CONFIG
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
+            toast.error("Please fill in all the fields");
             return;
         }
 
         try{
+            setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT_GENERATE, {
                 application_name: applicationName,
                 env_name: envName,
@@ -50,10 +53,12 @@ export default function GenerateConfig() {
             setConfigurationFileName("");
             setEnvName("");
             setTextArea("");
+            setLoading(false);
             setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
             toast.error("Failed to send data");
+            setLoading(false);
         }
     }
 
@@ -77,13 +82,22 @@ export default function GenerateConfig() {
                     configuration_file_name
                 }
             });
-            setTextArea(response.data);
+            let displayData;
+
+            if (typeof response.data === 'object') {
+                displayData = JSON.stringify(response.data, null, 4);
+            } else {
+                displayData = response.data.toString();
+            }
+
+            setTextArea(displayData);
             toast.success("Data fetched successfully");
             setLoading(false);
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            toast.error("Failed to send data");
+            toast.error("Failed to fetch data");
+            setLoading(false);
         }
     }
 

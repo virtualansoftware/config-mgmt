@@ -39,12 +39,22 @@ html body{
 /* Header */
 .nav{
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   position: relative;
   background-color: white;
   padding: 10px 20px;
   box-shadow: 1px 1px 5px #afaeae;
   z-index: 10;
+}
+.nav .logo{
+  display: flex;
+  align-items: center;
+  padding: 5px;
+}
+.nav .logo h4{
+  padding: 5px;
+  color: #800040;
+  font-family: impact;
 }
 .nav h5{
   margin-top: 5px;
@@ -60,7 +70,7 @@ html body{
   top: 1;
   left: 0;
   width: 230px;
-  height: 850px;
+  /* height: 100%; */
   background-color: white;
   box-shadow: 2px 2px 4px #e7e5e566;
   z-index: 1;
@@ -240,4 +250,28 @@ html body{
 }
 .config .textarea:focus{
   outline-color: #004080;
+}
+.config select{
+  width: 100%;
+  padding: 5px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+.footer{
+  width: 100%;
+  text-align: center;
+  padding: 5px 0;
+  background-color: white;
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  font-size: 8px;
+}
+.footer img{
+  padding-right: 4px;
+}
+.footer span{
+  font-weight: bold;
 }

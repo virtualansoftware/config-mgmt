@@ -61,7 +61,7 @@ export default function Common(){
             return;
         }
         if (!envName) {
-            toast.error("Please fill in all fields");
+            toast.error("Please fill in all the fields");
             return;
         }
 
@@ -72,16 +72,19 @@ export default function Common(){
             env_name: envName
         };
         try{
+            setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT_COMMON, requestData, {
                 headers: { "Content-Type": "application/json" },
             });
-            toast.success("Data fetched successfully");
+            toast.success("Data sent successfully");
             setPairs([]);
             setEnvName("");
+            setLoading(false);
             setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
             toast.error("Failed to send data");
+            setLoading(false);
         }
     }
 
@@ -108,7 +111,8 @@ export default function Common(){
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            toast.error("Failed to send data");
+            toast.error("Failed to fetch data");
+            setLoading(false);
         }
     }
 
