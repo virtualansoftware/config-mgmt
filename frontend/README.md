@@ -18,7 +18,7 @@ frontend/
 │   │   ├── Header.tsx
 │   │   ├── KeyValue.tsx
 │   │   ├── Sidebar.tsx
-│   │   └── UploadConfig.js
+│   │   └── UploadConfig.tsx
 │   ├── constants.ts
 │   └── main.tsx
 │
