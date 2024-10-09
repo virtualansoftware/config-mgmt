@@ -9,7 +9,6 @@ export default function GenerateConfig() {
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[textArea, setTextArea] = useState("");
-    // const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
 
@@ -28,28 +27,20 @@ export default function GenerateConfig() {
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            // setMessage({ text: "", type: "" });
             setIsDisabled(false);
         }
     }, [window.location.search]);
 
-    // CLEARS THE MESSAGE AFTER 3 SEC
-    // useEffect(() => {
-    //     if (message.text) {
-    //         const timer = setTimeout(() => {
-    //             setMessage({ text: "", type: "" });
-    //         }, 3000);
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [message]);
 
     // POST METHOD - GENERATE CONFIG
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
+            toast.error("Please fill in all the fields");
             return;
         }
 
         try{
+            setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT_GENERATE, {
                 application_name: applicationName,
                 env_name: envName,
@@ -57,17 +48,17 @@ export default function GenerateConfig() {
             }, {
                 headers: { "Content-Type": "application/json" },
             });
-            // setMessage({text:"Data generated successfully", type:"success"});
             toast.success("Data generated successfully");
             setApplicationName("");
             setConfigurationFileName("");
             setEnvName("");
             setTextArea("");
+            setLoading(false);
             setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
-            // setMessage({text:"Failed to send data", type:"error"});
             toast.error("Failed to send data");
+            setLoading(false);
         }
     }
 
@@ -91,15 +82,22 @@ export default function GenerateConfig() {
                     configuration_file_name
                 }
             });
-            setTextArea(JSON.stringify(response.data, null, 4));
-            // setMessage({ text: "Data fetched successfully", type: "success" });
+            let displayData;
+
+            if (typeof response.data === 'object') {
+                displayData = JSON.stringify(response.data, null, 4);
+            } else {
+                displayData = response.data.toString();
+            }
+
+            setTextArea(displayData);
             toast.success("Data fetched successfully");
             setLoading(false);
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            // setMessage({ text: "Failed to fetch data", type: "error" });
-            toast.error("Failed to send data");
+            toast.error("Failed to fetch data");
+            setLoading(false);
         }
     }
 
@@ -158,7 +156,6 @@ export default function GenerateConfig() {
                             </>
                         )}
                     </div>
-                    {/* <p className={message.type === "success" ? "success" : "error" }>{message.text}</p> */}
                     {!isDisabled && (
                         <button className='btn btn-success' onClick={generateConfig}>Generate</button>
                     )}

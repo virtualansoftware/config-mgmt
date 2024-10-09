@@ -17,7 +17,6 @@ export default function KeyValue(){
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[pairs, setPairs] = useState<any[]>([]);
-    // const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
@@ -38,23 +37,12 @@ export default function KeyValue(){
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            // setMessage({ text: "", type: "" });
-            setIsDisabled(false);
+            // setIsDisabled(false);
             setPairs([]);
             setKey("");
             setValue("");
         }
     }, [window.location.search]);
-
-    // CLEARS THE MESSAGE AFTER 3 SEC
-    // useEffect(() => {
-    //     if (message.text) {
-    //         const timer = setTimeout(() => {
-    //             setMessage({ text: "", type: "" });
-    //         }, 3000);
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [message]);
 
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
@@ -64,7 +52,6 @@ export default function KeyValue(){
             setKey("");
             setValue("");
         } else {
-            // setMessage({text:"Please enter key or value", type:"error"});
             toast.error("Please enter key or value");
         }
     }
@@ -85,13 +72,11 @@ export default function KeyValue(){
     // POST METHOD - UPLOAD CONFIG
     async function submit(){
         if(editablePairs){
-            // setMessage({ text: "Please save before proceeding", type: "error" });
             toast.error("Please save before proceeding");
             return;
         }
         if (!applicationName || !envName || !configurationFileName) {
-            // setMessage({ text: "Please fill in all fields", type: "error" });
-            toast.error("Please fill in all fields");
+            toast.error("Please fill in all the fields");
             return;
         }
 
@@ -104,20 +89,21 @@ export default function KeyValue(){
             configuration_file_name: configurationFileName
         };
         try{
+            setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT, requestData, {
                 headers: { "Content-Type": "application/json" },
             });
-            // setMessage({text:"Data sent successfully", type:"success"});
             toast.success("Data sent successfully");
             setPairs([]);
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            setIsDisabled(false);
+            setLoading(false);
+            // setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
-            // setMessage({text:"Failed to send data", type:"error"});
             toast.error("Failed to send data");
+            setLoading(false);
         }
     }
 
@@ -145,14 +131,13 @@ export default function KeyValue(){
             const data = response.data.configMap;
             const newPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
             setPairs(newPairs);
-            // setMessage({ text: "Data fetched successfully", type: "success" });
             toast.success("Data fetched successfully");
             setLoading(false);
-            setIsDisabled(true);
+            // setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            // setMessage({ text: "Failed to fetch data", type: "error" });
             toast.error("Failed to fetch data");
+            setLoading(false);
         }
     }
     
@@ -208,15 +193,13 @@ export default function KeyValue(){
                 }
             }
             setPairs(pairs);
-            // setMessage({ text: "Data fetched successfully", type: "success" });
             toast.success("Data fetched successfully");
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            // setMessage({ text: "Failed to fetch data", type: "error" });
             toast.error("Failed to fetch data");
         } finally {
             setLoading(false);
-            setIsDisabled(true);
+            // setIsDisabled(true);
         }
     }
 
@@ -246,7 +229,7 @@ export default function KeyValue(){
                                 type="text"
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
-                                disabled={isDisabled}
+                                // disabled={isDisabled}
                                 onBlur={handleInputs}
                             />
                         </div>
@@ -256,7 +239,7 @@ export default function KeyValue(){
                                 type="text"
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
-                                disabled={isDisabled}
+                                // disabled={isDisabled}
                                 onBlur={handleInputs}
                             />
                         </div>
@@ -266,7 +249,7 @@ export default function KeyValue(){
                                 type="text"
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
-                                disabled={isDisabled}
+                                // disabled={isDisabled}
                                 onBlur={handleInputs}
                             />
                         </div>
@@ -329,7 +312,6 @@ export default function KeyValue(){
                         />
                         <img src="/images/plus-img.png" alt="plus" onClick={handleAdd} />
                     </div>
-                    {/* <p className={message.type === "success" ? "success" : "error" }>{message.text}</p> */}
                     {pairs.length > 0 && (
                         <>
                             <button className='btn btn-success me-2' onClick={submit}>Submit</button>
