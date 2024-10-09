@@ -12,6 +12,7 @@ import GenerateConfig from './components/GenerateConfig';
 import UploadConfig from './components/UploadConfig';
 import Common from './components/Common';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Footer from './components/Footer';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ const router = createBrowserRouter([
           <h3>Welcome to Config Management!!!</h3>
           <p>Simplify Complexity with Expert Configuration Management</p>
         </div>
+        <Footer/>
       </>
     ),
   },
@@ -34,6 +36,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <KeyValue />
+        <Footer/>
       </>
     ),
   },
@@ -44,6 +47,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <GenerateConfig />
+        <Footer/>
       </>
     ),
   },
@@ -54,6 +58,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <UploadConfig />
+        <Footer/>
       </>
     ),
   },
@@ -64,6 +69,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <Common />
+        <Footer/>
       </>
     ),
   },

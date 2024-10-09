@@ -146,7 +146,7 @@ export default function GenerateConfig() {
                                         <label>Text Template</label><br/>
                                         <textarea
                                             className="textarea"
-                                            rows={5}
+                                            rows={20}
                                             value={textArea}
                                             onChange={(e) => setTextArea(e.target.value)}
                                             disabled={isDisabled}

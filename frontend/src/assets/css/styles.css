@@ -70,7 +70,7 @@ html body{
   top: 1;
   left: 0;
   width: 230px;
-  /* height: 100%; */
+  height: 100%;
   background-color: white;
   box-shadow: 2px 2px 4px #e7e5e566;
   z-index: 1;
@@ -264,7 +264,7 @@ html body{
   text-align: center;
   padding: 5px 0;
   background-color: white;
-  position: absolute;
+  position: fixed;
   left: 0;
   bottom: 0;
   font-size: 8px;
