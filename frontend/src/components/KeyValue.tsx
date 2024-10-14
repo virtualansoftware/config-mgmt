@@ -18,7 +18,7 @@ export default function KeyValue(){
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[pairs, setPairs] = useState<any[]>([]);
     const[loading, setLoading] = useState(false);
-    const[isDisabled, setIsDisabled] = useState(false);
+    const[isDataFetched, setIsDataFetched] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
     const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
 
@@ -37,7 +37,6 @@ export default function KeyValue(){
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            // setIsDisabled(false);
             setPairs([]);
             setKey("");
             setValue("");
@@ -99,7 +98,6 @@ export default function KeyValue(){
             setEnvName("");
             setConfigurationFileName("");
             setLoading(false);
-            // setIsDisabled(false);
         } catch(error){
             console.error("Error sending data: ", error);
             toast.error("Failed to send data");
@@ -133,7 +131,7 @@ export default function KeyValue(){
             setPairs(newPairs);
             toast.success("Data fetched successfully");
             setLoading(false);
-            // setIsDisabled(true);
+            setIsDataFetched(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
             toast.error("Failed to fetch data");
@@ -153,8 +151,8 @@ export default function KeyValue(){
 
     // GET METHOD - GET UPLOADED TEMPLATE
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
-        if(!applicationName || !envName || !configurationFileName) return;
-
+        if (!application_name || !env_name || !configuration_file_name) return;
+    
         if (Array.isArray(subMenuData[application_name]) && 
             subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
             setLoading(true);
@@ -162,12 +160,12 @@ export default function KeyValue(){
         } else {
             return;
         }
-
+    
         try {
             const response = await axios.get(API_GET_ENDPOINT_UPLOAD, {
                 params: { application_name, configuration_file_name },
             });
-            
+    
             let data = JSON.stringify(response.data);
             let regex = /\{\{[a-zA-Z0-9]+\}\}/g;
             let matches = data.match(regex); 
@@ -176,30 +174,36 @@ export default function KeyValue(){
                 params: { env_name },
             });
     
-            const commonData: string = commonResponse.data.commonMap;
-            const pairs: { key: string; value: string }[] = [];
+            const commonKeys = Object.keys(commonResponse.data.commonMap);
+            
+            const pairs: { key: string; value: string | null }[] = [];
+            const keysSet = new Set<string>();
     
-            if (commonData) {
-                const newPairs: Record<string, string> = Object.entries(commonData).reduce((acc, [key, value]) => {
-                    acc[key.trim()] = value;
-                    return acc;
-                }, {} as Record<string, string>);
-        
-                if (matches) {
-                    for (let match of matches) {
-                        const key = match.replace(/\{\{|\}\}/g, '').trim();
-                        pairs.push({ key, value: newPairs[key] });
+            if (matches) {
+                for (let match of matches) {
+                    const key = match.replace(/\{\{|\}\}/g, '').trim();
+                    
+                    if (!keysSet.has(key)) {
+                        pairs.push({ key, value: null }); 
+                        keysSet.add(key);
                     }
-                } 
+                }
+            }
+    
+            for (const key of commonKeys) {
+                if (!keysSet.has(key)) {
+                    pairs.push({ key, value: null });
+                    keysSet.add(key);
+                }
             }
             setPairs(pairs);
-            toast.success("Data fetched successfully");
+            toast.success("Keys fetched successfully");
+            setIsDataFetched(true);
         } catch (error) {
-            console.error("Error fetching pairs:", error);
+            console.error("Error fetching keys:", error);
             toast.error("Failed to fetch data");
         } finally {
             setLoading(false);
-            // setIsDisabled(true);
         }
     }
 
@@ -221,7 +225,7 @@ export default function KeyValue(){
             <Sidebar onRetrieve={retrieve}/>
             <div className="config">    
                 <div className="form-group">
-                    <h5>{isDisabled ? "Re-Configuration" : "Configuration"}</h5>
+                    <h5>{isDataFetched ? "Re-Configuration" : "Configuration"}</h5>
                     <div className="input-container">
                         <div>
                             <label>Application Name</label>
@@ -229,7 +233,6 @@ export default function KeyValue(){
                                 type="text"
                                 value={applicationName}
                                 onChange={(e) => setApplicationName(e.target.value)}
-                                // disabled={isDisabled}
                                 onBlur={handleInputs}
                             />
                         </div>
@@ -239,7 +242,6 @@ export default function KeyValue(){
                                 type="text"
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
-                                // disabled={isDisabled}
                                 onBlur={handleInputs}
                             />
                         </div>
@@ -249,7 +251,6 @@ export default function KeyValue(){
                                 type="text"
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
-                                // disabled={isDisabled}
                                 onBlur={handleInputs}
                             />
                         </div>
