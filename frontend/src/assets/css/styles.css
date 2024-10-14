@@ -262,6 +262,9 @@ html body{
   text-align: left;
   font-size: 14px;
 }
+.config .download{
+  text-align: center;
+}
 .footer{
   width: 100%;
   text-align: center;

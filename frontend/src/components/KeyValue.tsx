@@ -190,7 +190,7 @@ export default function KeyValue(){
                         const key = match.replace(/\{\{|\}\}/g, '').trim();
                         pairs.push({ key, value: newPairs[key] });
                     }
-                }
+                } 
             }
             setPairs(pairs);
             toast.success("Data fetched successfully");

@@ -101,6 +101,14 @@ export default function GenerateConfig() {
         }
     }
 
+    const downloadFile = () => {
+        const blob = new Blob([textArea], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${configurationFileName}.txt`;
+        link.click();
+    };
+
     return (
         <>
             <Sidebar onRetrieve={retrieve}/>
@@ -151,6 +159,9 @@ export default function GenerateConfig() {
                                             onChange={(e) => setTextArea(e.target.value)}
                                             disabled={isDisabled}
                                         />
+                                        <div className="download">
+                                            <button className='btn btn-success' onClick={downloadFile}>Download</button>
+                                        </div>
                                     </div>
                                 )}
                             </>
