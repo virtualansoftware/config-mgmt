@@ -17,8 +17,30 @@ class ConfigManagement:
         output = TemplateGenerator.apply_configuration(config_info)
         return output
 
+    # def save_configuration(config_info: ConfigSchema):
+    #     GitRepository.save_configuration(get_config_file(config_info),  config_info.configMap,  "Successfully Configuration Created...")
+
     def save_configuration(config_info: ConfigSchema):
-        GitRepository.save_configuration(get_config_file(config_info),  config_info.configMap,  "Successfully Configuration Created...")
+        # Retrieve existing configuration from GitHub repository
+        try:
+            object_content = GitRepository.getObject(get_config_file(config_info))
+            existing_config = json.loads(object_content)  # Retrieve current config
+
+            # Merge existing configuration with new data
+            updated_config = {**existing_config, **config_info.configMap}
+            commit_message = "Successfully updated configuration"
+        except Exception as e:
+            # If no existing configuration, this is a new config creation
+            updated_config = config_info.configMap
+            commit_message = "Successfully created new configuration"
+            print(f"New configuration being created: {e}")
+
+        # Save the updated or new configuration to the GitHub repository
+        GitRepository.save_configuration(
+            get_config_file(config_info),
+            json.dumps(updated_config, sort_keys=True, indent=2),
+            commit_message
+        )
 
     def save_common_configuration(config_info: CommonSchema):
         print(f"commonMap: {type(config_info.commonMap)}, env_name: {type(config_info.env_name)}")
