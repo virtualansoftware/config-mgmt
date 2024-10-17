@@ -93,6 +93,12 @@ class ConfigManagement:
         GitRepository.generate_object(fileName=get_template_generated(configInfo),templateGenerated=templateGenerated, commitMessage="Template Generated... ")
         return {"template_generated": templateGenerated}
 
+    def preview_configuration(configInfo : ConfigTemplateSchema):
+        object_content = GitRepository.getObject(get_config_file(configInfo))
+        template_file_content = GitRepository.getObject(get_template_file(configInfo))
+        templateGenerated = TemplateGenerator.apply_configuration(json.loads(object_content), template_file_content.decode('UTF-8'))
+        return {"template_generated": templateGenerated}
+
     def get_config(config_info: ConfigSchema):
         object_content = GitRepository.getObject(get_config_file(config_info))
         return object_content

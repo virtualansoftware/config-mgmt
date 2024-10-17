@@ -142,6 +142,35 @@ def generate_configuration(config_info: ConfigTemplateSchema):
         raise
     return {"template_generated": templateGenerated}
 
+
+@router.post("/generate-preview", response_model=dict)
+def generate_configuration(config_info: ConfigTemplateSchema):
+    log.info("Received a POST request for /generate")
+    try:
+        if config_info.application_name == '':
+            raise ValueError('application_name: Required field is not provided')
+        elif config_info.env_name == '':
+            raise ValueError('env_name: Required field is not provided')
+        elif config_info.configuration_file_name == '':
+            raise ValueError('configuration_file_name: Required field is not provided')
+        templateGenerated = ConfigManagement.preview_configuration(config_info)
+    except ValueError as er:
+        return JSONResponse(content=str(er), status_code=422)
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+        return "Error Occurred and Handled " + e.message
+    except ClientError as ex:
+        if ex.response['Error']['Code'] == 'NoSuchKey':
+            log.info(f'No object found - returning empty')
+            return ex.response
+    except Exception as error:
+        traceback.print_exception(error)
+        return JSONResponse(content=jsonable_encoder(error), status_code=404)
+    else:
+        raise
+    return {"template_generated": templateGenerated}
+
+
 @router.get("/generated-config", response_model=dict)
 def read_configuration():
     try:
