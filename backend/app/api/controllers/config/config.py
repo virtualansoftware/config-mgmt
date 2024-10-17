@@ -164,7 +164,7 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     except Exception as error:
         traceback.print_exception(error)
         return JSONResponse(content=jsonable_encoder(error), status_code=404)
-    return  templateGenerated
+    return Response(content=templateGenerated, media_type="text/plain")
 
 
 @router.get("/generated-config", response_model=dict)
