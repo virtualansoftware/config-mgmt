@@ -98,12 +98,8 @@ def common_configuration(config_info: CommonSchema):
 @router.get("/common")
 def read_common_configuration(env_name: str):
     try:
-        if application_name == '':
-            raise ValueError('application_name: Required field is not provided')
-        elif env_name == '':
+        if not env_name:
             raise ValueError('env_name: Required field is not provided')
-        elif configuration_file_name == '':
-            raise ValueError('configuration_file_name: Required field is not provided')
         configInfo = ConfigManagement.read_common_configuration(env_name)
     except ValueError as er:
         return JSONResponse(content=str(er), status_code=422)

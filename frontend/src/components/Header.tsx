@@ -6,7 +6,7 @@ export default function Header(){
         <div>
             <nav className="nav">
                 <div className="logo">
-                    <img src="/images/logo_image.png" alt="Configuran Logo" width="50px" />
+                    <img src="/images/logo_image.png" alt="Configuran Logo"/>
                     <h4>Configuran</h4>
                 </div>
                 <h5><Link to="/config-mgmt">Configuration Management</Link></h5>

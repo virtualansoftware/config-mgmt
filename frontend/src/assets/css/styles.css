@@ -51,13 +51,16 @@ html body{
   align-items: center;
   padding: 0 5px;
 }
+.nav .logo img{
+  width: 50px;
+}
 .nav .logo h4{
-  padding: 5px 0 0 10px;
+  padding: 10px 0 0 10px;
   color: #800040;
   font-family: impact;
 }
 .nav h5{
-  margin-top: 5px;
+  margin-top: 10px;
 }
 .nav h5 a {
   color: #243E85;
@@ -259,6 +262,9 @@ html body{
   text-align: left;
   font-size: 14px;
 }
+.config .download{
+  text-align: center;
+}
 .footer{
   width: 100%;
   text-align: center;
@@ -270,6 +276,7 @@ html body{
   font-size: 8px;
 }
 .footer img{
+  width: 20px;
   padding-right: 4px;
 }
 .footer span{
