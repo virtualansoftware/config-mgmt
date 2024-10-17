@@ -269,6 +269,51 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                             </ul>
                         )}
                     </li>
+                    {/* Harness Menu */}
+                    <li onClick={(e) => toggleSubMenu("Harness")}>
+                        <Link to="/harness">
+                            <i className={`fa-solid ${subMenu === "Harness" ? "fa-caret-down" : "fa-caret-right"}`}></i> Harness
+                        </Link>
+                        {/* First Sub Menu */}
+                        {subMenu === "Harness" && (
+                            <ul className="sublist">
+                                <li onClick={(e) => toggleFirstSubMenu("Infrastructure", e)}>
+                                    <i className={`fa-solid ${firstSubMenu === "Infrastructure" ? "fa-caret-down" : "fa-caret-right"}`}></i> Infrastructure
+                                    {/* Second Sub Menu*/}
+                                    {firstSubMenu === "Infrastructure" && (
+                                        <ul className="sublist">
+                                            <li onClick={(e) => toggleThirdSubMenu("Create Env", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=create-env` }}>Create Env</Link>
+                                            </li>
+                                            <li onClick={(e) => toggleThirdSubMenu("Create Infra", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=create-infra` }}>Create Infra</Link>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </li>
+                                <li onClick={(e) => toggleFirstSubMenu("App-Dev", e)}>
+                                    <i className={`fa-solid ${firstSubMenu === "App-Dev" ? "fa-caret-down" : "fa-caret-right"}`}></i> App-Dev
+                                    {/* Second Sub Menu*/}
+                                    {firstSubMenu === "App-Dev" && (
+                                        <ul className="sublist">
+                                            <li onClick={(e) => toggleThirdSubMenu("Create Service", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=create-service` }}>Create Service</Link>
+                                            </li>
+                                            <li onClick={(e) => toggleThirdSubMenu("Create Pipeline", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=create-pipeline` }}>Create Pipeline</Link>
+                                            </li>
+                                            <li onClick={(e) => toggleThirdSubMenu("Create Inputset", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=create-inputset` }}>Create Inputset</Link>
+                                            </li>
+                                            <li onClick={(e) => toggleThirdSubMenu("Execute Inputset", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=execute-inputset` }}>Execute Inputset</Link>
+                                            </li>
+                                        </ul>
+                                    )}
+                                </li>
+                            </ul>
+                        )}
+                    </li>
                 </ul>
             </div>
         </>

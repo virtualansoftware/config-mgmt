@@ -262,6 +262,47 @@ html body{
   text-align: left;
   font-size: 14px;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  max-width: 850px;
+  height: 450px;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.modal-head{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.modal-head h4{
+  text-align: center;
+  font-weight: bold;
+}
+.modal-head i{
+  cursor: pointer;
+  font-size: 20px;
+}
+.modal-body{
+  display: flex;
+  justify-content: space-around;
+  padding: 10px 0;
+  text-align: left;
+  overflow-y: auto;
+}
 .config .download{
   text-align: center;
 }
@@ -274,6 +315,7 @@ html body{
   left: 0;
   bottom: 0;
   font-size: 8px;
+  box-shadow: 1px 1px 5px #afaeae;
 }
 .footer img{
   width: 20px;

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE } from '../constants';
+import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOINT_GENERATE_PREVIEW } from '../constants';
 import Sidebar from './Sidebar';
 import { toast } from 'react-toastify';
+import ReactDiffViewer from 'react-diff-viewer';
 
 export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");
@@ -11,6 +12,9 @@ export default function GenerateConfig() {
     const[textArea, setTextArea] = useState("");
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
+    const[showDiffViewer, setShowDiffViewer] = useState(false);
+    const[oldFileContent, setOldFileContent] = useState("");
+    const[newFileContent, setNewFileContent] = useState("");
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -31,11 +35,58 @@ export default function GenerateConfig() {
         }
     }, [window.location.search]);
 
+    async function previewConfig(){       
+        if (!applicationName || !envName || !configurationFileName) {
+            toast.error("Please fill in all the fields");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
+                params: {
+                    application_name: applicationName,
+                    env_name: envName,
+                    configuration_file_name: configurationFileName
+                }
+            });
+
+            let oldDisplayData = typeof response.data === 'object' 
+                ? JSON.stringify(response.data, null, 4) 
+                : response.data.toString();
+            
+            const responsePreview = await axios.post(API_POST_ENDPOINT_GENERATE_PREVIEW, {
+                application_name: applicationName,
+                env_name: envName,
+                configuration_file_name: configurationFileName
+            }, {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            let newDisplayData = typeof responsePreview.data === 'object' 
+                ? JSON.stringify(responsePreview.data, null, 4) 
+                : responsePreview.data.toString();
+
+            setOldFileContent(oldDisplayData);
+            setNewFileContent(newDisplayData);
+            setShowDiffViewer(true);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+            toast.error("Failed to fetch data");
+            setLoading(false);
+        }
+    }
 
     // POST METHOD - GENERATE CONFIG
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
             toast.error("Please fill in all the fields");
+            return;
+        }
+
+        if (oldFileContent === newFileContent){
+            toast.error("No changes to generate");
             return;
         }
 
@@ -55,6 +106,7 @@ export default function GenerateConfig() {
             setTextArea("");
             setLoading(false);
             setIsDisabled(false);
+            setShowDiffViewer(false);
         } catch(error){
             console.error("Error sending data: ", error);
             toast.error("Failed to send data");
@@ -101,12 +153,17 @@ export default function GenerateConfig() {
         }
     }
 
-    const downloadFile = () => {
+    // DOWNLOADING GENERATED FILE
+    function downloadFile() {
         const blob = new Blob([textArea], { type: 'text/plain' });
         const link = document.createElement('a');
         link.href = URL.createObjectURL(blob);
         link.download = `${configurationFileName}.txt`;
         link.click();
+    };
+
+    function close() {
+        setShowDiffViewer(false);
     };
 
     return (
@@ -168,7 +225,28 @@ export default function GenerateConfig() {
                         )}
                     </div>
                     {!isDisabled && (
-                        <button className='btn btn-success' onClick={generateConfig}>Generate</button>
+                        <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
+                    )}
+                    { showDiffViewer && !isDisabled &&(
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <div className="modal-head">
+                                    <h4>Preview</h4>
+                                    <i className="fa-solid fa-xmark" onClick={close}></i>
+                                </div>
+                                <div className="modal-body">
+                                    <ReactDiffViewer
+                                        oldValue={oldFileContent}
+                                        newValue={newFileContent}
+                                        splitView={true}
+                                        showDiffOnly={false}
+                                        leftTitle="Old Generated File"  
+                                        rightTitle="New Generated File"
+                                    />
+                                </div>
+                                <button className='btn btn-success' onClick={generateConfig}>Generate</button>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>

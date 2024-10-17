@@ -11,8 +11,9 @@ import KeyValue from "./components/KeyValue";
 import GenerateConfig from './components/GenerateConfig';
 import UploadConfig from './components/UploadConfig';
 import Common from './components/Common';
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import Harness from './components/Harness';
 import Footer from './components/Footer';
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,17 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <Common />
+        <Footer/>
+      </>
+    ),
+  },
+  {
+    path: "/harness",
+    element: (
+      <>
+        <Header/>
+        <Sidebar onRetrieve={() => {}} />
+        <Harness />
         <Footer/>
       </>
     ),
