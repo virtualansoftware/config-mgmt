@@ -141,7 +141,7 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     return {"template_generated": templateGenerated}
 
 
-@router.post("/generate-preview", response_model=dict)
+@router.post("/generate-preview", response_model=str)
 def generate_configuration(config_info: ConfigTemplateSchema):
     log.info("Received a POST request for /generate")
     try:
@@ -164,7 +164,7 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     except Exception as error:
         traceback.print_exception(error)
         return JSONResponse(content=jsonable_encoder(error), status_code=404)
-    return {"template_generated": templateGenerated}
+    return  templateGenerated
 
 
 @router.get("/generated-config", response_model=dict)

@@ -97,7 +97,7 @@ class ConfigManagement:
         object_content = GitRepository.getObject(get_config_file(configInfo))
         template_file_content = GitRepository.getObject(get_template_file(configInfo))
         templateGenerated = TemplateGenerator.apply_configuration(json.loads(object_content), template_file_content.decode('UTF-8'))
-        return {"template_generated": templateGenerated}
+        return templateGenerated
 
     def get_config(config_info: ConfigSchema):
         object_content = GitRepository.getObject(get_config_file(config_info))
