@@ -138,8 +138,6 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     except Exception as error:
         traceback.print_exception(error)
         return JSONResponse(content=jsonable_encoder(error), status_code=404)
-    else:
-        raise
     return {"template_generated": templateGenerated}
 
 
@@ -166,8 +164,6 @@ def generate_configuration(config_info: ConfigTemplateSchema):
     except Exception as error:
         traceback.print_exception(error)
         return JSONResponse(content=jsonable_encoder(error), status_code=404)
-    else:
-        raise
     return {"template_generated": templateGenerated}
 
 
