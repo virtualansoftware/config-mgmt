@@ -35,6 +35,7 @@ export default function GenerateConfig() {
         }
     }, [window.location.search]);
 
+    // GET METHOD - DISPLAY PREVIEW TEMPLATE
     async function previewConfig(){       
         if (!applicationName || !envName || !configurationFileName) {
             toast.error("Please fill in all the fields");
@@ -78,7 +79,7 @@ export default function GenerateConfig() {
         }
     }
 
-    // POST METHOD - GENERATE CONFIG
+    // POST METHOD - GENERATE TEMPLATE
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
             toast.error("Please fill in all the fields");
@@ -114,7 +115,7 @@ export default function GenerateConfig() {
         }
     }
 
-    // GET METHOD - GET GENERATED CONFIG
+    // GET METHOD - GET GENERATED TEMPLATE
     async function retrieve() {
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
@@ -153,7 +154,7 @@ export default function GenerateConfig() {
         }
     }
 
-    // DOWNLOADING GENERATED FILE
+    // DOWNLOADING GENERATED TEMPLATE
     function downloadFile() {
         const blob = new Blob([textArea], { type: 'text/plain' });
         const link = document.createElement('a');
@@ -217,6 +218,7 @@ export default function GenerateConfig() {
                                             disabled={isDisabled}
                                         />
                                         <div className="download">
+                                            <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
                                             <button className='btn btn-success' onClick={downloadFile}>Download</button>
                                         </div>
                                     </div>
@@ -227,7 +229,7 @@ export default function GenerateConfig() {
                     {!isDisabled && (
                         <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
                     )}
-                    { showDiffViewer && !isDisabled &&(
+                    { showDiffViewer && (
                         <div className="modal-overlay">
                             <div className="modal-content">
                                 <div className="modal-head">

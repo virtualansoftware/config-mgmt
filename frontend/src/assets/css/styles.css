@@ -306,6 +306,9 @@ html body{
 .config .download{
   text-align: center;
 }
+.config .download button{
+  margin-right: 10px;
+}
 .footer{
   width: 100%;
   text-align: center;
