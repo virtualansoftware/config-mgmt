@@ -3,7 +3,7 @@ import axios from 'axios';
 import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOINT_GENERATE_PREVIEW } from '../constants';
 import Sidebar from './Sidebar';
 import { toast } from 'react-toastify';
-import ReactDiffViewer from 'react-diff-viewer';
+import DiffViewer from './DiffViewer';
 
 export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");
@@ -166,7 +166,7 @@ export default function GenerateConfig() {
     function close() {
         setShowDiffViewer(false);
     };
-
+    
     return (
         <>
             <Sidebar onRetrieve={retrieve}/>
@@ -237,14 +237,7 @@ export default function GenerateConfig() {
                                     <i className="fa-solid fa-xmark" onClick={close}></i>
                                 </div>
                                 <div className="modal-body">
-                                    <ReactDiffViewer
-                                        oldValue={oldFileContent}
-                                        newValue={newFileContent}
-                                        splitView={true}
-                                        showDiffOnly={false}
-                                        leftTitle="Old Generated File"  
-                                        rightTitle="New Generated File"
-                                    />
+                                   <DiffViewer oldText={oldFileContent} newText={newFileContent} />
                                 </div>
                                 <button className='btn btn-success' onClick={generateConfig}>Generate</button>
                             </div>
