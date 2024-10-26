@@ -39,15 +39,28 @@ html body{
 /* Header */
 .nav{
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   position: relative;
   background-color: white;
   padding: 10px 20px;
   box-shadow: 1px 1px 5px #afaeae;
   z-index: 10;
+} 
+.nav .logo{
+  display: flex;
+  align-items: center;
+  padding: 0 5px;
+}
+.nav .logo img{
+  width: 50px;
+}
+.nav .logo h4{
+  padding: 10px 0 0 10px;
+  color: #800040;
+  font-family: impact;
 }
 .nav h5{
-  margin-top: 5px;
+  margin-top: 10px;
 }
 .nav h5 a {
   color: #243E85;
@@ -59,8 +72,8 @@ html body{
   position: absolute;
   top: 1;
   left: 0;
-  width: 230px;
-  height: 850px;
+  width: 18%;
+  height: 150%;
   background-color: white;
   box-shadow: 2px 2px 4px #e7e5e566;
   z-index: 1;
@@ -73,14 +86,6 @@ html body{
 .sidebar .sidebarSpinner{
   width: 40px;
   margin: 10px 0 0 20px;
-}
-.sidebar .breadcrumbs ul{
-  display: flex;
-  justify-content: left;
-  padding: 0;
-}
-.sidebar .breadcrumbs ul li{
-  padding: 0 5px;
 }
 .sidebar ul li{
   color: #004080;
@@ -115,7 +120,7 @@ html body{
 .sidebar ul li.selected a{
   color: white;
 }
-/* Config, Generate & Upload */
+/* Config, Generate, Upload, Common & Harness */
 .config {
   text-align: center;
   padding: 20px;
@@ -124,7 +129,7 @@ html body{
 }
 .config .form-group{
   padding: 20px;
-  width: 600px;
+  width: 50%;
   min-height: 450px;
   display: inline-block;
   background-color: white;
@@ -240,4 +245,132 @@ html body{
 }
 .config .textarea:focus{
   outline-color: #004080;
+}
+.config select{
+  width: 100%;
+  padding: 5px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+.config .download{
+  text-align: center;
+}
+.config .download button{
+  margin-right: 10px;
+}
+/* Preview popup window */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  max-width: 80%;
+  height: 80%;
+  background-color: white;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.modal-head{
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.modal-head h4{
+  text-align: center;
+  font-weight: bold;
+}
+.modal-head i{
+  cursor: pointer;
+  font-size: 20px;
+}
+.modal-body{
+  text-align: left;
+  overflow-y: auto;
+  background-color: white;
+}
+/* Diff Viewer */
+.diff-viewer {
+  display: flex;
+}
+.diff-column {
+  width: 50%;
+  position: relative;
+}
+.diff-column h3 {
+  margin: 0;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border: 1px solid lightgray;
+  background-color: rgb(245, 244, 244);
+}
+.diff-container {
+  display: flex;
+}
+.diff-content{
+  width: 100%;
+}
+.diff-line div{
+  padding: 7px 0;
+  width: 1100px;
+}
+.line-number {
+  font-size: 12px;
+  width: 40px;
+  height: 35px;
+  text-align: right;
+  padding: 8px 15px 0 15px;
+  border-right: 1px solid lightgray;
+  border-left: 1px solid lightgray;
+  background-color: rgb(245, 244, 244);
+}
+.same {
+  background-color: none;
+}
+.old-line {
+  flex: 1;
+  padding-top: 5px;
+  background-color: rgb(252, 200, 200);
+}
+.new-line {
+  flex: 1;
+  padding-top: 5px;
+  background-color: rgb(204, 243, 204);
+}
+.removed {
+  background-color: rgb(239, 121, 121);
+}
+.added {
+  background-color: rgb(130, 227, 130);
+}
+/* Footer */
+.footer{
+  width: 100%;
+  text-align: center;
+  padding: 5px 0;
+  background-color: white;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  font-size: 8px;
+  box-shadow: 1px 1px 5px #afaeae;
+}
+.footer img{
+  width: 20px;
+  padding-right: 4px;
+}
+.footer span{
+  font-weight: bold;
 }

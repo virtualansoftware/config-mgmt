@@ -11,6 +11,8 @@ import KeyValue from "./components/KeyValue";
 import GenerateConfig from './components/GenerateConfig';
 import UploadConfig from './components/UploadConfig';
 import Common from './components/Common';
+import Harness from './components/Harness';
+import Footer from './components/Footer';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 
 const router = createBrowserRouter([
@@ -24,6 +26,7 @@ const router = createBrowserRouter([
           <h3>Welcome to Config Management!!!</h3>
           <p>Simplify Complexity with Expert Configuration Management</p>
         </div>
+        <Footer/>
       </>
     ),
   },
@@ -34,6 +37,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <KeyValue />
+        <Footer/>
       </>
     ),
   },
@@ -44,6 +48,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <GenerateConfig />
+        <Footer/>
       </>
     ),
   },
@@ -54,6 +59,7 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <UploadConfig />
+        <Footer/>
       </>
     ),
   },
@@ -64,6 +70,18 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <Common />
+        <Footer/>
+      </>
+    ),
+  },
+  {
+    path: "/harness",
+    element: (
+      <>
+        <Header/>
+        <Sidebar onRetrieve={() => {}} />
+        <Harness />
+        <Footer/>
       </>
     ),
   },

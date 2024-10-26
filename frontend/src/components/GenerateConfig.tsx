@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE } from '../constants';
+import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOINT_GENERATE_PREVIEW } from '../constants';
 import Sidebar from './Sidebar';
 import { toast } from 'react-toastify';
+import DiffViewer from './DiffViewer';
 
 export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
     const[textArea, setTextArea] = useState("");
-    // const[message, setMessage] = useState({text:"", type:""});
     const[loading, setLoading] = useState(false);
     const[isDisabled, setIsDisabled] = useState(false);
+    const[showDiffViewer, setShowDiffViewer] = useState(false);
+    const[oldFileContent, setOldFileContent] = useState("");
+    const[newFileContent, setNewFileContent] = useState("");
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -28,28 +31,68 @@ export default function GenerateConfig() {
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            // setMessage({ text: "", type: "" });
             setIsDisabled(false);
         }
     }, [window.location.search]);
 
-    // CLEARS THE MESSAGE AFTER 3 SEC
-    // useEffect(() => {
-    //     if (message.text) {
-    //         const timer = setTimeout(() => {
-    //             setMessage({ text: "", type: "" });
-    //         }, 3000);
-    //         return () => clearTimeout(timer);
-    //     }
-    // }, [message]);
+    // GET METHOD - DISPLAY PREVIEW TEMPLATE
+    async function previewConfig(){       
+        if (!applicationName || !envName || !configurationFileName) {
+            toast.error("Please fill in all the fields");
+            return;
+        }
 
-    // POST METHOD - GENERATE CONFIG
+        try {
+            setLoading(true);
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
+                params: {
+                    application_name: applicationName,
+                    env_name: envName,
+                    configuration_file_name: configurationFileName
+                }
+            });
+
+            let oldDisplayData = typeof response.data === 'object' 
+                ? JSON.stringify(response.data, null, 4) 
+                : response.data.toString();
+            
+            const responsePreview = await axios.post(API_POST_ENDPOINT_GENERATE_PREVIEW, {
+                application_name: applicationName,
+                env_name: envName,
+                configuration_file_name: configurationFileName
+            }, {
+                headers: { "Content-Type": "application/json" },
+            });
+
+            let newDisplayData = typeof responsePreview.data === 'object' 
+                ? JSON.stringify(responsePreview.data, null, 4) 
+                : responsePreview.data.toString();
+
+            setOldFileContent(oldDisplayData);
+            setNewFileContent(newDisplayData);
+            setShowDiffViewer(true);
+            setLoading(false);
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+            toast.error("Failed to fetch data");
+            setLoading(false);
+        }
+    }
+
+    // POST METHOD - GENERATE TEMPLATE
     async function generateConfig(){
         if (!applicationName || !envName || !configurationFileName) {
+            toast.error("Please fill in all the fields");
+            return;
+        }
+
+        if (oldFileContent === newFileContent){
+            toast.error("No changes to generate");
             return;
         }
 
         try{
+            setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT_GENERATE, {
                 application_name: applicationName,
                 env_name: envName,
@@ -57,21 +100,22 @@ export default function GenerateConfig() {
             }, {
                 headers: { "Content-Type": "application/json" },
             });
-            // setMessage({text:"Data generated successfully", type:"success"});
             toast.success("Data generated successfully");
             setApplicationName("");
             setConfigurationFileName("");
             setEnvName("");
             setTextArea("");
+            setLoading(false);
             setIsDisabled(false);
+            setShowDiffViewer(false);
         } catch(error){
             console.error("Error sending data: ", error);
-            // setMessage({text:"Failed to send data", type:"error"});
             toast.error("Failed to send data");
+            setLoading(false);
         }
     }
 
-    // GET METHOD - GET GENERATED CONFIG
+    // GET METHOD - GET GENERATED TEMPLATE
     async function retrieve() {
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
@@ -91,18 +135,38 @@ export default function GenerateConfig() {
                     configuration_file_name
                 }
             });
-            setTextArea(JSON.stringify(response.data, null, 4));
-            // setMessage({ text: "Data fetched successfully", type: "success" });
+            let displayData;
+
+            if (typeof response.data === 'object') {
+                displayData = JSON.stringify(response.data, null, 4);
+            } else {
+                displayData = response.data.toString();
+            }
+
+            setTextArea(displayData);
             toast.success("Data fetched successfully");
             setLoading(false);
             setIsDisabled(true);
         } catch (error) {
             console.error("Error fetching pairs:", error);
-            // setMessage({ text: "Failed to fetch data", type: "error" });
-            toast.error("Failed to send data");
+            toast.error("Failed to fetch data");
+            setLoading(false);
         }
     }
 
+    // DOWNLOADING GENERATED TEMPLATE
+    function downloadFile() {
+        const blob = new Blob([textArea], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${configurationFileName}.txt`;
+        link.click();
+    };
+
+    function close() {
+        setShowDiffViewer(false);
+    };
+    
     return (
         <>
             <Sidebar onRetrieve={retrieve}/>
@@ -148,19 +212,36 @@ export default function GenerateConfig() {
                                         <label>Text Template</label><br/>
                                         <textarea
                                             className="textarea"
-                                            rows={5}
+                                            rows={20}
                                             value={textArea}
                                             onChange={(e) => setTextArea(e.target.value)}
                                             disabled={isDisabled}
                                         />
+                                        <div className="download">
+                                            <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
+                                            <button className='btn btn-success' onClick={downloadFile}>Download</button>
+                                        </div>
                                     </div>
                                 )}
                             </>
                         )}
                     </div>
-                    {/* <p className={message.type === "success" ? "success" : "error" }>{message.text}</p> */}
                     {!isDisabled && (
-                        <button className='btn btn-success' onClick={generateConfig}>Generate</button>
+                        <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
+                    )}
+                    { showDiffViewer && (
+                        <div className="modal-overlay">
+                            <div className="modal-content">
+                                <div className="modal-head">
+                                    <h4>Preview</h4>
+                                    <i className="fa-solid fa-xmark" onClick={close}></i>
+                                </div>
+                                <div className="modal-body">
+                                   <DiffViewer oldText={oldFileContent} newText={newFileContent} />
+                                </div>
+                                <button className='btn btn-success' onClick={generateConfig}>Generate</button>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
