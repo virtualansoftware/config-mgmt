@@ -173,7 +173,11 @@ export default function KeyValue(){
             const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
                 params: { env_name },
             });
-    
+            const commonData: string = commonResponse.data.commonMap;
+            const newPairs: Record<string, string> = Object.entries(commonData).reduce((acc, [key, value]) => {
+                acc[key.trim()] = value;
+                return acc;
+            }, {} as Record<string, string>);
             const commonKeys = Object.keys(commonResponse.data.commonMap);
             
             const pairs: { key: string; value: string | null }[] = [];
@@ -184,7 +188,7 @@ export default function KeyValue(){
                     const key = match.replace(/\{\{|\}\}/g, '').trim();
                     
                     if (!keysSet.has(key)) {
-                        pairs.push({ key, value: null }); 
+                        pairs.push({ key, value: newPairs[key] }); 
                         keysSet.add(key);
                     }
                 }
