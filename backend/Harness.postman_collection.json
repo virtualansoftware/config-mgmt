@@ -1,0 +1,834 @@
+{
+	"info": {
+		"_postman_id": "15bd5c7c-ae64-4e7e-b81f-2759f127b08f",
+		"name": "Harness",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14314459",
+		"_collection_link": "https://virtualansoftware.postman.co/workspace/virtualan-sv~d5c4abc5-2d8a-4c6a-aed8-6bacafccf0e7/collection/14314459-15bd5c7c-ae64-4e7e-b81f-2759f127b08f?action=share&source=collection_link&creator=14314459"
+	},
+	"item": [
+		{
+			"name": "Create Service",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Harness-Account",
+						"value": "xxxxx"
+					},
+					{
+						"key": "x-api-key",
+						"value": "xxxx"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountId\": \"xxxxx\",\r\n    \"identifier\": \"virtualanopenapiauto1\",\r\n    \"orgIdentifier\": \"default\",\r\n    \"projectIdentifier\": \"ias_template\",\r\n    \"name\": \"virtualan-openapi-auto-1\",\r\n    \"deleted\": false,\r\n    \"tags\": {},\r\n    \"yaml\": \"service:\\n  name: virtualan-openapi-auto-1\\n  identifier: virtualanopenapiauto1\\n  orgIdentifier: default\\n  projectIdentifier: ias_template\\n  serviceDefinition:\\n    spec:\\n      manifests:\\n        - manifest:\\n            identifier: autodemo1\\n            type: K8sManifest\\n            spec:\\n              store:\\n                type: Github\\n                spec:\\n                  connectorRef: account.GIT\\n                  gitFetchType: Branch\\n                  paths:\\n                    - servicedeploy.yaml\\n                  branch: elan-harness-auto-1\\n              skipResourceVersioning: false\\n              enableDeclarativeRollback: false\\n    type: Kubernetes\\n\",\r\n    \"v2Service\": false,\r\n    \"connectorRef\": \"account.GIT\",\r\n    \"storeType\": \"REMOTE\",\r\n    \"fallbackBranch\": \"elan-harness-auto-1\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/v1/services",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"v1",
+						"services"
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\r\n  https://app.harness.io/v1/services \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'Harness-Account: string' \\\r\n  -H 'x-api-key: YOUR_API_KEY_HERE' \\\r\n  -d '{\r\n    \"identifier\": \"example_service\",\r\n    \"name\": \"Example_service\",\r\n    \"description\": \"This is a example service\",\r\n    \"tags\": {\r\n      \"example-tag-1\": \"example-tag-1-value\",\r\n      \"example-tag-2\": \"example-tag-2-value\"\r\n    },\r\n    \"yaml\": \"service:\\n  name: \\\"Example_service\\\"\\n  identifier: \\\"example_service\\\"\\n  tags: {}\\n\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Services",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "xxxxx"
+					}
+				],
+				"url": {
+					"raw": "https://app.harness.io/gateway/ng/api/servicesV2/virtualanopenapiauto?accountIdentifier=xxxxx&orgIdentifier=default&projectIdentifier=ias_template&deleted=false&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"ng",
+						"api",
+						"servicesV2",
+						"virtualanopenapiauto"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "default"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "ias_template"
+						},
+						{
+							"key": "deleted",
+							"value": "false"
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/ng/api/servicesV2/tempor adipisicing?accountIdentifier=tempor%20adipisicing&orgIdentifier=tempor%20adipisicing&projectIdentifier=tempor%20adipisicing&deleted=false' \\\r\n--header 'x-api-key: ••••••'"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Pipeline",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "xxxxx"
+					}
+				],
+				"url": {
+					"raw": "https://app.harness.io/gateway/pipeline/api/pipelines/virtualanpipelineauto?accountIdentifier=xxxxx&orgIdentifier=default&projectIdentifier=ias_template&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"pipeline",
+						"api",
+						"pipelines",
+						"virtualanpipelineauto"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "default"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "ias_template"
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						},
+						{
+							"key": "repoIdentifier",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "getDefaultFromOtherRepo",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/pipeline/api/pipelines/tempor adipisicing?accountIdentifier=tempor%20adipisicing&orgIdentifier=tempor%20adipisicing&projectIdentifier=tempor%20adipisicing&branch=tempor%20adipisicing&repoIdentifier=tempor%20adipisicing&getDefaultFromOtherRepo=true' \\\r\n--header 'x-api-key: <API Key>'"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Env",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "pat.xxxxx.66ff6a0ed617c1381e84b5fa.WOSOeRXgIgmsMd0Cxi4M"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/gateway/ng/api/environmentsV2/awsvirtualanautoenv?accountIdentifier=xxxxx&orgIdentifier=default&projectIdentifier=ias_template&deleted=false&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"ng",
+						"api",
+						"environmentsV2",
+						"awsvirtualanautoenv"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "default"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "ias_template"
+						},
+						{
+							"key": "deleted",
+							"value": "false"
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/ng/api/environmentsV2/tempor adipisicing?accountIdentifier=tempor%20adipisicing&orgIdentifier=tempor%20adipisicing&projectIdentifier=tempor%20adipisicing&deleted=false' \\\r\n--header 'x-api-key: pat.xxxxx.66ff6a0ed617c1381e84b5fa.WOSOeRXgIgmsMd0Cxi4M'"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Env",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "pat.xxxxx.66ff6a0ed617c1381e84b5fa.WOSOeRXgIgmsMd0Cxi4M"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\r\n        \"accountId\": \"xxxxx\",\r\n        \"orgIdentifier\": \"default\",\r\n        \"projectIdentifier\": \"ias_template\",\r\n        \"identifier\": \"awsvirtualanautoenv\",\r\n        \"name\": \"aws-virtualan-auto-env\",\r\n        \"color\": \"#0063F7\",\r\n        \"type\": \"PreProduction\",\r\n        \"deleted\": false,\r\n        \"tags\": {},\r\n        \"yaml\": \"environment:\\n  name: aws-virtualan-auto-env\\n  identifier: awsvirtualanautoenv\\n  orgIdentifier: default\\n  projectIdentifier: ias_template\\n  type: PreProduction\\n\",\r\n        \"connectorRef\": \"account.VirtualanGIT\",\r\n        \"storeType\": \"REMOTE\",\r\n        \"fallbackBranch\": \"elan-harness-demo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/gateway/ng/api/environmentsV2?accountIdentifier=xxxxx",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"ng",
+						"api",
+						"environmentsV2"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/ng/api/environmentsV2?accountIdentifier=tempor%20adipisicing' \\\r\n--header 'Content-Type: application/json' \\\r\n--header 'x-api-key: pat.xxxxx.66ff6a0ed617c1381e84b5fa.WOSOeRXgIgmsMd0Cxi4M' \\\r\n--data '{\r\n    \"orgIdentifier\": \"sint\",\r\n    \"projectIdentifier\": \"sint\",\r\n    \"identifier\": \"esse \",\r\n    \"tags\": {},\r\n    \"name\": \"dolor veniam irure deserunt nisi\",\r\n    \"description\": \"minim mol\",\r\n    \"color\": \"ut esse\",\r\n    \"type\": \"PreProduction\",\r\n    \"version\": -95711279\r\n}'"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Infra",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "xxxxx"
+					}
+				],
+				"url": {
+					"raw": "https://app.harness.io/ng/api/infrastructures/awsvirtualaninfrademo?accountIdentifier=xxxxx&orgIdentifier=default&projectIdentifier=ias_template&environmentIdentifier=awsvirtualandemoenv&deleted=false&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"ng",
+						"api",
+						"infrastructures",
+						"awsvirtualaninfrademo"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "default"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "ias_template"
+						},
+						{
+							"key": "environmentIdentifier",
+							"value": "awsvirtualandemoenv"
+						},
+						{
+							"key": "deleted",
+							"value": "false"
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -i -X GET \\\r\n  'https://app.harness.io/ng/api/infrastructures/{infraIdentifier}?accountIdentifier=string&orgIdentifier=string&projectIdentifier=string&environmentIdentifier=string&deleted=false' \\\r\n  -H 'x-api-key: YOUR_API_KEY_HERE'"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Infra",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "xxxxx"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"accountId\": \"xxxxx\",\r\n    \"identifier\": \"awsvirtualaninfraauto\",\r\n    \"orgIdentifier\": \"default\",\r\n    \"projectIdentifier\": \"ias_template\",\r\n    \"environmentRef\": \"awsvirtualanautoenv\",\r\n    \"name\": \"aws-virtualan-infra-auto\",\r\n    \"tags\": {},\r\n    \"type\": \"KubernetesDirect\",\r\n    \"deploymentType\": \"Kubernetes\",\r\n    \"yaml\": \"infrastructureDefinition:\\n  name: aws-virtualan-infra-auto\\n  identifier: awsvirtualaninfraauto\\n  orgIdentifier: default\\n  projectIdentifier: ias_template\\n  environmentRef: awsvirtualanautoenv\\n  deploymentType: Kubernetes\\n  type: KubernetesDirect\\n  scopedServices:\\n    - virtualanopenapiauto\\n  spec:\\n    connectorRef: demo\\n    namespace: virtualan-auto\\n    releaseName: release-<+INFRA_KEY_SHORT_ID>\\n  allowSimultaneousDeployments: true\\n\",\r\n    \"storeType\": \"INLINE\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/ng/api/infrastructures?accountIdentifier=xxxxx",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"ng",
+						"api",
+						"infrastructures"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\r\n  'https://app.harness.io/ng/api/infrastructures?accountIdentifier=string' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'x-api-key: YOUR_API_KEY_HERE' \\\r\n  -d '{\r\n    \"name\": \"infrastructure\",\r\n    \"identifier\": \"infrastructureId\",\r\n    \"description\": \"infrastructure description\",\r\n    \"tags\": {},\r\n    \"orgIdentifier\": \"default\",\r\n    \"projectIdentifier\": \"projectIdentifier\",\r\n    \"environmentRef\": \"environmentId\",\r\n    \"deploymentType\": \"Kubernetes\",\r\n    \"type\": \"KubernetesDirect\",\r\n    \"yaml\": \"infrastructureDefinition:\\n  name: infrastructure\\n  identifier: infrastructure\\n  description: infrastructure description\\n  tags: {}\\n  orgIdentifier: default\\n  projectIdentifier: projectIdentifier\\n  environmentRef: environmentId\\n  deploymentType: Kubernetes\\n  type: KubernetesDirect\\n  spec:\\n    connectorRef: connectorId\\n    namespace: namespace\\n    releaseName: release-<+INFRA_KEY>\\n  allowSimultaneousDeployments: false\\n\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "Create pipeline",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "xxxxx"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"pipeline\": {\r\n    \"name\": \"virtualan-pipeline-auto\",\r\n    \"identifier\": \"virtualanpipelineauto\",\r\n    \"projectIdentifier\": \"ias_template\",\r\n    \"orgIdentifier\": \"default\",\r\n    \"tags\": {},\r\n    \"stages\": [\r\n      {\r\n        \"stage\": {\r\n          \"name\": \"deploy\",\r\n          \"identifier\": \"deploy\",\r\n          \"description\": \"\",\r\n          \"type\": \"Deployment\",\r\n          \"spec\": {\r\n            \"deploymentType\": \"Kubernetes\",\r\n            \"service\": {\r\n              \"serviceRef\": \"virtualanopenapiauto\"\r\n            },\r\n            \"environment\": {\r\n              \"environmentRef\": \"awsvirtualanautoenv\",\r\n              \"deployToAll\": false,\r\n              \"infrastructureDefinitions\": [\r\n                {\r\n                  \"identifier\": \"awsvirtualaninfraauto\"\r\n                }\r\n              ]\r\n            },\r\n            \"execution\": {\r\n              \"steps\": [\r\n                {\r\n                  \"step\": {\r\n                    \"name\": \"Rollout Deployment\",\r\n                    \"identifier\": \"rolloutDeployment\",\r\n                    \"type\": \"K8sRollingDeploy\",\r\n                    \"timeout\": \"10m\",\r\n                    \"spec\": {\r\n                      \"skipDryRun\": false,\r\n                      \"pruningEnabled\": false\r\n                    }\r\n                  }\r\n                }\r\n              ],\r\n              \"rollbackSteps\": [\r\n                {\r\n                  \"step\": {\r\n                    \"name\": \"Rollback Rollout Deployment\",\r\n                    \"identifier\": \"rollbackRolloutDeployment\",\r\n                    \"type\": \"K8sRollingRollback\",\r\n                    \"timeout\": \"10m\",\r\n                    \"spec\": {\r\n                      \"pruningEnabled\": false\r\n                    }\r\n                  }\r\n                }\r\n              ]\r\n            }\r\n          },\r\n          \"tags\": {},\r\n          \"failureStrategies\": [\r\n            {\r\n              \"onFailure\": {\r\n                \"errors\": [\r\n                  \"AllErrors\"\r\n                ],\r\n                \"action\": {\r\n                  \"type\": \"StageRollback\"\r\n                }\r\n              }\r\n            }\r\n          ]\r\n        }\r\n      }\r\n    ]\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/gateway/pipeline/api/pipelines/v2?accountIdentifier=xxxxx&orgIdentifier=default&projectIdentifier=ias_template&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"pipeline",
+						"api",
+						"pipelines",
+						"v2"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "xxxxx"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "default"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "ias_template"
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						},
+						{
+							"key": "repoIdentifier",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "rootFolder",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "filePath",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "commitMsg",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "isNewBranch",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "baseBranch",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/pipeline/api/pipelines/v2?accountIdentifier=tempor%20adipisicing&orgIdentifier=tempor%20adipisicing&projectIdentifier=tempor%20adipisicing&branch=tempor%20adipisicing&repoIdentifier=tempor%20adipisicing&rootFolder=tempor%20adipisicing&filePath=tempor%20adipisicing&commitMsg=tempor%20adipisicing&isNewBranch=false&baseBranch=tempor%20adipisicing' \\\r\n--header 'Content-Type: application/json' \\\r\n--header 'x-api-key: <API Key>' \\\r\n--data '\"tempor adipisicing\"'"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Inputset",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-api-key",
+						"value": "{{api-token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/gateway/pipeline/api/inputSets/virtualannsautoinputset?accountIdentifier={{accountIdentifier}}&orgIdentifier={{orgIdentifier}}&projectIdentifier={{projectIdentifier}}&pipelineIdentifier=virtualanpipelineauto&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"pipeline",
+						"api",
+						"inputSets",
+						"virtualannsautoinputset"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "{{accountIdentifier}}"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "{{orgIdentifier}}"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "{{projectIdentifier}}"
+						},
+						{
+							"key": "pipelineIdentifier",
+							"value": "virtualanpipelineauto"
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						},
+						{
+							"key": "repoIdentifier",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "getDefaultFromOtherRepo",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/pipeline/api/inputSets/tempor adipisicing?accountIdentifier=tempor%20adipisicing&orgIdentifier=tempor%20adipisicing&projectIdentifier=tempor%20adipisicing&pipelineIdentifier=tempor%20adipisicing&branch=tempor%20adipisicing&repoIdentifier=tempor%20adipisicing&getDefaultFromOtherRepo=true' \\\r\n--header 'x-api-key: <API Key>'"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Inputset",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "{{api-token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"inputSet\": {\r\n    \"name\": \"deploy-ns-virtualan-auto\",\r\n    \"identifier\": \"deploynsvirtualanauto\",\r\n    \"orgIdentifier\": \"default\",\r\n    \"projectIdentifier\": \"ias_template\",\r\n    \"pipeline\": {\r\n      \"identifier\": \"virtualanpipelineauto\",\r\n      \"stages\": [\r\n        {\r\n          \"stage\": {\r\n            \"identifier\": \"deploy\",\r\n            \"type\": \"Deployment\",\r\n            \"spec\": {\r\n              \"service\": {\r\n                \"serviceRef\": \"virtualanopenapiauto\"\r\n              },\r\n              \"environment\": {\r\n                \"environmentRef\": \"awsvirtualanautoenv\",\r\n                \"infrastructureDefinitions\": [\r\n                  {\r\n                    \"identifier\": \"awsvirtualaninfraauto\"\r\n                  }\r\n                ]\r\n              }\r\n            }\r\n          }\r\n        }\r\n      ]\r\n    }\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/gateway/pipeline/api/inputSets?accountIdentifier={{accountIdentifier}}&orgIdentifier={{orgIdentifier}}&projectIdentifier={{projectIdentifier}}&pipelineIdentifier=virtualanpipelineauto&branch=elan-harness-demo",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"gateway",
+						"pipeline",
+						"api",
+						"inputSets"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "{{accountIdentifier}}"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "{{orgIdentifier}}"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "{{projectIdentifier}}"
+						},
+						{
+							"key": "pipelineIdentifier",
+							"value": "virtualanpipelineauto"
+						},
+						{
+							"key": "pipelineBranch",
+							"value": "tempor%20adipisicing{{a",
+							"disabled": true
+						},
+						{
+							"key": "pipelineRepoID",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "branch",
+							"value": "elan-harness-demo"
+						},
+						{
+							"key": "repoIdentifier",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "rootFolder",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "filePath",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "commitMsg",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						},
+						{
+							"key": "isNewBranch",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "baseBranch",
+							"value": "tempor%20adipisicing",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Generated from cURL: curl --location 'https://app.harness.io/gateway/pipeline/api/inputSets?accountIdentifier=tempor%20adipisicing&orgIdentifier=tempor%20adipisicing&projectIdentifier=tempor%20adipisicing&pipelineIdentifier=tempor%20adipisicing&pipelineBranch=tempor%20adipisicing&pipelineRepoID=tempor%20adipisicing&branch=tempor%20adipisicing&repoIdentifier=tempor%20adipisicing&rootFolder=tempor%20adipisicing&filePath=tempor%20adipisicing&commitMsg=tempor%20adipisicing&isNewBranch=false&baseBranch=tempor%20adipisicing' \\\r\n--header 'Content-Type: application/json' \\\r\n--header 'x-api-key: <API Key>' \\\r\n--data '\"tempor adipisicing\"'"
+			},
+			"response": []
+		},
+		{
+			"name": "Execute Input",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "{{api-token}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"inputSetReferences\": [\r\n      \"deploynsvirtualanauto\"\r\n    ],\r\n    \"withMergedPipelineYaml\": true,\r\n    \"stageIdentifiers\": [\r\n      \r\n    ]\r\n    \r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/pipeline/api/pipeline/execute/virtualanpipelineauto/inputSetList?accountIdentifier={{accountIdentifier}}&orgIdentifier={{orgIdentifier}}&projectIdentifier={{projectIdentifier}}",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"pipeline",
+						"api",
+						"pipeline",
+						"execute",
+						"virtualanpipelineauto",
+						"inputSetList"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "{{accountIdentifier}}"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "{{orgIdentifier}}"
+						},
+						{
+							"key": "projectIdentifier",
+							"value": "{{projectIdentifier}}"
+						},
+						{
+							"key": "moduleType",
+							"value": "",
+							"disabled": true
+						},
+						{
+							"key": "branch",
+							"value": "string",
+							"disabled": true
+						},
+						{
+							"key": "repoIdentifier",
+							"value": "string",
+							"disabled": true
+						},
+						{
+							"key": "getDefaultFromOtherRepo",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "useFQNIfError",
+							"value": "false",
+							"disabled": true
+						},
+						{
+							"key": "notesForPipelineExecution",
+							"value": "",
+							"disabled": true
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\r\n  'https://app.harness.io/pipeline/api/pipeline/execute/{identifier}/inputSetList?accountIdentifier=string&orgIdentifier=string&projectIdentifier=string&moduleType=string&branch=string&repoIdentifier=string&getDefaultFromOtherRepo=true&useFQNIfError=false&notesForPipelineExecution=' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'x-api-key: YOUR_API_KEY_HERE' \\\r\n  -d '{\r\n    \"inputSetReferences\": [\r\n      \"string\"\r\n    ],\r\n    \"withMergedPipelineYaml\": true,\r\n    \"stageIdentifiers\": [\r\n      \"string\"\r\n    ],\r\n    \"lastYamlToMerge\": \"string\"\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Connector ",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "API_KEY_TOKEN"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"connector\": {\r\n      \"name\": \"dockerhub\",\r\n      \"identifier\": \"dockerhub\",\r\n      \"description\": \"\",\r\n      \"accountIdentifier\": \"ACCOUNT_ID\",\r\n      \"orgIdentifier\": \"default\",\r\n      \"projectIdentifier\": \"apisample\",\r\n      \"tags\": {},\r\n      \"type\": \"DockerRegistry\",\r\n      \"spec\": {\r\n        \"connectorType\": \"DockerConnector\",\r\n        \"dockerRegistryUrl\": \"https://index.docker.io/v2/\",\r\n        \"providerType\": \"DockerHub\",\r\n        \"auth\":\r\n          \"type\": \"Anonymous\"\r\n      }\r\n    }\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/ng/api/connectors?accountIdentifier=ACCOUNT_ID",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"ng",
+						"api",
+						"connectors"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "ACCOUNT_ID"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\r\n  'https://app.harness.io/ng/api/connectors?accountIdentifier=ACCOUNT_ID' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'x-api-key: API_KEY_TOKEN' \\\r\n  -d '{\r\n    \"connector\": {\r\n      \"name\": \"dockerhub\",\r\n      \"identifier\": \"dockerhub\",\r\n      \"description\": \"\",\r\n      \"accountIdentifier\": \"ACCOUNT_ID\",\r\n      \"orgIdentifier\": \"default\",\r\n      \"projectIdentifier\": \"apisample\",\r\n      \"tags\": {},\r\n      \"type\": \"DockerRegistry\",\r\n      \"spec\": {\r\n        \"connectorType\": \"DockerConnector\",\r\n        \"dockerRegistryUrl\": \"https://index.docker.io/v2/\",\r\n        \"providerType\": \"DockerHub\",\r\n        \"auth\":\r\n          \"type\": \"Anonymous\"\r\n      }\r\n    }\r\n  }'"
+			},
+			"response": []
+		},
+		{
+			"name": "Create Project",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "x-api-key",
+						"value": "API_KEY_TOKEN"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"project\": {\r\n      \"orgIdentifier\": \"default\",\r\n      \"identifier\": \"apisample\",\r\n      \"name\": \"APISample\",\r\n      \"color\": \"#0063F7\",\r\n      \"modules\": [],\r\n      \"description\": \"\",\r\n      \"tags\": {}\r\n    }\r\n  }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://app.harness.io/ng/api/projects?accountIdentifier=ACCOUNT_ID&orgIdentifier=default",
+					"protocol": "https",
+					"host": [
+						"app",
+						"harness",
+						"io"
+					],
+					"path": [
+						"ng",
+						"api",
+						"projects"
+					],
+					"query": [
+						{
+							"key": "accountIdentifier",
+							"value": "ACCOUNT_ID"
+						},
+						{
+							"key": "orgIdentifier",
+							"value": "default"
+						}
+					]
+				},
+				"description": "Generated from cURL: curl -i -X POST \\\r\n  'https://app.harness.io/ng/api/projects?accountIdentifier=ACCOUNT_ID&orgIdentifier=default' \\\r\n  -H 'Content-Type: application/json' \\\r\n  -H 'x-api-key: API_KEY_TOKEN' \\\r\n  -d '{\r\n    \"project\": {\r\n      \"orgIdentifier\": \"default\",\r\n      \"identifier\": \"apisample\",\r\n      \"name\": \"APISample\",\r\n      \"color\": \"#0063F7\",\r\n      \"modules\": [],\r\n      \"description\": \"\",\r\n      \"tags\": {}\r\n    }\r\n  }'"
+			},
+			"response": []
+		}
+	]
+}
