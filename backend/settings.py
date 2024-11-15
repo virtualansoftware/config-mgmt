@@ -34,7 +34,6 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY: str = os.getenv("AWS_ACCESS_KEY")
     AWS_SECRET_KEY: str = os.getenv("AWS_SECRET_KEY")
     API_KEY: str = os.getenv("API_KEY")
-    HARNESS_API_KEY: str = os.getenv("HARNESS_API_KEY")
     CLIENT_ID: str = os.getenv("CLIENT_ID")
     CLIENT_SECRET: str = os.getenv("CLIENT_SECRET")
     OAUTH_TOKEN_URL: str = os.getenv("OAUTH_TOKEN_URL")
@@ -48,6 +47,7 @@ class Settings(BaseSettings):
     TEMPLATE_PREFIX: str = 'config-mgmt/templates'
     GENERATED_PREFIX: str = 'config-mgmt/generated'
     model_config = SettingsConfigDict(extra=Extra.allow, env_file='.env', env_file_encoding='utf-8')
-    HARNESS_BASE_URL = 'https://app.harness.io'
+    HARNESS_BASE_URL: str = 'https://app.harness.io'
+    HARNESS_API_KEY: str = os.getenv("HARNESS_API_KEY")
 
 settings = Settings()
