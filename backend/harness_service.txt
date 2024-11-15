@@ -1,0 +1,14 @@
+{
+    "accountId": "{{accountIdentifier}}",
+    "identifier": "{{identifier}}",
+    "orgIdentifier": "{{orgIdentifier}}",
+    "projectIdentifier": "{{projectIdentifier}}",
+    "name": "{{serviceName}}",
+    "deleted": false,
+    "tags": {},
+    "yaml": "service:\n  name: {{serviceName}}\n  identifier: {{identifier}}\n  orgIdentifier: {{orgIdentifier}}\n  projectIdentifier: {{projectIdentifier}}\n  serviceDefinition:\n    spec:\n      manifests:\n        - manifest:\n            identifier: autodemo1\n            type: K8sManifest\n            spec:\n              store:\n                type: Github\n                spec:\n                  connectorRef: account.GIT\n                  gitFetchType: Branch\n                  paths:\n                    - servicedeploy.yaml\n                  branch: elan-harness-auto-1\n              skipResourceVersioning: false\n              enableDeclarativeRollback: false\n    type: Kubernetes\n",
+    "v2Service": false,
+    "connectorRef": "account.GIT",
+    "storeType": "REMOTE",
+    "fallbackBranch": "elan-harness-auto-1"
+}

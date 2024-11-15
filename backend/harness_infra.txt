@@ -1,0 +1,13 @@
+{
+    "accountId": "{{accountIdentifier}}",
+    "identifier": "{{infraIdentifier}}",
+    "orgIdentifier": "{{orgIdentifier}}",
+    "projectIdentifier": "{{projectIdentifier}}",
+    "environmentRef": "{{envIdentifier}}",
+    "name": "{{infraName}}",
+    "tags": {},
+    "type": "KubernetesDirect",
+    "deploymentType": "Kubernetes",
+    "yaml": "infrastructureDefinition:\n  name: {{infraName}}\n  identifier: {{infraIdentifier}}\n  orgIdentifier: {{orgIdentifier}}\n  projectIdentifier: {{projectIdentifier}}\n  environmentRef: {{envIdentifier}}\n  deploymentType: Kubernetes\n  type: KubernetesDirect\n  scopedServices:\n    - {{ServiceIdentifier}}\n  spec:\n    connectorRef: demo\n    namespace: {{kubeNamespace}}\n    releaseName: release-<+INFRA_KEY_SHORT_ID>\n  allowSimultaneousDeployments: true\n",
+    "storeType": "INLINE"
+}

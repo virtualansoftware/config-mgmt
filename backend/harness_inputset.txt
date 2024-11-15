@@ -1,0 +1,32 @@
+{
+  "inputSet": {
+    "name": "{{inputSetName}}",
+    "identifier": "{{inputSetIdentifier}}",
+    "orgIdentifier": "{{orgIdentifier}}",
+    "projectIdentifier": "{{projectIdentifier}}",
+    "pipeline": {
+      "identifier": "{{pipelineIdentifier}}",
+      "stages": [
+        {
+          "stage": {
+            "identifier": "deploy",
+            "type": "Deployment",
+            "spec": {
+              "service": {
+                "serviceRef": "{{serviceIdentifier}}"
+              },
+              "environment": {
+                "environmentRef": "{{envIdentifier}}",
+                "infrastructureDefinitions": [
+                  {
+                    "identifier": "{{infraIdentifier}}"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

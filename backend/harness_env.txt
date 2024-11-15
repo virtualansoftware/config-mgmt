@@ -1,0 +1,16 @@
+{
+
+        "accountId": "{{accountIdentifier}}",
+        "orgIdentifier": "{{orgIdentifier}}",
+        "projectIdentifier": "{{projectIdentifier}}",
+        "identifier": "{{identifier}}",
+        "name": "{{harnessEnvName}}",
+        "color": "#0063F7",
+        "type": "PreProduction",
+        "deleted": false,
+        "tags": {},
+        "yaml": "environment:\n  name: {{harnessEnvName}}\n  identifier: {{identifier}}\n  orgIdentifier: {{orgIdentifier}}\n  projectIdentifier: {{projectIdentifier}}\n  type: PreProduction\n",
+        "connectorRef": "account.VirtualanGIT",
+        "storeType": "REMOTE",
+        "fallbackBranch": "elan-harness-demo"
+}
