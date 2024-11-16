@@ -10,7 +10,7 @@ class HarnessPipelineClient:
             "x-api-key": api_key
         }
 
-    def create_pipeline(self, org_identifier, project_identifier, branch, data):
+    def create_pipeline( org_identifier, project_identifier, branch, data):
         """Creates a pipeline in the Harness API."""
         url = f"{self.base_url}/gateway/pipeline/api/pipelines/v2?accountIdentifier={self.account_id}&orgIdentifier={org_identifier}&projectIdentifier={project_identifier}&branch={branch}"
 

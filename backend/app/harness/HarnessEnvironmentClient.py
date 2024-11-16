@@ -27,7 +27,7 @@ class HarnessEnvironmentClient:
             print("An error occurred:", e)
             return None
 
-    def create_harness_environment(self, account_id, data):
+    def create_harness_environment( account_id, data):
         """Creates an environment and prints the response."""
         client = HarnessEnvironmentClient(
             base_url=settings.HARNESS_BASE_URL,

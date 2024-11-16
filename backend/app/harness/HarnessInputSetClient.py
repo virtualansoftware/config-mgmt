@@ -26,7 +26,7 @@ class HarnessInputSetClient:
             print("An error occurred:", e)
             return None
 
-    def create_harness_input_set(self, account_id, org_identifier, project_identifier, pipeline_identifier, branch, data):
+    def create_harness_input_set( account_id, org_identifier, project_identifier, pipeline_identifier, branch, data):
 
         client = HarnessInputSetClient(
             base_url=settings.HARNESS_BASE_URL,

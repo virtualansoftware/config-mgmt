@@ -28,7 +28,7 @@ class HarnessPipelineExecutionClient:
             print("An error occurred:", e)
             return None
 
-    def execute_and_print_pipeline(self, account_id, org_identifier, project_identifier):
+    def execute_and_pipeline( account_id, org_identifier, project_identifier):
 
         client = HarnessPipelineExecutionClient(
             base_url=settings.HARNESS_BASE_URL,

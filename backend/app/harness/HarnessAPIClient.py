@@ -29,7 +29,7 @@ class HarnessAPIClient:
             print("An error occurred:", e)
             return None
 
-    def create_harness_service(self, account_id, data):
+    def create_harness_service( account_id, data):
         # Call create_service with the prepared data
         client = HarnessAPIClient(
             base_url=settings.HARNESS_BASE_URL,
