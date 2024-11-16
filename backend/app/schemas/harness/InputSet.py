@@ -1,7 +1,7 @@
 from pydantic import BaseModel
     
 class InputSchema(BaseModel):
-    inputSetData: dict
+    inputSetData: str
     accountIdentifier: str
     orgIdentifier: str
     projectIdentifier: str

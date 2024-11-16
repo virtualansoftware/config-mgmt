@@ -1,7 +1,7 @@
 from pydantic import BaseModel
     
 class PipelineSchema(BaseModel):
-    serviceData: dict
+    serviceData: str
     accountIdentifier: str
 
     def __init__(self, serviceData, accountIdentifier):
