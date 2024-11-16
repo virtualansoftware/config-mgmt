@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS } from '../constants';
+import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE } from '../constants';
 import { toast } from 'react-toastify';
 
 export default function Harness() {
@@ -11,6 +11,13 @@ export default function Harness() {
     const[envName, setEnvName] = useState("");
     const[module, setModule] = useState("");
     const[loading, setLoading] = useState(false);
+    const[serviceData, setServiceData] = useState("");
+    const[inputSetData, setInputSetData] = useState("");
+    const[accountIdentifier, setAccountIdentifier] = useState("");
+    const[orgIdentifier, setOrgIdentifier] = useState("");
+    const[projectIdentifier, setProjectIdentifier] = useState("");
+    const[pipelineIdentifier, setPipelineIdentifier] = useState("");
+    const[branch, setBranch] = useState("");
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -34,24 +41,89 @@ export default function Harness() {
         fetchAPPList();
     }, [window.location.search]);
 
+    // GET METHOD - GET UPLOADED COMMON
+    async function fetchCommon() { 
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_COMMON, {
+                params: { env_name:envName }
+            });
+            const data = response.data.commonMap;
+            setAccountIdentifier(data.accountIdentifier);
+            setBranch(data.branch);
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+        }
+    }
+
+    // GET METHOD - GET GENERATED TEMPLATE
+    async function fetchGenerated() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE  , {
+                params: {
+                    application_name: application,
+                    env_name: envName,
+                    configuration_file_name:`harness_${type}`
+                }
+            });
+            const data = response.data;
+            let displayData;
+            if (typeof data === 'object') {
+                displayData = JSON.stringify(data, null, 4);
+            } else {
+                displayData = data.toString();
+            }
+            // Harness_Service
+            setServiceData(displayData);
+            // // Harness_Pipeline
+            setOrgIdentifier(data.pipeline.orgIdentifier);
+            setProjectIdentifier(data.pipeline.projectIdentifier);
+            // Harness_Inputset
+            setInputSetData(displayData);
+            setOrgIdentifier(data.inputSet.orgIdentifier);
+            setProjectIdentifier(data.inputSet.projectIdentifier);
+            setPipelineIdentifier(data.inputSet.pipeline.identifier);
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+        }
+    }
+
+    function delay(ms:any) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
     // POST METHOD - GENERATE HARNESS
     async function submit(){
         if (!applicationName || !type || !application || !envName || !module) {
             toast.error("Please fill in all the fields");
             return;
         }
-
+        await fetchCommon();
+        await fetchGenerated();
+        await delay(10000);
         try{
-            setLoading(true);
-            const response = await axios.post(API_POST_ENDPOINT_HARNESS, {
-                applicationName,
-                type,
-                application,
-                envName,
-                module
-            }, {
-                headers: { "Content-Type": "application/json" },
-            });
+            setLoading(true);   
+            if (type === "service"){
+                const response1 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, {
+                    serviceData, accountIdentifier
+                }, {
+                    headers: { "Content-Type": "application/json" },
+                });
+            } else if(type === "inputset"){
+                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, {
+                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, pipelineIdentifier, branch
+                }, {
+                    headers: { "Content-Type": "application/json" },
+                });
+            } else if (type === "pipeline"){
+                const response3 = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, {
+                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, branch
+                }, {
+                    headers: { "Content-Type": "application/json" },
+                });
+            } else {
+                setLoading(false);
+                return;
+            }
             toast.success("Data sent successfully");
             setApplicationName("");
             setType("");
@@ -99,11 +171,11 @@ export default function Harness() {
                                 onChange={(e) => setType(e.target.value)} 
                             >
                                 <option value="">Select Type</option>
-                                <option value="app1">Infra</option>
-                                <option value="app2">ENV</option>
-                                <option value="app3">Service</option>
-                                <option value="app4">Pipeline</option>
-                                <option value="app5">InputSet</option>
+                                <option value="infra">Infra</option>
+                                <option value="env">ENV</option>
+                                <option value="service">Service</option>
+                                <option value="pipeline">Pipeline</option>
+                                <option value="inputset">InputSet</option>
                             </select>
                         </div>
                         <div>
