@@ -15,6 +15,7 @@ export default function GenerateConfig() {
     const[showDiffViewer, setShowDiffViewer] = useState(false);
     const[oldFileContent, setOldFileContent] = useState("");
     const[newFileContent, setNewFileContent] = useState("");
+    const [copyButtonText, setCopyButtonText] = useState("Copy Text");
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -34,6 +35,18 @@ export default function GenerateConfig() {
             setIsDisabled(false);
         }
     }, [window.location.search]);
+
+    const handleCopy = () => {
+        navigator.clipboard
+            .writeText(textArea)
+            .then(() => {
+                setCopyButtonText("Copied!");
+                setTimeout(() => setCopyButtonText("Copy Text"), 2000);
+            })
+            .catch(() => {
+                toast.error("Failed to copy text");
+            });
+    };
 
     // GET METHOD - DISPLAY PREVIEW TEMPLATE
     async function previewConfig(){       
@@ -166,7 +179,7 @@ export default function GenerateConfig() {
     function close() {
         setShowDiffViewer(false);
     };
-    
+
     return (
         <>
             <Sidebar onRetrieve={retrieve}/>
@@ -208,7 +221,7 @@ export default function GenerateConfig() {
                         ) : (
                             <>
                                 {textArea && (
-                                    <div>
+                                    <div className="textArea-container">
                                         <label>Text Template</label><br/>
                                         <textarea
                                             className="textarea"
@@ -217,6 +230,12 @@ export default function GenerateConfig() {
                                             onChange={(e) => setTextArea(e.target.value)}
                                             disabled={isDisabled}
                                         />
+                                        <div className="copyButton">
+                                            <button onClick={handleCopy}>
+                                                <i className={`fa-solid ${copyButtonText === "Copied!" ? "fa-check" : "fa-copy"}`}></i>
+                                                {copyButtonText}
+                                            </button>
+                                        </div>
                                         <div className="download">
                                             <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
                                             <button className='btn btn-success' onClick={downloadFile}>Download</button>

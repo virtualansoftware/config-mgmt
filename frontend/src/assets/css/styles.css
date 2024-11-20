@@ -246,6 +246,26 @@ html body{
 .config .textarea:focus{
   outline-color: #004080;
 }
+.textArea-container {
+  position: relative;
+}
+.textArea-container .copyButton {
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  z-index: 1;
+}
+.textArea-container .copyButton button{
+  width: 90px;
+  text-align: center;
+  font-size: 12px;
+  border-radius: 5px;
+  border: 1px solid gray;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+.textArea-container .copyButton button i{
+  padding-right: 5px;
+}
 .config select{
   width: 100%;
   padding: 5px;
