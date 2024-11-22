@@ -68,7 +68,7 @@ export default function KeyValue(){
         setPairs(newPairs);
     }
 
-    // POST METHOD - UPLOAD CONFIG
+    // POST - UPLOAD CONFIG
     async function submit(){
         if(editablePairs){
             toast.error("Please save before proceeding");
@@ -105,7 +105,7 @@ export default function KeyValue(){
         }
     }
 
-    // GET METHOD - GET CONFIG
+    // GET - GET CONFIG
     async function retrieve() { 
         const authResult = new URLSearchParams(window.location.search);
         const application_name = authResult.get('application_name')
@@ -139,7 +139,7 @@ export default function KeyValue(){
         }
     }
     
-    // GET METHOD - GET ALL CONFIG DATA
+    // GET - GET ALL CONFIG DATA
     async function allMenus() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
@@ -149,7 +149,7 @@ export default function KeyValue(){
         }
     }
 
-    // GET METHOD - GET UPLOADED TEMPLATE
+    // GET - GET UPLOADED TEMPLATE
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
     
@@ -162,44 +162,54 @@ export default function KeyValue(){
         }
     
         try {
-            const response = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+            // Fetch data from the upload endpoint
+            const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
                 params: { application_name, configuration_file_name },
             });
     
-            let data = JSON.stringify(response.data);
+            let uploadData = JSON.stringify(uploadResponse.data);
             let regex = /\{\{[a-zA-Z0-9]+\}\}/g;
-            let matches = data.match(regex); 
+            let matches = uploadData.match(regex);
     
+            // Fetch data from the common endpoint
             const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
                 params: { env_name },
             });
+    
             const commonData: string = commonResponse.data.commonMap;
-            const newPairs: Record<string, string> = Object.entries(commonData).reduce((acc, [key, value]) => {
-                acc[key.trim()] = value;
-                return acc;
-            }, {} as Record<string, string>);
-            const commonKeys = Object.keys(commonResponse.data.commonMap);
-            
+            const newPairs: Record<string, string> = Object.entries(commonData).reduce(
+                (acc, [key, value]) => {
+                    acc[key.trim()] = value;
+                    return acc;
+                },
+                {} as Record<string, string>
+            );
+            const commonKeys = Object.keys(commonData);
+    
             const pairs: { key: string; value: string | null }[] = [];
             const keysSet = new Set<string>();
     
             if (matches) {
                 for (let match of matches) {
                     const key = match.replace(/\{\{|\}\}/g, '').trim();
-                    
+            
+                    // If the key exists in common data, use the value, else set to null
+                    const value = newPairs[key] || null;
                     if (!keysSet.has(key)) {
-                        pairs.push({ key, value: newPairs[key] }); 
+                        pairs.push({ key, value }); 
                         keysSet.add(key);
                     }
                 }
             }
     
+            // Add unmatched common keys (those not found in matches)
             for (const key of commonKeys) {
                 if (!keysSet.has(key)) {
-                    pairs.push({ key, value: null });
+                    pairs.push({ key, value: newPairs[key] || null });
                     keysSet.add(key);
                 }
             }
+    
             setPairs(pairs);
             toast.success("Keys fetched successfully");
             setIsDataFetched(true);
@@ -210,6 +220,7 @@ export default function KeyValue(){
             setLoading(false);
         }
     }
+    
 
     // CALLING FUNCTIONS
     async function handleInputs() {
