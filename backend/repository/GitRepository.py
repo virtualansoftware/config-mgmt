@@ -6,7 +6,7 @@ import base64
 def loginGitHub():
     token = settings.GITHUP_TOKEN
     auth = Auth.Token(token)
-    g = Github(auth=auth) #, base_url=settings.GITHUB_HOST_URL)
+    g = Github(auth=auth) #, base_url=settings.GITHUB_HOST_URL, verify=False)
     print("token verified")
     return g
 
