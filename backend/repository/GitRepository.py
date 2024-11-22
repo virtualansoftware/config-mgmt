@@ -1,3 +1,4 @@
+import requests
 from github import Github, Auth, GithubException
 from settings import settings
 import json
@@ -5,9 +6,91 @@ import base64
 def loginGitHub():
     token = settings.GITHUP_TOKEN
     auth = Auth.Token(token)
-    g = Github(auth=auth) #, base_url=settings.GITHUB_HOST_URL)
+    g = Github(auth=auth) #, base_url=settings.GITHUB_HOST_URL, verify=False)
     print("token verified")
     return g
+
+
+def fetch_full_tree(url, headers, prefix):
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        tree = response.json()["tree"]
+        filtered_dirs = [
+            item["path"] for item in tree if item["type"] == "blob" and prefix in item["path"]
+        ]
+        my_map = dict()
+        for directory in filtered_dirs:
+            appList = directory.replace(prefix + "/", "").split("/")
+            my_child_map = dict()
+            if my_map.get(appList[0]) is None:
+                my_child_map = dict()
+                my_list = [appList[2]]
+                my_child_map[appList[1]] = my_list
+                my_map[appList[0]] = my_child_map
+            elif my_child_map.get(appList[1]) is None:
+                my_child_map = my_map[appList[0]]
+                my_list = my_child_map.get(appList[1])
+                if my_list is None:
+                    my_list = []
+                my_list.append(appList[2])
+                my_child_map[appList[1]] = my_list
+                my_map[appList[0]] = my_child_map
+            else:
+                my_child_map = my_map.get(appList[0])
+                my_list = my_child_map.get(appList[1])
+                my_list.append(appList[2])
+                my_child_map[appList[1]] = my_list
+                my_map[appList[0]] = my_child_map
+    else:
+        print(f"Failed to fetch the repository tree: {response.status_code}, {response.text}")
+    return my_map
+
+def fetch_full_tree_template(url, headers, prefix):
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        tree = response.json()["tree"]
+        filtered_dirs = [
+            item["path"] for item in tree if item["type"] == "blob" and prefix in item["path"]
+        ]
+        my_map = dict()
+
+        for directory in filtered_dirs:
+            appList = directory.replace(prefix + "/", "").split("/")
+            if my_map.get(appList[0]) is None:
+                my_list = []
+                my_list.append(appList[1])
+                my_map[appList[0]] = my_list
+            else:
+                my_list = my_map.get(appList[0])
+                my_list.append(appList[1])
+                my_map[appList[0]] = my_list
+    else:
+        print(f"Failed to fetch the repository tree: {response.status_code}, {response.text}")
+    return my_map
+
+
+def fetch_full_tree_common(url, headers, prefix):
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        tree = response.json()["tree"]
+        filtered_dirs = [
+            item["path"] for item in tree if item["type"] == "blob" and prefix in item["path"]
+        ]
+        my_map = dict()
+
+        for directory in filtered_dirs:
+            appList = directory.replace(prefix + "/", "").split("/")
+            env_name = appList[0]
+            common_file = appList[1]
+
+            if env_name not in my_map:
+                my_map[env_name] = []
+
+            my_map[env_name].append(common_file)
+    else:
+        print(f"Failed to fetch the repository tree: {response.status_code}, {response.text}")
+    return my_map
+
 class GitRepository:
 
     def createFile(fileName: str, content: str, commitMessage: str):
@@ -22,116 +105,40 @@ class GitRepository:
             print("created successfully!")
 
     def get_all_generated_configurations():
-        g = loginGitHub()
-        repo = g.get_repo(settings.GITHUB_REPO_NAME)
-        contents = repo.get_contents(settings.GENERATED_PREFIX, settings.BRANCH)
-        my_map = dict()
-        while contents:
-            file_content = contents.pop(0)
-            my_child_map = dict()
-            if file_content.type == "dir":
-                contents.extend(repo.get_contents(file_content.path, settings.BRANCH))
-            else:
-                if settings.GENERATED_PREFIX in file_content.path:
-                    appList = file_content.path.replace(settings.GENERATED_PREFIX + "/", "").split("/")
-                    if my_map.get(appList[0]) is None:
-                        my_child_map = dict()
-                        my_list = [appList[2]]
-                        my_child_map[appList[1]] = my_list
-                        my_map[appList[0]] = my_child_map
-                    elif my_child_map.get(appList[1]) is None:
-                        my_child_map = my_map[appList[0]]
-                        my_list = my_child_map.get(appList[1])
-                        if my_list is None:
-                            my_list = []
-                        my_list.append(appList[2])
-                        my_child_map[appList[1]] = my_list
-                        my_map[appList[0]] = my_child_map
-                    else:
-                        my_child_map = my_map.get(appList[0])
-                        my_list = my_child_map.get(appList[1])
-                        my_list.append(appList[2])
-                        my_child_map[appList[1]] = my_list
-                        my_map[appList[0]] = my_child_map
-        return my_map
+        GITHUB_TOKEN = settings.GITHUP_TOKEN
+        headers = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
+        repo = settings.GITHUB_REPO_NAME
+        branch = settings.BRANCH  # Replace with the branch name
+        # GitHub API endpoint for repo contents
+        url = f"https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
+        return fetch_full_tree(url, headers, settings.GENERATED_PREFIX)
 
     def get_all_configuration():
-        g = loginGitHub()
-        repo = g.get_repo(settings.GITHUB_REPO_NAME)
-        contents = repo.get_contents(settings.APPLICATION_PREFIX, settings.BRANCH)
-        my_map = dict()
-        while contents:
-            file_content = contents.pop(0)
-            my_child_map = dict()
-            if file_content.type == "dir":
-                contents.extend(repo.get_contents(file_content.path, settings.BRANCH))
-            else:
-                if settings.APPLICATION_PREFIX in file_content.path:
-                    appList = file_content.path.replace(settings.APPLICATION_PREFIX+"/", "").split("/")
-                    if my_map.get(appList[0]) is None:
-                        my_child_map = dict()
-                        my_list = [appList[2]]
-                        my_child_map[appList[1]] = my_list
-                        my_map[appList[0]] = my_child_map
-                    elif my_child_map.get(appList[1]) is None:
-                        my_child_map = my_map[appList[0]]
-                        my_list = my_child_map.get(appList[1])
-                        if my_list is None:
-                            my_list = []
-                        my_list.append(appList[2])
-                        my_child_map[appList[1]] = my_list
-                        my_map[appList[0]] = my_child_map
-                    else:
-                        my_child_map = my_map.get(appList[0])
-                        my_list = my_child_map.get(appList[1])
-                        my_list.append(appList[2])
-                        my_child_map[appList[1]] = my_list
-                        my_map[appList[0]] = my_child_map
-        return my_map
+        GITHUB_TOKEN = settings.GITHUP_TOKEN
+        headers = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
+        repo = settings.GITHUB_REPO_NAME
+        branch = settings.BRANCH  # Replace with the branch name
+        # GitHub API endpoint for repo contents
+        url = f"https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
+        return fetch_full_tree(url, headers, settings.APPLICATION_PREFIX)
 
     def get_all_common():
-        g = loginGitHub()
-        repo = g.get_repo(settings.GITHUB_REPO_NAME)
-        contents = repo.get_contents(settings.COMMON_PREFIX, settings.BRANCH)
-        my_map = dict()
-        while contents:
-            file_content = contents.pop(0)
-            my_child_map = dict()
-            if file_content.type == "dir":
-                contents.extend(repo.get_contents(file_content.path, settings.BRANCH))
-            else:
-                if settings.COMMON_PREFIX in file_content.path:
-                    appList = file_content.path.replace(settings.COMMON_PREFIX+"/", "").split("/")
-                    env_name = appList[0]
-                    common_file = appList[1]
-
-                    if env_name not in my_map:
-                        my_map[env_name] = []
-
-                    my_map[env_name].append(common_file)
-        return my_map
+        GITHUB_TOKEN = settings.GITHUP_TOKEN
+        headers = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
+        repo = settings.GITHUB_REPO_NAME
+        branch = settings.BRANCH  # Replace with the branch name
+        # GitHub API endpoint for repo contents
+        url = f"https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
+        return fetch_full_tree_common(url, headers, settings.COMMON_PREFIX)
 
     def get_all_template():
-        g = loginGitHub()
-        repo = g.get_repo(settings.GITHUB_REPO_NAME)
-        contents = repo.get_contents(settings.TEMPLATE_PREFIX, settings.BRANCH)
-        my_map = dict()
-        while contents:
-            file_content = contents.pop(0)
-            if file_content.type == "dir":
-                contents.extend(repo.get_contents(file_content.path, settings.BRANCH))
-            else:
-                if settings.TEMPLATE_PREFIX in file_content.path:
-                    appList = file_content.path.replace(settings.TEMPLATE_PREFIX + "/", "").split("/")
-                    if my_map.get(appList[0]) is None:
-                        my_list = []
-                        my_list.append(appList[1])
-                        my_map[appList[0]] = my_list
-                    else:
-                        my_list = my_map.get(appList[0])
-                        my_list.append(appList[1])
-                        my_map[appList[0]] = my_list
-        return my_map
+        GITHUB_TOKEN = settings.GITHUP_TOKEN
+        headers = {"Authorization": f"token {GITHUB_TOKEN}"} if GITHUB_TOKEN else {}
+        repo = settings.GITHUB_REPO_NAME
+        branch = settings.BRANCH  # Replace with the branch name
+        # GitHub API endpoint for repo contents
+        url = f"https://api.github.com/repos/{repo}/git/trees/{branch}?recursive=1"
+        return fetch_full_tree_template(url, headers, settings.TEMPLATE_PREFIX)
 
     def save_configuration(fileName: str, content: str, commitMessage: str):
         g = loginGitHub()
