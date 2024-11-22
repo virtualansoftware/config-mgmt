@@ -23,7 +23,7 @@ router = APIRouter(
 )
 
 
-@router.post("/service", response_model=str)
+@router.post("/service", response_model=dict)
 def harness_service(serviceObject: ServiceSchema):
     try:
 
