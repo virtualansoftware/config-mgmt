@@ -119,15 +119,15 @@ export default function KeyValue(){
         try {
             setLoading(true);
             setEditablePairs(false);
-            const response = await axios.get(API_GET_ENDPOINT, {
+            const configResponse = await axios.get(API_GET_ENDPOINT, {
                 params: {
                     application_name,
                     env_name,
                     configuration_file_name
                 }
             });
-            const data = response.data.configMap;
-            const newPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
+            const configData = configResponse.data.configMap;
+            const newPairs = configData ? Object.entries(configData).map(([key, value]) => ({ key, value })) : [];
             setPairs(newPairs);
             toast.success("Data fetched successfully");
             setLoading(false);
@@ -153,7 +153,7 @@ export default function KeyValue(){
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
     
-        if (Array.isArray(subMenuData[application_name]) && 
+        if (Array.isArray(subMenuData[application_name]) &&
             subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
             setLoading(true);
             setEditablePairs(true);
@@ -176,15 +176,22 @@ export default function KeyValue(){
                 params: { env_name },
             });
     
-            const commonData: string = commonResponse.data.commonMap;
+            const commonData = commonResponse.data.commonMap;
             const newPairs: Record<string, string> = Object.entries(commonData).reduce(
                 (acc, [key, value]) => {
-                    acc[key.trim()] = value;
+                    acc[key.trim()] = value as string;
                     return acc;
                 },
                 {} as Record<string, string>
             );
             const commonKeys = Object.keys(commonData);
+    
+            // Fetch data from the config endpoint
+            const configResponse = await axios.get(API_GET_ENDPOINT, {
+                params: { application_name, env_name, configuration_file_name },
+            });
+    
+            const configData = configResponse.data.configMap;
     
             const pairs: { key: string; value: string | null }[] = [];
             const keysSet = new Set<string>();
@@ -192,20 +199,28 @@ export default function KeyValue(){
             if (matches) {
                 for (let match of matches) {
                     const key = match.replace(/\{\{|\}\}/g, '').trim();
-            
+    
                     // If the key exists in common data, use the value, else set to null
-                    const value = newPairs[key] || null;
+                    const value = newPairs[key] || configData[key] || null;
                     if (!keysSet.has(key)) {
-                        pairs.push({ key, value }); 
+                        pairs.push({ key, value });
                         keysSet.add(key);
                     }
                 }
             }
     
-            // Add unmatched common keys (those not found in matches)
+            // Add unmatched common keys
             for (const key of commonKeys) {
                 if (!keysSet.has(key)) {
-                    pairs.push({ key, value: newPairs[key] || null });
+                    pairs.push({ key, value: newPairs[key] || configData[key] || null });
+                    keysSet.add(key);
+                }
+            }
+    
+            // Add unmatched config keys
+            for (const key of Object.keys(configData)) {
+                if (!keysSet.has(key)) {
+                    pairs.push({ key, value: configData[key] || null });
                     keysSet.add(key);
                 }
             }
@@ -219,8 +234,7 @@ export default function KeyValue(){
         } finally {
             setLoading(false);
         }
-    }
-    
+    }    
 
     // CALLING FUNCTIONS
     async function handleInputs() {
