@@ -194,8 +194,6 @@ def upload(application_name: str = Form(...), configuration_file_name: str = For
             raise ValueError('application_name: Required field is not provided')
         elif configuration_file_name == '':
             raise ValueError('configuration_file_name: Required field is not provided')
-        elif file.filename == '':
-            raise ValueError('file: Required field is not provided')
         elif file and file.filename:
             with open(file.filename, 'wb') as f:
                 while contents := file.file.read(1024 * 1024):
