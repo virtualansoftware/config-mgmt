@@ -180,7 +180,7 @@ class GitRepository:
         g = loginGitHub()
         repo = g.get_repo(settings.GITHUB_REPO_NAME)
         try:
-            fileContents = repo.get_contents(f"./{fileName}")
+            fileContents = repo.get_contents(f"./{fileName}",  settings.BRANCH)
             repo.update_file(fileName, commitMessage, templateGenerated, fileContents.sha, settings.BRANCH)
             print("Updated successfully!")
         except GithubException as ex:
