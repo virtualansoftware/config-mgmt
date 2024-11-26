@@ -12,7 +12,7 @@ def loginGitHub():
 
 
 def fetch_full_tree(url, headers, prefix):
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, verify=False)
     if response.status_code == 200:
         tree = response.json()["tree"]
         filtered_dirs = [
@@ -46,7 +46,7 @@ def fetch_full_tree(url, headers, prefix):
     return my_map
 
 def fetch_full_tree_template(url, headers, prefix):
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, verify=False)
     if response.status_code == 200:
         tree = response.json()["tree"]
         filtered_dirs = [
@@ -70,7 +70,7 @@ def fetch_full_tree_template(url, headers, prefix):
 
 
 def fetch_full_tree_common(url, headers, prefix):
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, verify=False)
     if response.status_code == 200:
         tree = response.json()["tree"]
         filtered_dirs = [
