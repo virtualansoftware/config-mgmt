@@ -10,7 +10,9 @@ from utils.log import log
 from jinja2 import UndefinedError
 from app.schemas.harness.Service import ServiceSchema
 from app.schemas.harness.InputSet import InputSchema
+from app.schemas.harness.Override import OverrideSchema
 from app.schemas.harness.Pipleline import PipelineSchema
+from app.harness.HarnessOverrideClient import HarnessOverrideClient
 from app.harness.HarnessAPIClient import HarnessAPIClient
 from app.harness.HarnessInputSetClient import HarnessInputSetClient
 from app.harness.HarnessPipelineClient import HarnessPipelineClient
@@ -28,6 +30,27 @@ def harness_service(serviceObject: ServiceSchema):
     try:
 
         HarnessAPIClient.create_harness_service(serviceObject.accountIdentifier, json.loads(serviceObject.serviceData))
+
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+        return "Error Occurred and Handled " + e.message
+    except Exception as error:
+        traceback.print_exception(error)
+        return "Error Occurred and Handled ${error.message}"
+    except ClientError as ex:
+        if ex.response['Error']['Code'] == 'NoSuchKey':
+            log.info('No object found - returning empty')
+            return ex.response
+        else:
+            raise
+    return {"status": "Added successfully"}
+
+
+@router.post("/service-override", response_model=dict)
+def harness_service(overrideSchema: OverrideSchema):
+    try:
+
+        HarnessOverrideClient.create_harness_service_override(overrideSchema.accountIdentifier, json.loads(overrideSchema.serviceData))
 
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
