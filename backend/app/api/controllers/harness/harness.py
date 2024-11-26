@@ -67,6 +67,27 @@ def harness_service(overrideSchema: OverrideSchema):
     return {"status": "Added successfully"}
 
 
+@router.post("/update-service-override", response_model=dict)
+def harness_service(overrideSchema: OverrideSchema):
+    try:
+
+        HarnessOverrideClient.update_service_override(overrideSchema.accountIdentifier, json.loads(overrideSchema.serviceData))
+
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+        return "Error Occurred and Handled " + e.message
+    except Exception as error:
+        traceback.print_exception(error)
+        return "Error Occurred and Handled ${error.message}"
+    except ClientError as ex:
+        if ex.response['Error']['Code'] == 'NoSuchKey':
+            log.info('No object found - returning empty')
+            return ex.response
+        else:
+            raise
+    return {"status": "Added successfully"}
+
+
 @router.post("/input-sets", response_model=dict)
 def harness_inputsets(inputsetObject: InputSchema):
     try:
