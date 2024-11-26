@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON } from '../constants';
-import Sidebar from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 
 interface SubMenuData {

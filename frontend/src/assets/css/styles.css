@@ -36,6 +36,139 @@ html body{
   font-size: 14px;
   width: 300px !important;
 }
+/* Login & Register*/
+.login-page, .register-page{
+  background-image: url(images/bg2.jpg);
+	background-size: 100% 100%;
+  /* background-image: url(images/favicon.png), url(images/bg2.jpg);
+	background-size: 30% 50%, 50% 100%;
+  background-position: left center, right; */
+	background-repeat: no-repeat;
+}
+.login-container, .register-container{
+  width: 50%;
+  margin: 0;
+  padding: 50px;
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+.login-container form, .register-container form{
+  width: 50%;
+  text-align: left;
+  margin: 0 auto;
+}
+.login-container h2, .register-container h2{
+  font-weight: bold;
+}
+.login-container div, .register-container div{
+  padding: 5px 0;
+  margin-top: 5px;
+}
+.login-container label, .register-container label{
+  font-size: 14px;
+  font-weight: bold;
+}
+.login-container input, .register-container input{
+  width: 100%;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  text-align: left;
+  font-size: 14px;
+}
+.login-container input:focus, .register-container input:focus{
+  border: 1px solid #004080;
+  outline: none;
+  box-shadow: 0 0 4px #004080;
+}
+.login-container .error-input, .register-container .error-input{
+  border: 1px solid red;
+}
+.login-container .error-input:focus, .register-container .error-input:focus{
+  border: 1px solid red;
+  outline: none;
+  box-shadow: 0 0 4px red;
+}
+.login-container div .errorMsg, .register-container div .errorMsg{
+  color: red;
+  font-size: 12px;
+  margin: 0;
+}
+.login-container .password div{
+  display: flex;
+  justify-content: space-between;
+}
+.login-container .password a{
+  color: #5b5858;
+  font-size: 10px;
+  margin-top: 5px;
+  text-decoration: none;
+}
+.login-container .password span{
+  position: absolute;
+  top: 55px;
+  right: 10px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+.register-container .password span, .register-container .confirm span{
+  position: absolute;
+  top: 45px;
+  right: 10px;
+  cursor: pointer;
+  transform: translateY(-50%);
+}
+.login-container .checkbox{
+  display: flex;
+  align-items: center;
+}
+.login-container .checkbox input{
+  margin: 0 0 0 -125px;
+  box-shadow: none;
+}
+.login-container .checkbox label{
+  color: black;
+  font-size: 14px;
+  font-weight: bold;
+  margin: 0 0 0 -120px;
+  cursor: pointer;
+}
+.login-container button{
+  width: 100%;
+  margin: 5px 0;
+  border-radius: 4px;
+  padding: 4px;
+}
+.register-container button{
+  width: 100%;
+  margin: 10px 0 0 0;
+  border-radius: 4px;
+  padding: 4px;
+}
+.login-container hr, .register-container hr{
+  border: 1px solid black;
+}
+/* .login-container .googleLogin, .register-container .googleLogin{
+  display: block;
+  width: 50%;
+  margin: 30px 0;
+} */
+.login-container .register, .register-container .login{
+  color: black;
+  font-weight: bold;
+  font-size: 14px;
+  text-decoration: none;
+}
+.login-container .register a, .register-container .login a{
+  padding: 0 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+.login-container .rights, .register-container .rights{
+  color: #5b5858;
+  font-size: 12px;
+  padding: 5px 0;
+}
 /* Header */
 .nav{
   display: flex;

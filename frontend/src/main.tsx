@@ -5,17 +5,40 @@ import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer, toast } from 'react-toastify';
 import React from "react";
 import ReactDOM from "react-dom/client";
+import Login from './pages/Login';
+import Register from './pages/Register';
 import Header from "./components/Header";
 import Sidebar from "./components/Sidebar";
-import KeyValue from "./components/KeyValue";
-import GenerateConfig from './components/GenerateConfig';
-import UploadConfig from './components/UploadConfig';
-import Common from './components/Common';
-import Harness from './components/Harness';
+import KeyValue from "./pages/KeyValue";
+import GenerateConfig from './pages/GenerateConfig';
+import UploadConfig from './pages/UploadConfig';
+import Common from './pages/Common';
+import Harness from './pages/Harness';
 import Footer from './components/Footer';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
+const clientId = "YOUR_GOOGLE_CLIENT_ID";
 
 const router = createBrowserRouter([
+  {
+    path: "/login",
+    element: (
+      <>
+        <Header/>
+        <Login/>
+      </>
+    ),
+  },
+  {
+    path: "/register",
+    element: (
+      <>
+        <Header/>
+        <Register/>
+      </>
+    ),
+  },
   {
     path: "/config-mgmt",
     element: (
@@ -89,16 +112,18 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
-    <ToastContainer 
-      className="toaster" 
-      theme="dark" 
-      position="top-center" 
-      autoClose={3000}
-      hideProgressBar={false}
-      closeOnClick={true}
-      pauseOnHover={true}
-      draggable={true}
-    />
+    <GoogleOAuthProvider clientId={clientId}>
+      <RouterProvider router={router} />
+      <ToastContainer 
+        className="toaster" 
+        theme="dark" 
+        position="top-center" 
+        autoClose={3000}
+        hideProgressBar={false}
+        closeOnClick={true}
+        pauseOnHover={true}
+        draggable={true}
+      />
+    </GoogleOAuthProvider>
   </React.StrictMode>
 );

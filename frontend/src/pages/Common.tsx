@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Sidebar from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import { API_GET_ENDPOINT_COMMON, API_POST_ENDPOINT_COMMON } from '../constants';
 import { toast } from 'react-toastify';
 

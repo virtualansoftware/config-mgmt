@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOINT_GENERATE_PREVIEW } from '../constants';
-import Sidebar from './Sidebar';
+import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
-import DiffViewer from './DiffViewer';
+import DiffViewer from '../components/DiffViewer';
 
 export default function GenerateConfig() {
     const[applicationName, setApplicationName] = useState("");

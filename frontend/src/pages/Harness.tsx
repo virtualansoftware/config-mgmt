@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE } from '../constants';
+import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE } from '../constants';
 import { toast } from 'react-toastify';
 
 export default function Harness() {
-    const[applicationName, setApplicationName] = useState("");
     const[type, setType] = useState("");
     const[applicationList, setApplicationList] = useState<string[]>([]);
     const[application, setApplication] = useState("");
+    const[configurationFileNameList, setConfigurationFileNameList] = useState<string[]>([]);
+    const[configurationFileName, setConfigurationFileName] = useState("");
     const[envName, setEnvName] = useState("");
     const[module, setModule] = useState("");
     const[loading, setLoading] = useState(false);
@@ -26,22 +27,23 @@ export default function Harness() {
         const env_name = authResult.get('env_name');
 
         if (application_name && type && application && env_name && module) {
-            setApplicationName(application_name);
             setType(type);
             setApplication(application);
+            setConfigurationFileName(configurationFileName);
             setEnvName(env_name);
             setModule(module);
         } else {
-            setApplicationName("");
             setType("");
             setApplication("");
+            setConfigurationFileName("");
             setEnvName("");
             setModule("");
         }
         fetchAPPList();
-    }, [window.location.search]);
+        fetchFileNameList();
+    }, [window.location.search, application]);
 
-    // GET METHOD - GET UPLOADED COMMON
+    // GET - UPLOADED COMMON
     async function fetchCommon() { 
         try {
             const response = await axios.get(API_GET_ENDPOINT_COMMON, {
@@ -55,14 +57,14 @@ export default function Harness() {
         }
     }
 
-    // GET METHOD - GET GENERATED TEMPLATE
+    // GET - GENERATED TEMPLATE
     async function fetchGenerated() {
         try {
-            const response = await axios.get(API_GET_ENDPOINT_GENERATE  , {
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
                 params: {
                     application_name: application,
                     env_name: envName,
-                    configuration_file_name:`harness_${type}`
+                    configuration_file_name: configurationFileName.replace('.json', '')
                 }
             });
             const data = response.data;
@@ -91,9 +93,9 @@ export default function Harness() {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    // POST METHOD - GENERATE HARNESS
+    // POST - GENERATE HARNESS
     async function submit(){
-        if (!applicationName || !type || !application || !envName || !module) {
+        if (!type || !application || !configurationFileName || !envName || !module) {
             toast.error("Please fill in all the fields");
             return;
         }
@@ -105,6 +107,18 @@ export default function Harness() {
             if (type === "service"){
                 const response1 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, {
                     serviceData, accountIdentifier
+                }, {
+                    headers: { "Content-Type": "application/json" },
+                });
+            } else if(type === "service-override"){
+                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, {
+                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier
+                }, {
+                    headers: { "Content-Type": "application/json" },
+                });
+            } else if(type === "update-service-override"){
+                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE, {
+                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier
                 }, {
                     headers: { "Content-Type": "application/json" },
                 });
@@ -125,7 +139,7 @@ export default function Harness() {
                 return;
             }
             toast.success("Data sent successfully");
-            setApplicationName("");
+            setConfigurationFileName("");
             setType("");
             setApplication("");
             setEnvName("");
@@ -138,13 +152,28 @@ export default function Harness() {
         }
     }
 
-    // GET METHOD - GET APPLICATION NAME LIST
+    // GET - APPLICATION NAME LIST
     async function fetchAPPList() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
             const data = response.data;
             const appNames = Object.keys(data);
             setApplicationList(appNames);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    // GET - CONFIG FILE NAME LIST
+    async function fetchFileNameList() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
+            const data = response.data;
+    
+            const selectedKey = application;
+            const fileNames = Object.values(data[selectedKey] as Record<string, string[]>).flat();
+    
+            setConfigurationFileNameList(fileNames);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -157,14 +186,6 @@ export default function Harness() {
                     <h5>Harness</h5>
                     <div className="input-container">
                         <div>
-                            <label>Application Name</label>
-                            <input 
-                                type="text"
-                                value={applicationName}
-                                onChange={(e) => setApplicationName(e.target.value)}
-                            />
-                        </div>
-                        <div>
                             <label>Type</label>
                             <select 
                                 value={type} 
@@ -174,6 +195,8 @@ export default function Harness() {
                                 <option value="infra">Infra</option>
                                 <option value="env">ENV</option>
                                 <option value="service">Service</option>
+                                <option value="service-override">Service Override</option>
+                                <option value="update-service-override">Updated Service Override</option>
                                 <option value="pipeline">Pipeline</option>
                                 <option value="inputset">InputSet</option>
                             </select>
@@ -188,6 +211,20 @@ export default function Harness() {
                                 {applicationList.map((app, index) => (
                                 <option key={index} value={app}>{app}</option>
                             ))}
+                            </select>
+                        </div>
+                        <div>
+                            <label>Configuration File Name</label>
+                            <select
+                                value={configurationFileName} 
+                                onChange={(e) => setConfigurationFileName(e.target.value)} 
+                            >
+                                <option value="">Select File Name</option>
+                                {[...new Set(configurationFileNameList)].map((fileName, index) => (
+                                    <option key={index} value={fileName}>
+                                        {fileName}
+                                    </option>
+                                ))}
                             </select>
                         </div>
                         <div>
