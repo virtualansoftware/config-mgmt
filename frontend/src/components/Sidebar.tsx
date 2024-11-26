@@ -296,11 +296,14 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                     {/* Second Sub Menu*/}
                                     {firstSubMenu === "App-Dev" && (
                                         <ul className="sublist">
+                                            <li onClick={(e) => toggleThirdSubMenu("Create Service", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=create-service` }}>Create Service</Link>
+                                            </li>
                                             <li onClick={(e) => toggleThirdSubMenu("Service Override", e)}>
                                                 <Link to={{ pathname: "/harness", search: `?type=service-override` }}>Service Override</Link>
                                             </li>
-                                            <li onClick={(e) => toggleThirdSubMenu("Create Service", e)}>
-                                                <Link to={{ pathname: "/harness", search: `?type=create-service` }}>Create Service</Link>
+                                            <li onClick={(e) => toggleThirdSubMenu("Update Service Override", e)}>
+                                                <Link to={{ pathname: "/harness", search: `?type=update-service-override` }}>Update Service Override</Link>
                                             </li>
                                             <li onClick={(e) => toggleThirdSubMenu("Create Pipeline", e)}>
                                                 <Link to={{ pathname: "/harness", search: `?type=create-pipeline` }}>Create Pipeline</Link>
