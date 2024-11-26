@@ -39,9 +39,12 @@ export default function Harness() {
             setEnvName("");
             setModule("");
         }
+    }, [window.location.search]);
+
+    useEffect(() => {
         fetchAPPList();
         fetchFileNameList();
-    }, [window.location.search, application]);
+    }, [application]);
 
     // GET - UPLOADED COMMON
     async function fetchCommon() { 
