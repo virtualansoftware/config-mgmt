@@ -38,13 +38,11 @@ html body{
 }
 /* Login & Register*/
 .login-page, .register-page{
-  /* background-image: url(images/bg2.jpg);
-	background-size: 100% 100%; */
-  background-image: url(images/bg7.png);
+  background-image: url(images/bg.png);
 	background-size: 50% 100%;
   background-position: right;
 	background-repeat: no-repeat;
-  background-color: #f43e3ec7;
+  background-color: #3ea2fa;
 }
 .login-container, .register-container{
   width: 50%;
@@ -195,9 +193,44 @@ html body{
 .nav h5{
   margin-top: 10px;
 }
-.nav h5 a {
-  color: #243E85;
-  text-decoration: none;
+.nav .profile div{
+  cursor: pointer;
+  margin-top: 5px;
+  font-size: 25px;
+  color: gray;
+}
+.nav .profile .profile-menu {
+  width: 13%;
+  top: 70px;
+  right: 0;
+  position: absolute;
+  background-color: white;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  opacity: 0;
+  transform: translateY(-20px) scale(0.95);
+  transition: 
+    opacity 0.4s ease-in-out, 
+    transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  pointer-events: none;
+}
+.nav .profile .profile-menu.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+.nav .profile .profile-menu li {
+  list-style: none;
+  cursor: pointer;
+  padding: 10px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+.nav .profile .profile-menu li:hover {
+  background-color: #f4f1f1;
+  border-radius: 5px;
   font-weight: bold;
 }
 /* Side Bar */
