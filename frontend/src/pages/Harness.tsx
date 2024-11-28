@@ -20,6 +20,11 @@ export default function Harness() {
     const[pipelineIdentifier, setPipelineIdentifier] = useState("");
     const[branch, setBranch] = useState("");
 
+    useEffect(() => {
+        fetchAPPList();
+        fetchFileNameList();
+    }, [application]);
+    
     // CLEAR ALL FIELDS
     useEffect(() => {
         const authResult = new URLSearchParams(window.location.search);
@@ -41,12 +46,7 @@ export default function Harness() {
         }
     }, [window.location.search]);
 
-    useEffect(() => {
-        fetchAPPList();
-        fetchFileNameList();
-    }, [application]);
-
-    // GET - UPLOADED COMMON
+    // GET - COMMON
     async function fetchCommon() { 
         try {
             const response = await axios.get(API_GET_ENDPOINT_COMMON, {
@@ -120,19 +120,19 @@ export default function Harness() {
                     headers: { "Content-Type": "application/json" },
                 });
             } else if(type === "update-service-override"){
-                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE, {
+                const response3 = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE, {
                     inputSetData, accountIdentifier, orgIdentifier, projectIdentifier
                 }, {
                     headers: { "Content-Type": "application/json" },
                 });
             } else if(type === "inputset"){
-                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, {
+                const response4 = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, {
                     inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, pipelineIdentifier, branch
                 }, {
                     headers: { "Content-Type": "application/json" },
                 });
             } else if (type === "pipeline"){
-                const response3 = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, {
+                const response5 = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, {
                     inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, branch
                 }, {
                     headers: { "Content-Type": "application/json" },
@@ -148,9 +148,10 @@ export default function Harness() {
             setEnvName("");
             setModule("");
             setLoading(false);
-        } catch(error){
+        } catch(error:any){
             console.error("Error sending data: ", error);
-            toast.error("Failed to send data");
+            const errorMessage = error.response?.data || error.message;
+            toast.error(`Failed to send data: ${errorMessage}`);
             setLoading(false);
         }
     }

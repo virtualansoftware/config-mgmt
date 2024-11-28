@@ -68,7 +68,7 @@ export default function Login(){
                     <button className="btn btn-primary">Login</button><hr/>
                 </form>
                 <div className="googleLogin">
-                    <GoogleLogin containerProps={{ style: { width: '50%', margin: '-40px 130px' } }} onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} useOneTap />
+                    <GoogleLogin containerProps={{ style: { margin: '-40px 135px' } }} onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} useOneTap />
                 </div><br/><br/>
                 <p className="register">
                     Don't have an account?
