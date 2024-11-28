@@ -3,8 +3,10 @@ import axios from 'axios';
 import { API_POST_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD } from '../constants';
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 export default function UploadConfig() {
+    const location = useLocation();
     const [applicationName, setApplicationName] = useState("");
     const [configurationFileName, setConfigurationFileName] = useState("");
     const [file, setFile] = useState(null);
@@ -22,7 +24,7 @@ export default function UploadConfig() {
         if (application_name && configuration_file_name) {
             setApplicationName(application_name);
             setConfigurationFileName(configuration_file_name);
-        } else {
+        } else if (location.pathname === "/upload-template") {
             setApplicationName("");
             setConfigurationFileName("");
             setFile(null);

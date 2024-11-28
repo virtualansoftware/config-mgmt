@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE } from '../constants';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 export default function Harness() {
+    const location = useLocation();
     const[type, setType] = useState("");
     const[applicationList, setApplicationList] = useState<string[]>([]);
     const[application, setApplication] = useState("");
@@ -37,7 +39,7 @@ export default function Harness() {
             setConfigurationFileName(configurationFileName);
             setEnvName(env_name);
             setModule(module);
-        } else {
+        } else if (location.pathname === "/harness") {
             setType("");
             setApplication("");
             setConfigurationFileName("");

@@ -124,7 +124,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     {/* Config Menu */}
                     <li onClick={(e) => toggleSubMenu("Config")}>
                         <Link to="/config">
-                            <i className={`fa-solid ${subMenu === "Config" ? "fa-caret-down" : "fa-caret-right"}`}></i> Config
+                            <i className={`fa-solid ${subMenu === "Config" ? "fa-caret-down" : "fa-caret-right"}`}></i> Config <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                         {/* First Sub Menu */}
                         {subMenu === "Config" && (
@@ -166,7 +166,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     {/* Generate Menu */}
                     <li onClick={(e) => toggleSubMenu("Generate")}>
                         <Link to="/generate-config">
-                            <i className={`fa-solid ${subMenu === "Generate" ? "fa-caret-down" : "fa-caret-right"}`}></i> Generate Config
+                            <i className={`fa-solid ${subMenu === "Generate" ? "fa-caret-down" : "fa-caret-right"}`}></i> Generate Config <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                         {/* First Sub Menu */}
                         {subMenu === "Generate" && (
@@ -208,7 +208,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     {/* Upload Menu */}
                     <li onClick={(e) => toggleSubMenu("Upload")}>
                         <Link to="/upload-template">
-                            <i className={`fa-solid ${subMenu === "Upload" ? "fa-caret-down" : "fa-caret-right"}`}></i> Upload Template
+                            <i className={`fa-solid ${subMenu === "Upload" ? "fa-caret-down" : "fa-caret-right"}`}></i> Upload Template <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                         {/* First Sub Menu */}
                         {subMenu === "Upload" && (
@@ -240,7 +240,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     {/* Common Menu */}
                     <li onClick={(e) => toggleSubMenu("Common")}>
                         <Link to="/common-config">
-                            <i className={`fa-solid ${subMenu === "Common" ? "fa-caret-down" : "fa-caret-right"}`}></i> Common Files
+                            <i className={`fa-solid ${subMenu === "Common" ? "fa-caret-down" : "fa-caret-right"}`}></i> Common Files <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                         {/* First Sub Menu */}
                         {subMenu === "Common" && (
@@ -272,7 +272,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     {/* Harness Menu */}
                     <li onClick={(e) => toggleSubMenu("Harness")}>
                         <Link to="/harness">
-                            <i className={`fa-solid ${subMenu === "Harness" ? "fa-caret-down" : "fa-caret-right"}`}></i> Harness
+                            <i className={`fa-solid ${subMenu === "Harness" ? "fa-caret-down" : "fa-caret-right"}`}></i> Harness <i className="fa-solid fa-pen-to-square"></i>
                         </Link>
                         {/* First Sub Menu */}
                         {subMenu === "Harness" && (

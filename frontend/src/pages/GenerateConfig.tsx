@@ -4,8 +4,10 @@ import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOIN
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 import DiffViewer from '../components/DiffViewer';
+import { useLocation } from 'react-router-dom';
 
 export default function GenerateConfig() {
+    const location = useLocation();
     const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
     const[configurationFileName, setConfigurationFileName] = useState("");
@@ -15,7 +17,7 @@ export default function GenerateConfig() {
     const[showDiffViewer, setShowDiffViewer] = useState(false);
     const[oldFileContent, setOldFileContent] = useState("");
     const[newFileContent, setNewFileContent] = useState("");
-    const [copyButtonText, setCopyButtonText] = useState("Copy Text");
+    const[copyButtonText, setCopyButtonText] = useState("Copy Text");
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -28,11 +30,11 @@ export default function GenerateConfig() {
             setApplicationName(application_name);
             setEnvName(env_name);
             setConfigurationFileName(configuration_file_name);
-        } else {
+        } else if (location.pathname === "/generate-config") {
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
-            setIsDisabled(false);
+            setTextArea("");
         }
     }, [window.location.search]);
 

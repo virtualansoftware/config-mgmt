@@ -3,6 +3,7 @@ import axios from 'axios';
 import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON } from '../constants';
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 interface SubMenuData {
     [applicationName: string]: {
@@ -11,6 +12,7 @@ interface SubMenuData {
 }
 
 export default function KeyValue(){
+    const location = useLocation();
     const[key, setKey] = useState("");
     const[value, setValue] = useState("");
     const[applicationName, setApplicationName] = useState("");
@@ -33,7 +35,7 @@ export default function KeyValue(){
             setApplicationName(application_name);
             setEnvName(env_name);
             setConfigurationFileName(configuration_file_name);
-        } else {
+        } else if (location.pathname === "/config") {
             setApplicationName("");
             setEnvName("");
             setConfigurationFileName("");
@@ -41,7 +43,7 @@ export default function KeyValue(){
             setKey("");
             setValue("");
         }
-    }, [window.location.search]);
+    }, [window.location.search, location.pathname]);
 
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){

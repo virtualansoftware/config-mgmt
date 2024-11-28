@@ -3,8 +3,10 @@ import axios from 'axios';
 import Sidebar from '../components/Sidebar';
 import { API_GET_ENDPOINT_COMMON, API_POST_ENDPOINT_COMMON } from '../constants';
 import { toast } from 'react-toastify';
+import { useLocation } from 'react-router-dom';
 
 export default function Common(){
+    const location = useLocation();
     const[key, setKey] = useState("");
     const[value, setValue] = useState("");
     const[envName, setEnvName] = useState("");
@@ -20,7 +22,7 @@ export default function Common(){
 
         if (env_name) {
             setEnvName(env_name);
-        } else {
+        } else if (location.pathname === "/common-config") {
             setEnvName("");
             setIsDisabled(false);
             setPairs([]);
