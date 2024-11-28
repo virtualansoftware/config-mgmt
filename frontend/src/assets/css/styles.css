@@ -232,6 +232,13 @@ html body{
   background-color: #f4f1f1;
   border-radius: 5px;
   font-weight: bold;
+  transform: translateX(1px);
+}
+.nav .profile .profile-menu li:last-child:hover {
+  background-color: rgb(251, 63, 63);
+}
+.nav .profile .profile-menu li i{
+  margin-right: 5px;
 }
 /* Side Bar */
 .sidebar{
