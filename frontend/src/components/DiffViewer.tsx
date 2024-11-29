@@ -3,23 +3,55 @@ import React from 'react';
 const getLineDiff = (oldText: string, newText: string) => {
     const oldLines = oldText.split('\n');
     const newLines = newText.split('\n');
+    const diffArray: { oldLine: string | null; newLine: string | null }[] = [];
 
-    const maxLength = Math.max(oldLines.length, newLines.length);
-    const diffArray: { oldLine: string | null, newLine: string | null }[] = [];
+    let oldIdx = 0, newIdx = 0;
 
-    for (let i = 0; i < maxLength; i++) {
-        diffArray.push({
-            oldLine: oldLines[i] || null,
-            newLine: newLines[i] || null,
-        });
+    while (oldIdx < oldLines.length || newIdx < newLines.length) {
+        if (oldIdx < oldLines.length && newIdx < newLines.length) {
+            if (oldLines[oldIdx] === newLines[newIdx]) {
+                // Unchanged line
+                diffArray.push({ oldLine: oldLines[oldIdx], newLine: newLines[newIdx] });
+                oldIdx++;
+                newIdx++;
+            } else if (
+                oldIdx + 1 < oldLines.length &&
+                newLines[newIdx] === oldLines[oldIdx + 1]
+            ) {
+                // Line removed
+                diffArray.push({ oldLine: oldLines[oldIdx], newLine: null });
+                oldIdx++;
+            } else if (
+                newIdx + 1 < newLines.length &&
+                oldLines[oldIdx] === newLines[newIdx + 1]
+            ) {
+                // Line added
+                diffArray.push({ oldLine: null, newLine: newLines[newIdx] });
+                newIdx++;
+            } else {
+                // Modified line
+                diffArray.push({ oldLine: oldLines[oldIdx], newLine: newLines[newIdx] });
+                oldIdx++;
+                newIdx++;
+            }
+        } else if (oldIdx < oldLines.length) {
+            // Remaining old lines
+            diffArray.push({ oldLine: oldLines[oldIdx], newLine: null });
+            oldIdx++;
+        } else if (newIdx < newLines.length) {
+            // Remaining new lines
+            diffArray.push({ oldLine: null, newLine: newLines[newIdx] });
+            newIdx++;
+        }
     }
+
     return diffArray;
 };
 
 // Function to compute the Longest Common Subsequence (LCS) between two strings
 const computeLCS = (oldLine: string, newLine: string) => {
-    const lenOld = oldLine.length;
-    const lenNew = newLine.length;
+    const lenOld = oldLine?.length || 0;
+    const lenNew = newLine?.length || 0;
     const dp = Array(lenOld + 1).fill(null).map(() => Array(lenNew + 1).fill(0));
 
     for (let i = 1; i <= lenOld; i++) {
@@ -35,7 +67,6 @@ const computeLCS = (oldLine: string, newLine: string) => {
     let i = lenOld, j = lenNew;
     const lcs = [];
 
-    // Backtrack to find LCS
     while (i > 0 && j > 0) {
         if (oldLine[i - 1] === newLine[j - 1]) {
             lcs.unshift(oldLine[i - 1]);
@@ -61,16 +92,20 @@ const highlightDiff = (oldLine: string | null, newLine: string | null) => {
         return [{ text: oldLine, type: 'removed' }];
     }
 
-    const lcs = computeLCS(oldLine || '', newLine || '');
+    // Safely handle null values
+    const safeOldLine = oldLine || '';
+    const safeNewLine = newLine || '';
+
+    const lcs = computeLCS(safeOldLine, safeNewLine);
     let oldIdx = 0, newIdx = 0;
 
     for (let i = 0; i < lcs.length; i++) {
-        while (oldLine?.[oldIdx] !== lcs[i] && oldIdx < oldLine.length) {
-            result.push({ text: oldLine[oldIdx], type: 'removed' });
+        while (safeOldLine[oldIdx] !== lcs[i] && oldIdx < safeOldLine.length) {
+            result.push({ text: safeOldLine[oldIdx], type: 'removed' });
             oldIdx++;
         }
-        while (newLine?.[newIdx] !== lcs[i] && newIdx < newLine.length) {
-            result.push({ text: newLine[newIdx], type: 'added' });
+        while (safeNewLine[newIdx] !== lcs[i] && newIdx < safeNewLine.length) {
+            result.push({ text: safeNewLine[newIdx], type: 'added' });
             newIdx++;
         }
         result.push({ text: lcs[i], type: 'same' });
@@ -78,13 +113,12 @@ const highlightDiff = (oldLine: string | null, newLine: string | null) => {
         newIdx++;
     }
 
-    // Push remaining characters
-    while (oldIdx < oldLine.length) {
-        result.push({ text: oldLine[oldIdx], type: 'removed' });
+    while (oldIdx < safeOldLine.length) {
+        result.push({ text: safeOldLine[oldIdx], type: 'removed' });
         oldIdx++;
     }
-    while (newIdx < newLine.length) {
-        result.push({ text: newLine[newIdx], type: 'added' });
+    while (newIdx < safeNewLine.length) {
+        result.push({ text: safeNewLine[newIdx], type: 'added' });
         newIdx++;
     }
 
@@ -141,7 +175,8 @@ const DiffViewer = ({ oldText, newText }: { oldText: string; newText: string }) 
                                             <span key={idx} className={part.type === 'added' ? 'added' : ''}>
                                                 {part.text}
                                             </span>
-                                        ))}
+                                        ))
+                                    }
                                 </div>
                             </div>
                         ))}
