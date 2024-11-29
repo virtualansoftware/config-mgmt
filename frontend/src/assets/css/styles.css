@@ -395,6 +395,26 @@ html body{
   width: 100%;
   padding: 4px;
 }
+.config .existingPairs{
+  position: absolute;
+  left: 72%;
+}
+.config .existingPairs div{
+  display: flex;
+  justify-content: space-around;
+}
+.config .existingPairs div li{
+  padding: 5px 10px;
+  background-color: lightyellow;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.config .existingPairs div i{
+  padding: 10px 5px;
+  cursor: pointer;
+}
 .config .error{
   color: red;
   font-size: 14px;

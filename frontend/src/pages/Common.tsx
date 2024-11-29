@@ -106,7 +106,10 @@ export default function Common(){
                 }
             });
             const data = response.data.commonMap;
-            const newPairs = data ? Object.entries(data).map(([key, value]) => ({ key, value })) : [];
+            const newPairs = data ? Object.entries(data)
+                .map(([key, value]) => ({ key, value })) 
+                .sort((a, b) => a.key.localeCompare(b.key))
+            : [];
             setPairs(newPairs);
             toast.success("Data fetched successfully");
             setLoading(false);

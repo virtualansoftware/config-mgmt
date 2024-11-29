@@ -23,6 +23,7 @@ export default function KeyValue(){
     const[isDataFetched, setIsDataFetched] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
     const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
+    const[existingKeyPairs, setExistingKeyPairs] = useState<{ key: string; value: any }[]>([]);
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -44,7 +45,7 @@ export default function KeyValue(){
             setValue("");
         }
     }, [window.location.search, location.pathname]);
-
+    
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
         if(key || value){
@@ -52,6 +53,7 @@ export default function KeyValue(){
             setPairs(newPairs);
             setKey("");
             setValue("");
+            setExistingKeyPairs([]);
         } else {
             toast.error("Please enter key or value");
         }
@@ -129,11 +131,15 @@ export default function KeyValue(){
                 }
             });
             const configData = configResponse.data.configMap;
-            const newPairs = configData ? Object.entries(configData).map(([key, value]) => ({ key, value })) : [];
+            const newPairs = configData ? Object.entries(configData)
+                .map(([key, value]) => ({ key, value }))
+                .sort((a, b) => a.key.localeCompare(b.key))
+            : [];
             setPairs(newPairs);
             toast.success("Data fetched successfully");
             setLoading(false);
             setIsDataFetched(true);
+            setExistingKeyPairs([]);
         } catch (error) {
             console.error("Error fetching pairs:", error);
             toast.error("Failed to fetch data");
@@ -155,8 +161,10 @@ export default function KeyValue(){
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
     
-        if (Array.isArray(subMenuData[application_name]) &&
-            subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
+        if (
+            Array.isArray(subMenuData[application_name]) &&
+            subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
+        ) {
             setLoading(true);
             setEditablePairs(true);
         } else {
@@ -164,37 +172,37 @@ export default function KeyValue(){
         }
     
         try {
-            // Fetch data from the upload endpoint
+            // Fetch upload data
             const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
                 params: { application_name, configuration_file_name },
             });
     
-            let uploadData = JSON.stringify(uploadResponse.data);
-            let regex = /\{\{[a-zA-Z0-9]+\}\}/g;
-            let matches = uploadData.match(regex);
+            const uploadData = JSON.stringify(uploadResponse.data);
+            const regex = /\{\{[a-zA-Z0-9]+\}\}/g;
+            const matches = uploadData.match(regex);
     
-            // Fetch data from the common endpoint
+            // Fetch common data
             const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
                 params: { env_name },
             });
     
             const commonData = commonResponse.data.commonMap;
-            const newPairs: Record<string, string> = Object.entries(commonData).reduce(
-                (acc, [key, value]) => {
-                    acc[key.trim()] = value as string;
-                    return acc;
-                },
-                {} as Record<string, string>
-            );
-            const commonKeys = Object.keys(commonData);
     
-            // Fetch data from the config endpoint
+            // Fetch config data
             const configResponse = await axios.get(API_GET_ENDPOINT, {
                 params: { application_name, env_name, configuration_file_name },
             });
     
             const configData = configResponse.data.configMap;
     
+            const existingPairs = Object.keys(commonData)
+            .filter(key => key in configData)
+            .map(key => ({
+                key,
+                value: commonData[key]
+            }));
+            setExistingKeyPairs(existingPairs);
+            
             const pairs: { key: string; value: string | null }[] = [];
             const keysSet = new Set<string>();
     
@@ -202,8 +210,8 @@ export default function KeyValue(){
                 for (let match of matches) {
                     const key = match.replace(/\{\{|\}\}/g, '').trim();
     
-                    // If the key exists in common data, use the value, else set to null
-                    const value = newPairs[key] || configData[key] || null;
+                    // Get the value from `commonData` or `configData`
+                    const value = commonData[key] || configData[key] || null;
                     if (!keysSet.has(key)) {
                         pairs.push({ key, value });
                         keysSet.add(key);
@@ -211,24 +219,26 @@ export default function KeyValue(){
                 }
             }
     
-            // Add unmatched common keys
-            for (const key of commonKeys) {
-                if (!keysSet.has(key)) {
-                    pairs.push({ key, value: newPairs[key] || configData[key] || null });
-                    keysSet.add(key);
-                }
-            }
-    
-            // Add unmatched config keys
+            // Add unmatched keys from `configData`
             for (const key of Object.keys(configData)) {
                 if (!keysSet.has(key)) {
-                    pairs.push({ key, value: configData[key] || null });
+                    pairs.push({ key, value: configData[key] });
+                    keysSet.add(key);
+                }
+            }
+
+            // Add unmatched keys from `commonData`
+            for (const key of Object.keys(commonData)) {
+                if (!keysSet.has(key)) {
+                    pairs.push({ key, value: commonData[key] });
                     keysSet.add(key);
                 }
             }
     
-            setPairs(pairs);
-            toast.success("Keys fetched successfully");
+            const sortedPairs = pairs.sort((a, b) => a.key.localeCompare(b.key));
+    
+            setPairs(sortedPairs);
+            toast.info("This key already exists. Do you want to overwrite the value?");
             setIsDataFetched(true);
         } catch (error) {
             console.error("Error fetching keys:", error);
@@ -236,7 +246,7 @@ export default function KeyValue(){
         } finally {
             setLoading(false);
         }
-    }    
+    }
 
     // CALLING FUNCTIONS
     async function handleInputs() {
@@ -250,6 +260,23 @@ export default function KeyValue(){
     const toggleEditMode = () => {
         setEditablePairs(!editablePairs);
     };
+
+    function handleCheckClick(existingPair: { key: string; value: any }, index: number) {
+        const newPairs = [...pairs];
+        const pairIndex = newPairs.findIndex(pair => pair.key === existingPair.key);
+        if (pairIndex !== -1) {
+            newPairs[pairIndex].value = existingPair.value;
+            setPairs(newPairs);
+        }
+        
+        const updatedKeyPairs = existingKeyPairs.filter(pair => pair.key !== existingPair.key);
+        setExistingKeyPairs(updatedKeyPairs);
+    }
+
+    function handleXmarkClick(key: string) {
+        const updatedKeyPairs = existingKeyPairs.filter(pair => pair.key !== key);
+        setExistingKeyPairs(updatedKeyPairs);
+    }
 
     return (
         <>
@@ -319,6 +346,22 @@ export default function KeyValue(){
                                                 />
                                             ) : (
                                                 <span>{pair.value}</span>
+                                            )}
+                                        </div>
+                                        <div className="existingPairs">
+                                            {existingKeyPairs && (
+                                                <>
+                                                    {existingKeyPairs
+                                                        .filter((existingPair) => existingPair.key === pair.key)
+                                                        .map((existingPair, idx) => (
+                                                            <div key={existingPair.key}>
+                                                                <li>{existingPair.value}</li>
+                                                                <i className="fa-solid fa-check" onClick={() => handleCheckClick(existingPair, idx)}></i>
+                                                                <i className="fa-solid fa-xmark" onClick={() => handleXmarkClick(existingPair.key)}></i>
+                                                            </div>
+                                                        ))
+                                                    }
+                                                </>
                                             )}
                                         </div>
                                         <img src="/images/minus-img.png" alt="minus" onClick={() => handleRemove(index)} />
