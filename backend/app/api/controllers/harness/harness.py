@@ -85,10 +85,7 @@ def harness_service(overrideSchema: OverrideSchema):
 @router.post("/input-sets", response_model=dict)
 def harness_inputsets(inputsetObject: InputSchema):
     try:
-        HarnessInputSetClient.create_harness_input_set(inputsetObject.accountIdentifier, inputsetObject.orgIdentifier,
-                                                       inputsetObject.projectIdentifier,
-                                                       inputsetObject.pipelineIdentifier,
-                                                       inputsetObject.branch, json.loads(inputsetObject.inputSetData))
+        HarnessInputSetClient.create_harness_input_set(inputsetObject.accountIdentifier, json.loads(inputsetObject.inputSetData))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled"+e.message

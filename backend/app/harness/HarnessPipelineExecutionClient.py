@@ -16,19 +16,19 @@ class HarnessPipelineExecutionClient:
         url = f"{self.base_url}/pipeline/api/pipeline/execute/{pipeline_identifier}/inputSetList?accountIdentifier={self.account_id}&orgIdentifier={org_identifier}&projectIdentifier={project_identifier}"
 
         try:
-            response = requests.post(url, headers=self.headers, json=data)
+            response = requests.put(url, headers=self.headers, json=data, params=self.params, proxies=self.proxy)
             # Check if the request was successful
             if response.status_code == 200:
                 return response.json()  # Return JSON response data
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                return None
+                raise ValueError(response.text)
         except requests.RequestException as e:
             print("An error occurred:", e)
-            return None
+            raise ValueError(e)
 
-    def execute_and_pipeline( account_id, org_identifier, project_identifier):
+    def execute_and_pipeline( account_id, data):
 
         client = HarnessPipelineExecutionClient(
             base_url=settings.HARNESS_BASE_URL,
@@ -38,8 +38,8 @@ class HarnessPipelineExecutionClient:
 
         """Executes the pipeline and prints the response."""
         response_data = client.execute_pipeline(
-            org_identifier=org_identifier,
-            project_identifier=project_identifier,
+            org_identifier=data['orgIdentifier'],
+            project_identifier=data['projectIdentifier'],
         )
 
         if response_data:

@@ -10,24 +10,32 @@ class HarnessEnvironmentClient:
             "x-api-key": api_key
         }
 
-    def create_environment(self, data ):
+        self.params = {
+            "accountIdentifier": account_id
+        }
+
+        self.proxy = {
+            "http": settings.PROXY
+        }
+
+    def create_environment(self, data):
         """Creates an environment in the Harness API."""
         url = f"{self.base_url}/gateway/ng/api/environmentsV2?accountIdentifier={self.account_id}"
 
         try:
-            response = requests.post(url, headers=self.headers, json=data)
+            response = requests.post(url, headers=self.headers, json=data, params=self.params, proxies=self.proxy)
             # Check if the request was successful
             if response.status_code == 200:
                 return response.json()  # Return JSON response data
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                return None
+                raise ValueError(response.text)
         except requests.RequestException as e:
             print("An error occurred:", e)
-            return None
+            raise ValueError(e)
 
-    def create_harness_environment( account_id, data):
+    def create_harness_environment(account_id, data):
         """Creates an environment and prints the response."""
         client = HarnessEnvironmentClient(
             base_url=settings.HARNESS_BASE_URL,
