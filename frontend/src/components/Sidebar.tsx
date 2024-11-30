@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
 import { API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE_ALL, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON_ALL } from "../constants";
@@ -29,6 +29,24 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [subMenuDataCommon, setSubMenuDataCommon] = useState<UploadMenuItem>({});
     const [subMenuDataHarness, setSubMenuDataHarness] = useState(null);
 
+    useEffect(() => { 
+        if (location.pathname === "/config") { 
+            setSubMenu("Config"); 
+            buildConfigMenu(); 
+        } else if (location.pathname === "/generate-config") { 
+            setSubMenu("Generate"); 
+            buildGenerateMenu(); 
+        } else if (location.pathname === "/upload-template") { 
+            setSubMenu("Upload"); 
+            buildUploadMenu(); 
+        } else if (location.pathname === "/common-config") { 
+            setSubMenu("Common"); 
+            buildCommonMenu(); 
+        } else if (location.pathname === "/harness") { 
+            setSubMenu("Harness"); 
+        } 
+    }, [location.pathname]);
+    
     const toggleSubMenu = (item: string) => {
         setSubMenu(subMenu === item ? null : item);
         setFirstSubMenu(null);
@@ -272,7 +290,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                     {/* Harness Menu */}
                     <li onClick={(e) => toggleSubMenu("Harness")}>
                         <Link to="/harness">
-                            <i className={`fa-solid ${subMenu === "Harness" ? "fa-caret-down" : "fa-caret-right"}`}></i> Harness <i className="fa-solid fa-pen-to-square"></i>
+                            <i className={`fa-solid ${subMenu === "Harness" ? "fa-caret-down" : "fa-caret-right"}`}></i> Harness
                         </Link>
                         {/* First Sub Menu */}
                         {subMenu === "Harness" && (

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE } from '../constants';
+import { API_GET_ENDPOINT, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE } from '../constants';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 
@@ -14,13 +14,6 @@ export default function Harness() {
     const[envName, setEnvName] = useState("");
     const[module, setModule] = useState("");
     const[loading, setLoading] = useState(false);
-    const[serviceData, setServiceData] = useState("");
-    const[inputSetData, setInputSetData] = useState("");
-    const[accountIdentifier, setAccountIdentifier] = useState("");
-    const[orgIdentifier, setOrgIdentifier] = useState("");
-    const[projectIdentifier, setProjectIdentifier] = useState("");
-    const[pipelineIdentifier, setPipelineIdentifier] = useState("");
-    const[branch, setBranch] = useState("");
 
     useEffect(() => {
         fetchAPPList();
@@ -55,8 +48,24 @@ export default function Harness() {
                 params: { env_name:envName }
             });
             const data = response.data.commonMap;
-            setAccountIdentifier(data.accountIdentifier);
-            setBranch(data.branch);
+            return data; 
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+        }
+    }
+
+    // GET - CONFIG
+    async function fetchConfig() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT, {
+                params: {
+                    application_name: application,
+                    env_name: envName,
+                    configuration_file_name: configurationFileName.replace('.json', '')
+                }
+            });
+            const data = response.data.configMap;
+            return data; 
         } catch (error) {
             console.error("Error fetching pairs:", error);
         }
@@ -79,23 +88,10 @@ export default function Harness() {
             } else {
                 displayData = data.toString();
             }
-            // Harness_Service
-            setServiceData(displayData);
-            // // Harness_Pipeline
-            setOrgIdentifier(data.pipeline.orgIdentifier);
-            setProjectIdentifier(data.pipeline.projectIdentifier);
-            // Harness_Inputset
-            setInputSetData(displayData);
-            setOrgIdentifier(data.inputSet.orgIdentifier);
-            setProjectIdentifier(data.inputSet.projectIdentifier);
-            setPipelineIdentifier(data.inputSet.pipeline.identifier);
+            return displayData; 
         } catch (error) {
             console.error("Error fetching pairs:", error);
         }
-    }
-
-    function delay(ms:any) {
-        return new Promise(resolve => setTimeout(resolve, ms));
     }
 
     // POST - GENERATE HARNESS
@@ -104,41 +100,50 @@ export default function Harness() {
             toast.error("Please fill in all the fields");
             return;
         }
-        await fetchCommon();
-        await fetchGenerated();
-        await delay(10000);
+
         try{
-            setLoading(true);   
+            setLoading(true);
+
+            const commonData = await fetchCommon();
+            const configData = await fetchConfig();
+            const generatedData = await fetchGenerated();
+
             if (type === "service"){
-                const response1 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, {
-                    serviceData, accountIdentifier
-                }, {
-                    headers: { "Content-Type": "application/json" },
-                });
+                const serviceData = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+
+                const response1 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, { serviceData, accountIdentifier});
             } else if(type === "service-override"){
-                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, {
-                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier
-                }, {
-                    headers: { "Content-Type": "application/json" },
-                });
+                const inputSetData = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+                const orgIdentifier = configData.orgIdentifier;
+                const projectIdentifier = configData.projectIdentifier;
+
+                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier });
             } else if(type === "update-service-override"){
-                const response3 = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE, {
-                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier
-                }, {
-                    headers: { "Content-Type": "application/json" },
-                });
+                const inputSetData = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+                const orgIdentifier = configData.orgIdentifier;
+                const projectIdentifier = configData.projectIdentifier;
+
+                const response3 = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier });
             } else if(type === "inputset"){
-                const response4 = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, {
-                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, pipelineIdentifier, branch
-                }, {
-                    headers: { "Content-Type": "application/json" },
-                });
+                const inputSetData = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+                const orgIdentifier = configData.orgIdentifier;
+                const projectIdentifier = configData.projectIdentifier;
+                const pipelineIdentifier = configData.identifier;
+                const branch = commonData.branch;
+
+                const response4 = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, pipelineIdentifier, branch });
             } else if (type === "pipeline"){
-                const response5 = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, {
-                    inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, branch
-                }, {
-                    headers: { "Content-Type": "application/json" },
-                });
+                const inputSetData = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+                const orgIdentifier = configData.orgIdentifier;
+                const projectIdentifier = configData.projectIdentifier;
+                const branch = commonData.branch;
+
+                const response5 = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, branch });
             } else {
                 setLoading(false);
                 return;

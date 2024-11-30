@@ -200,7 +200,7 @@ html body{
   color: gray;
 }
 .nav .profile .profile-menu {
-  width: 13%;
+  width: 11%;
   top: 70px;
   right: 0;
   position: absolute;
@@ -225,7 +225,7 @@ html body{
 .nav .profile .profile-menu li {
   list-style: none;
   cursor: pointer;
-  padding: 10px;
+  padding: 5px 10px;
   transition: background-color 0.3s ease, transform 0.3s ease;
 }
 .nav .profile .profile-menu li:hover {
