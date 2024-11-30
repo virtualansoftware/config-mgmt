@@ -28,64 +28,58 @@ router = APIRouter(
 @router.post("/service", response_model=dict)
 def harness_service(serviceObject: ServiceSchema):
     try:
-
         HarnessAPIClient.create_harness_service(serviceObject.accountIdentifier, json.loads(serviceObject.serviceData))
-
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
-        return "Error Occurred and Handled " + e.message
+        raise "Error Occurred and Handled"+e.message
     except Exception as error:
         traceback.print_exception(error)
-        return "Error Occurred and Handled ${error.message}"
+        raise "Error Occurred and Handled"+error.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
-            return ex.response
+            raise "Error Occurred and Handled"+ex.response
         else:
             raise
-    return {"status": "Added successfully"}
+    return {"status": "Created successfully"}
 
 
-@router.post("/service-override", response_model=dict)
+@router.post("/override", response_model=dict)
 def harness_service(overrideSchema: OverrideSchema):
     try:
-
-        HarnessOverrideClient.create_harness_service_override(overrideSchema.accountIdentifier, json.loads(overrideSchema.serviceData))
-
+        HarnessOverrideClient.create_harness_service_override(overrideSchema.accountIdentifier, json.loads(overrideSchema.inputSetData))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
-        return "Error Occurred and Handled " + e.message
+        raise "Error Occurred and Handled"+e.message
     except Exception as error:
         traceback.print_exception(error)
-        return "Error Occurred and Handled ${error.message}"
+        raise "Error Occurred and Handled"+error.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
-            return ex.response
+            raise "Error Occurred and Handled"+ex.response
         else:
             raise
-    return {"status": "Added successfully"}
+    return {"status": "Created successfully"}
 
 
-@router.post("/update-service-override", response_model=dict)
+@router.post("/update-override", response_model=dict)
 def harness_service(overrideSchema: OverrideSchema):
     try:
-
         HarnessOverrideClient.update_service_override(overrideSchema.accountIdentifier, json.loads(overrideSchema.serviceData))
-
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
-        return "Error Occurred and Handled " + e.message
+        raise "Error Occurred and Handled" + e.message
     except Exception as error:
         traceback.print_exception(error)
-        return "Error Occurred and Handled ${error.message}"
+        raise "Error Occurred and Handled" + error.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
-            return ex.response
+            raise "Error Occurred and Handled" + ex.response
         else:
             raise
-    return {"status": "Added successfully"}
+    return {"status": "Updated successfully"}
 
 
 @router.post("/input-sets", response_model=dict)
@@ -97,18 +91,17 @@ def harness_inputsets(inputsetObject: InputSchema):
                                                        inputsetObject.branch, json.loads(inputsetObject.inputSetData))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
-        return "Error Occurred and Handled " + e.message
+        raise "Error Occurred and Handled"+e.message
     except Exception as error:
         traceback.print_exception(error)
-        return "Error Occurred and Handled ${error.message}"
+        raise "Error Occurred and Handled"+error.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
-            return ex.response
+            raise "Error Occurred and Handled"+ex.response
         else:
             raise
-    return {"status": "Added successfully"}
-
+    return {"status": "Created successfully"}
 
 @router.post("/pipeline", response_model=dict)
 def harness_pipeline(inputsetObject: PipelineSchema):

@@ -113,14 +113,14 @@ export default function Harness() {
                 const accountIdentifier = commonData.accountIdentifier;
 
                 const response1 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, { serviceData, accountIdentifier});
-            } else if(type === "service-override"){
+            } else if(type === "override"){
                 const inputSetData = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
                 const orgIdentifier = configData.orgIdentifier;
                 const projectIdentifier = configData.projectIdentifier;
 
                 const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier });
-            } else if(type === "update-service-override"){
+            } else if(type === "update-override"){
                 const inputSetData = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
                 const orgIdentifier = configData.orgIdentifier;
@@ -206,8 +206,8 @@ export default function Harness() {
                                 <option value="infra">Infra</option>
                                 <option value="env">ENV</option>
                                 <option value="service">Service</option>
-                                <option value="service-override">Service Override</option>
-                                <option value="update-service-override">Updated Service Override</option>
+                                <option value="override">Override</option>
+                                <option value="update-override">Updated Override</option>
                                 <option value="pipeline">Pipeline</option>
                                 <option value="inputset">InputSet</option>
                             </select>

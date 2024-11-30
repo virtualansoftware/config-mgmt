@@ -28,10 +28,10 @@ class HarnessOverrideClient:
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                return None
+                raise ValueError(response.text)
         except requests.RequestException as e:
             print("An error occurred:", e)
-            return None
+            raise ValueError(e)
 
 
     def update_service_override(self, org_identifier, project_identifier, pipeline_identifier, branch, data):
@@ -44,10 +44,10 @@ class HarnessOverrideClient:
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                return None
+                raise ValueError(response.text)
         except requests.RequestException as e:
             print("An error occurred:", e)
-            return None
+            raise ValueError(e)
 
 
     def update_harness_service_override( account_id, org_identifier, project_identifier, data):
@@ -60,8 +60,8 @@ class HarnessOverrideClient:
 
         """Creates an input set and prints the response."""
         response_data = client.update_service_override(
-            org_identifier=org_identifier,
-            project_identifier=project_identifier,
+            org_identifier=data['orgIdentifier'],
+            project_identifier=data['projectIdentifier'],
             data=data
         )
 
@@ -70,7 +70,7 @@ class HarnessOverrideClient:
         else:
             print("Failed to create the input set.")
 
-    def create_harness_service_override( account_id, org_identifier, project_identifier, data):
+    def create_harness_service_override( account_id, data):
 
         client = HarnessOverrideClient(
             base_url=settings.HARNESS_BASE_URL,
@@ -80,8 +80,8 @@ class HarnessOverrideClient:
 
         """Creates an input set and prints the response."""
         response_data = client.create_service_override(
-            org_identifier=org_identifier,
-            project_identifier=project_identifier,
+            org_identifier=data['orgIdentifier'],
+            project_identifier=data['projectIdentifier'],
             data=data
         )
 
