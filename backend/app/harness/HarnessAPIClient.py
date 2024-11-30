@@ -8,15 +8,21 @@ class HarnessAPIClient:
         self.account_id = account_id
         self.headers = {
             "Content-Type": "application/json",
-            "Harness-Account": account_id,
             "x-api-key": api_key
+        }
+        self.params = {
+            "accountIdentifier": account_id
+        }
+
+        self.proxy = {
+            "http": settings.PROXY
         }
 
     def create_service(self, data):
         """Sends a POST request to create a service."""
         url = f"{self.base_url}/v1/services"
         try:
-            response = requests.post(url, headers=self.headers, json=data)
+            response = requests.post(url, headers=self.headers, json=data, params=self.params, proxies=self.proxy)
             # Check if the request was successful
             if response.status_code == 200:
                 print("Request was successful.")

@@ -113,13 +113,17 @@ const highlightDiff = (oldLine: string | null, newLine: string | null) => {
         newIdx++;
     }
 
-    while (oldIdx < safeOldLine.length) {
-        result.push({ text: safeOldLine[oldIdx], type: 'removed' });
-        oldIdx++;
+    if(oldIdx) {
+        while (oldIdx < safeOldLine.length) {
+            result.push({ text: safeOldLine[oldIdx], type: 'removed' });
+            oldIdx++;
+        }
     }
-    while (newIdx < safeNewLine.length) {
-        result.push({ text: safeNewLine[newIdx], type: 'added' });
-        newIdx++;
+    if(newIdx) {
+        while (newIdx < safeNewLine.length) {
+            result.push({ text: safeNewLine[newIdx], type: 'added' });
+            newIdx++;
+        }
     }
 
     return result;

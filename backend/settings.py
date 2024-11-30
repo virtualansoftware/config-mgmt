@@ -49,5 +49,5 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(extra=Extra.allow, env_file='.env', env_file_encoding='utf-8')
     HARNESS_BASE_URL: str = 'https://app.harness.io'
     HARNESS_API_KEY: str = os.getenv("HARNESS_API_KEY")
-
+    PROXY: str = os.getenv("PROXY")
 settings = Settings()

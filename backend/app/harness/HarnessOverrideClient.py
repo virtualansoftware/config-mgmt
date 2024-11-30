@@ -10,11 +10,19 @@ class HarnessOverrideClient:
             "x-api-key": api_key
         }
 
-    def create_service_override(self, org_identifier, project_identifier, pipeline_identifier, branch, data):
+        self.params = {
+            "accountIdentifier": account_id
+        }
+
+        self.proxy = {
+            "http": settings.PROXY
+        }
+
+    def create_service_override(self, org_identifier, project_identifier, data):
         """Creates an input set in the Harness API."""
         url = f"{self.base_url}/ng/api/serviceOverrides?accountIdentifier={self.account_id}&orgIdentifier={org_identifier}&projectIdentifier={project_identifier}"
         try:
-            response = requests.post(url, headers=self.headers, json=data)
+            response = requests.post(url, headers=self.headers, json=data, params=self.params, proxies=self.proxy)
             if response.status_code == 200:
                 return response.json()  # Return JSON response data
             else:
@@ -30,7 +38,7 @@ class HarnessOverrideClient:
         """Creates an input set in the Harness API."""
         url = f"{self.base_url}/ng/api/serviceOverrides?accountIdentifier={self.account_id}&orgIdentifier={org_identifier}&projectIdentifier={project_identifier}"
         try:
-            response = requests.put(url, headers=self.headers, json=data)
+            response = requests.put(url, headers=self.headers, json=data, params=self.params, proxies=self.proxy)
             if response.status_code == 200:
                 return response.json()  # Return JSON response data
             else:
