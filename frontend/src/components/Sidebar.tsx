@@ -318,10 +318,10 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                                 <Link to={{ pathname: "/harness", search: `?type=create-service` }}>Create Service</Link>
                                             </li>
                                             <li onClick={(e) => toggleThirdSubMenu("Override", e)}>
-                                                <Link to={{ pathname: "/harness", search: `?type=override` }}>Service Override</Link>
+                                                <Link to={{ pathname: "/harness", search: `?type=override` }}>Override</Link>
                                             </li>
                                             <li onClick={(e) => toggleThirdSubMenu("Update Override", e)}>
-                                                <Link to={{ pathname: "/harness", search: `?type=update-override` }}>Update Service Override</Link>
+                                                <Link to={{ pathname: "/harness", search: `?type=update-override` }}>Update Override</Link>
                                             </li>
                                             <li onClick={(e) => toggleThirdSubMenu("Create Pipeline", e)}>
                                                 <Link to={{ pathname: "/harness", search: `?type=create-pipeline` }}>Create Pipeline</Link>
