@@ -5,7 +5,7 @@ class PipelineSchema(BaseModel):
     accountIdentifier: str
     branch: str
 
-    def __init__(self, inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, branch):
+    def __init__(self, inputSetData, accountIdentifier, branch):
         super().__init__(inputSetData=inputSetData, accountIdentifier=accountIdentifier,
                          branch=branch)
 

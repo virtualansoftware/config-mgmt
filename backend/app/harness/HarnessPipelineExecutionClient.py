@@ -11,7 +11,7 @@ class HarnessPipelineExecutionClient:
             "x-api-key": api_key
         }
 
-    def execute_pipeline(self, org_identifier, project_identifier, pipeline_identifier, data):
+    def execute_inputset(self, org_identifier, project_identifier, pipeline_identifier, data):
         """Executes the pipeline with the provided input set list."""
         url = f"{self.base_url}/pipeline/api/pipeline/execute/{pipeline_identifier}/inputSetList?accountIdentifier={self.account_id}&orgIdentifier={org_identifier}&projectIdentifier={project_identifier}"
 
@@ -28,7 +28,7 @@ class HarnessPipelineExecutionClient:
             print("An error occurred:", e)
             raise ValueError(e)
 
-    def execute_and_pipeline( account_id, data):
+    def execute_with_inputset_pipeline(account_id, org_identifier, project_identifier, pipeline_identifier, data):
 
         client = HarnessPipelineExecutionClient(
             base_url=settings.HARNESS_BASE_URL,
@@ -37,9 +37,11 @@ class HarnessPipelineExecutionClient:
         )
 
         """Executes the pipeline and prints the response."""
-        response_data = client.execute_pipeline(
-            org_identifier=data['orgIdentifier'],
-            project_identifier=data['projectIdentifier'],
+        response_data = client.execute_inputset(
+            org_identifier=org_identifier,
+            project_identifier=project_identifier,
+            pipeline_identifier=pipeline_identifier,
+            data=data
         )
 
         if response_data:
