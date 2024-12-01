@@ -207,7 +207,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                                                     <ul className="lastlist">
                                                                         {links.map((link, linkIndex) => (
                                                                             <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
-                                                                                <Link to={{ pathname: "/generate-config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link.replace(/\.json$/, "")}` }}>{link}</Link>
+                                                                                <Link to={{ pathname: "/generate-config", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link}` }}>{link}</Link>
                                                                             </li>
                                                                         ))}
                                                                     </ul>
