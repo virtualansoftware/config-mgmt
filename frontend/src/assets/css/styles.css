@@ -657,3 +657,78 @@ html body{
 .footer span{
   font-weight: bold;
 }
+/* Responsive Design */
+@media (min-width: 768px) {
+  .config .form-group {
+    width: 70%;
+    /* height: 500px; */
+  }
+}
+
+@media (min-width: 1024px) {
+  .config .form-group {
+    width: 50%;
+  }
+}
+
+@media (min-width: 1500px) {
+  .login-page, .register-page{
+    height: 900px;
+  }
+  .login-container, .register-container{
+    padding: 100px 10px;
+  }
+  .login-container h2, .register-container h2{
+    font-size: 40px;
+  }
+  .login-container .username, .password, .checkbox, .register, .rights, .register-container .username, .password, .confirm, .login, .rights{
+    padding: 15px 0;
+    margin-top: 15px;
+  }
+  .login-container label, .register-container label{
+    font-size: 22px;
+  }
+  .login-container input, .register-container input{
+    padding: 10px;
+    font-size: 18px;
+  }
+  .login-container div .errorMsg, .register-container div .errorMsg{
+    font-size: 18px;
+  }
+  .login-container .password a{
+    font-size: 18px;
+  }
+  .login-container .password span{
+    font-size: 25px;
+    top: 70px;
+  }
+  .register-container .password span, .register-container .confirm span{
+    font-size: 25px;
+    top: 75px;
+  }
+  .login-container .checkbox input{
+    margin: 0 0 0 -230px;
+  }
+  .login-container .checkbox label{
+    font-size: 18px;
+    margin: 0 0 0 -230px;
+  }
+  .login-container button{
+    margin: 15px 0;
+    padding: 8px;
+  }
+  .register-container button{
+    margin: 20px 0 0 0;
+    padding: 8px;
+  }
+  .login-container .googleLogin, .register-container .googleLogin{
+    margin: 80px 0 0 80px;
+    width: 80%;
+  }
+  .login-container .register, .register-container .login{
+    font-size: 18px;
+  }
+  .login-container .rights, .register-container .rights{
+    font-size: 16px;
+  }
+}

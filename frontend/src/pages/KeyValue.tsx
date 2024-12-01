@@ -195,14 +195,16 @@ export default function KeyValue(){
     
             const configData = configResponse.data.configMap;
     
-            const existingPairs = Object.keys(commonData)
-            .filter(key => key in configData)
-            .map(key => ({
-                key,
-                value: commonData[key]
-            }));
-            setExistingKeyPairs(existingPairs);
-            
+            if(configData){
+                const existingPairs = Object.keys(commonData)
+                .filter(key => (key && key in configData))
+                .map(key => ({
+                    key,
+                    value: commonData[key]
+                }));
+                setExistingKeyPairs(existingPairs);
+            }
+
             const pairs: { key: string; value: string | null }[] = [];
             const keysSet = new Set<string>();
     
@@ -218,12 +220,14 @@ export default function KeyValue(){
                     }
                 }
             }
-    
-            // Add unmatched keys from `configData`
-            for (const key of Object.keys(configData)) {
-                if (!keysSet.has(key)) {
-                    pairs.push({ key, value: configData[key] });
-                    keysSet.add(key);
+
+            if(configData){
+                // Add unmatched keys from `configData`
+                for (const key of Object.keys(configData)) {
+                    if (!keysSet.has(key)) {
+                        pairs.push({ key, value: configData[key] });
+                        keysSet.add(key);
+                    }
                 }
             }
 
