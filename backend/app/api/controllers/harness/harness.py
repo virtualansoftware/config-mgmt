@@ -1,10 +1,7 @@
 import json
 
-from fastapi import APIRouter, Depends, HTTPException, File, Form, UploadFile, Response, HTTPException
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter
 from botocore.exceptions import ClientError
-from fastapi.security import HTTPBasic
 
 from utils.log import log
 from jinja2 import UndefinedError
