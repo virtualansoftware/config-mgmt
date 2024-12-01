@@ -1,11 +1,11 @@
 from pydantic import BaseModel
 
 class PipelineSchema(BaseModel):
-    inputSetData: str
+    data: str
     accountIdentifier: str
     branch: str
 
-    def __init__(self, inputSetData, accountIdentifier, branch):
-        super().__init__(inputSetData=inputSetData, accountIdentifier=accountIdentifier,
+    def __init__(self, data, accountIdentifier, branch):
+        super().__init__(data=data, accountIdentifier=accountIdentifier,
                          branch=branch)
 

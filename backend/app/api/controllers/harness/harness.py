@@ -28,7 +28,7 @@ router = APIRouter(
 @router.post("/service", response_model=dict)
 def harness_service(serviceObject: ServiceSchema):
     try:
-        HarnessAPIClient.create_harness_service(serviceObject.accountIdentifier, json.loads(serviceObject.serviceData))
+        HarnessAPIClient.create_harness_service(serviceObject.accountIdentifier, json.loads(serviceObject.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -48,7 +48,7 @@ def harness_service(serviceObject: ServiceSchema):
 def harness_service(overrideSchema: OverrideSchema):
     try:
         HarnessOverrideClient.create_harness_service_override(overrideSchema.accountIdentifier,
-                                                              json.loads(overrideSchema.inputSetData))
+                                                              json.loads(overrideSchema.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -68,7 +68,7 @@ def harness_service(overrideSchema: OverrideSchema):
 def harness_service(overrideSchema: OverrideSchema):
     try:
         HarnessOverrideClient.update_service_override(overrideSchema.accountIdentifier,
-                                                      json.loads(overrideSchema.serviceData))
+                                                      json.loads(overrideSchema.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -87,8 +87,7 @@ def harness_service(overrideSchema: OverrideSchema):
 @router.post("/input-sets", response_model=dict)
 def harness_inputsets(inputsetObject: InputSchema):
     try:
-        HarnessInputSetClient.create_harness_input_set(inputsetObject.accountIdentifier,
-                                                       json.loads(inputsetObject.inputSetData))
+        HarnessInputSetClient.create_harness_input_set(inputsetObject.accountIdentifier, inputsetObject.branch, json.loads(inputsetObject.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -107,9 +106,11 @@ def harness_inputsets(inputsetObject: InputSchema):
 @router.post("/execute-pipeline-inputset", response_model=dict)
 def harness_execute_pipeline(inputsetObject: InputSchema):
     try:
-        HarnessPipelineExecutionClient.execute_with_inputset_pipeline(inputsetObject.accountIdentifier, inputsetObject.orgIdentifier,
-                                                                      inputsetObject.projectIdentifier,inputsetObject.pipelineIdentifier,
-                                                                      json.loads(inputsetObject.inputSetData))
+        HarnessPipelineExecutionClient.execute_with_inputset_pipeline(inputsetObject.accountIdentifier,
+                                                                      inputsetObject.orgIdentifier,
+                                                                      inputsetObject.projectIdentifier,
+                                                                      inputsetObject.pipelineIdentifier,
+                                                                      json.loads(inputsetObject.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -129,7 +130,7 @@ def harness_execute_pipeline(inputsetObject: InputSchema):
 def harness_pipeline(inputsetObject: PipelineSchema):
     try:
         HarnessPipelineClient.create_the_pipeline(inputsetObject.accountIdentifier, inputsetObject.branch,
-                                                  json.loads(inputsetObject.inputSetData))
+                                                  json.loads(inputsetObject.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -149,7 +150,7 @@ def harness_pipeline(inputsetObject: PipelineSchema):
 def harness_environment(inputsetObject: PipelineSchema):
     try:
         HarnessEnvironmentClient.create_harness_environment(inputsetObject.accountIdentifier,
-                                                            json.loads(inputsetObject.inputSetData))
+                                                            json.loads(inputsetObject.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
@@ -168,7 +169,8 @@ def harness_environment(inputsetObject: PipelineSchema):
 @router.post("/infrastructure", response_model=dict)
 def harness_infrastructure(inputsetObject: ServiceSchema):
     try:
-        HarnessInfrastructureClient.create_harness_infrastructure(inputsetObject.accountIdentifier, json.loads(inputsetObject.inputSetData))
+        HarnessInfrastructureClient.create_harness_infrastructure(inputsetObject.accountIdentifier,
+                                                                  json.loads(inputsetObject.data))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
