@@ -197,7 +197,7 @@ export default function KeyValue(){
     
             if(configData){
                 const existingPairs = Object.keys(commonData)
-                .filter(key => (key && key in configData))
+                .filter(key => (key && (commonData[key] !== configData[key]) && key in configData))
                 .map(key => ({
                     key,
                     value: commonData[key]
