@@ -17,6 +17,8 @@ import Harness from './pages/Harness';
 import Footer from './components/Footer';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 const clientId = "YOUR_GOOGLE_CLIENT_ID";
 
@@ -36,6 +38,28 @@ const router = createBrowserRouter([
       <>
         <Header/>
         <Register/>
+      </>
+    ),
+  },
+  {
+    path: "/profile",
+    element: (
+      <>
+        <Header/>
+        <Sidebar onRetrieve={() => {}} />
+        <Profile/>
+        <Footer/>
+      </>
+    ),
+  },
+  {
+    path: "/settings",
+    element: (
+      <>
+        <Header/>
+        <Sidebar onRetrieve={() => {}} />
+        <Settings/>
+        <Footer/>
       </>
     ),
   },

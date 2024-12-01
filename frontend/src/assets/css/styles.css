@@ -570,6 +570,74 @@ html body{
 .added {
   background-color: rgb(130, 227, 130);
 }
+/* Profile */
+.profile-container{
+  padding: 20px;
+  width: 50%;
+  min-height: 450px;
+  display: inline-block;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 2px 2px 4px #e7e5e5;
+}
+.profile-container hr{
+  margin: 0;
+}
+.profile-head{
+  position: relative;
+}
+.profile-head h5{
+  text-align: center;
+  color: #004080;
+  font-weight: bold;
+  padding: 5px;
+}
+.profile-head i{
+  position: absolute;
+  top: 0;
+  right: 0;
+  cursor: pointer;
+  color: #004080;
+}
+.profile-content{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.profile-content img{
+  width: 15%;
+  margin: 10px;
+}
+.profile-content p{
+  color: #004080;
+  font-size: 16px;
+  font-weight: bold;
+}
+.profile-details{
+  width: 50%;
+}
+.profile-details .detail-row {
+  display: flex;
+  align-items: center;
+  text-align: left;
+}
+.profile-details .detail-row label {
+  font-weight: bold;
+  width: 150px;
+  font-size: 14px;
+}
+.profile-details .detail-row input{
+  width: 100%;
+  padding: 4px;
+  border: 1px solid gray;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 10px 0;
+}
+.profile-details button{
+  margin-top: 10px;
+  padding: 5px;
+}
 /* Footer */
 .footer{
   width: 100%;
