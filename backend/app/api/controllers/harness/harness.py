@@ -14,6 +14,7 @@ from app.harness.HarnessAPIClient import HarnessAPIClient
 from app.harness.HarnessInputSetClient import HarnessInputSetClient
 from app.harness.HarnessPipelineClient import HarnessPipelineClient
 from app.harness.HarnessEnvironmentClient import HarnessEnvironmentClient
+from app.harness.HarnessInfrastructureClient import HarnessInfrastructureClient
 from app.harness.HarnessPipelineExecutionClient import HarnessPipelineExecutionClient
 
 import traceback
@@ -149,6 +150,25 @@ def harness_environment(inputsetObject: PipelineSchema):
     try:
         HarnessEnvironmentClient.create_harness_environment(inputsetObject.accountIdentifier,
                                                             json.loads(inputsetObject.inputSetData))
+    except UndefinedError as e:
+        print("Error Occurred and Handled" + e.message)
+        raise "Error Occurred and Handled" + e.message
+    except Exception as error:
+        traceback.print_exception(error)
+        raise "Error Occurred and Handled" + error.message
+    except ClientError as ex:
+        if ex.response['Error']['Code'] == 'NoSuchKey':
+            log.info('No object found - returning empty')
+            raise "Error Occurred and Handled" + ex.response
+        else:
+            raise
+    return {"status": "Created successfully"}
+
+
+@router.post("/infrastructure", response_model=dict)
+def harness_infrastructure(inputsetObject: ServiceSchema):
+    try:
+        HarnessInfrastructureClient.create_harness_infrastructure(inputsetObject.accountIdentifier, json.loads(inputsetObject.inputSetData))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
         raise "Error Occurred and Handled" + e.message
