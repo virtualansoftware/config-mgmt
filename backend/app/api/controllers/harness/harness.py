@@ -103,19 +103,17 @@ def harness_inputsets(inputsetObject: InputSchema):
 @router.post("/pipeline", response_model=dict)
 def harness_pipeline(inputsetObject: PipelineSchema):
     try:
-        HarnessPipelineClient.create_the_pipeline(inputsetObject.accountIdentifier, inputsetObject.orgIdentifier,
-                                                  inputsetObject.projectIdentifier,
-                                                  inputsetObject.branch, json.loads(inputsetObject.inputSetData))
+        HarnessPipelineClient.create_the_pipeline(inputsetObject.accountIdentifier,  inputsetObject.branch, json.loads(inputsetObject.inputSetData))
     except UndefinedError as e:
         print("Error Occurred and Handled" + e.message)
-        return "Error Occurred and Handled " + e.message
+        raise "Error Occurred and Handled" + e.message
     except Exception as error:
         traceback.print_exception(error)
-        return "Error Occurred and Handled ${error.message}"
+        raise "Error Occurred and Handled" + error.message
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
-            return ex.response
+            raise "Error Occurred and Handled" + ex.response
         else:
             raise
-    return {"status": "Added successfully"}
+    return {"status": "Created successfully"}
