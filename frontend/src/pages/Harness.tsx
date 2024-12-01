@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_GET_ENDPOINT, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE } from '../constants';
+import { API_GET_ENDPOINT, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_OVERRIDE, API_POST_ENDPOINT_HARNESS_ENV, API_POST_ENDPOINT_HARNESS_INFRA, API_POST_ENDPOINT_HARNESS_EXECUTE_PIPELINE } from '../constants';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 
@@ -11,6 +11,7 @@ export default function Harness() {
     const[application, setApplication] = useState("");
     const[configurationFileNameList, setConfigurationFileNameList] = useState<string[]>([]);
     const[configurationFileName, setConfigurationFileName] = useState("");
+    const[envNameList, setEnvNameList] = useState<string[]>([]);
     const[envName, setEnvName] = useState("");
     const[module, setModule] = useState("");
     const[loading, setLoading] = useState(false);
@@ -54,23 +55,6 @@ export default function Harness() {
         }
     }
 
-    // GET - CONFIG
-    async function fetchConfig() {
-        try {
-            const response = await axios.get(API_GET_ENDPOINT, {
-                params: {
-                    application_name: application,
-                    env_name: envName,
-                    configuration_file_name: configurationFileName.replace('.json', '')
-                }
-            });
-            const data = response.data.configMap;
-            return data; 
-        } catch (error) {
-            console.error("Error fetching pairs:", error);
-        }
-    }
-
     // GET - GENERATED TEMPLATE
     async function fetchGenerated() {
         try {
@@ -105,45 +89,52 @@ export default function Harness() {
             setLoading(true);
 
             const commonData = await fetchCommon();
-            const configData = await fetchConfig();
             const generatedData = await fetchGenerated();
 
-            if (type === "service"){
-                const serviceData = generatedData;
+            if (type === "env"){
+                const data = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+                const branch = commonData.branch;
+
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_ENV, { data, accountIdentifier, branch});
+            } else if(type === "infra"){
+                const data = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
 
-                const response1 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, { serviceData, accountIdentifier});
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_INFRA, { data, accountIdentifier });
+            } else if(type === "service"){
+                const data = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE, { data, accountIdentifier });
             } else if(type === "override"){
-                const inputSetData = generatedData;
+                const data = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
-                const orgIdentifier = configData.orgIdentifier;
-                const projectIdentifier = configData.projectIdentifier;
 
-                const response2 = await axios.post(API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier });
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_OVERRIDE, { data, accountIdentifier });
             } else if(type === "update-override"){
-                const inputSetData = generatedData;
+                const data = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
-                const orgIdentifier = configData.orgIdentifier;
-                const projectIdentifier = configData.projectIdentifier;
 
-                const response3 = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier });
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_UPDATE_OVERRIDE, { data, accountIdentifier });
             } else if(type === "inputset"){
-                const inputSetData = generatedData;
+                const data = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
-                const orgIdentifier = configData.orgIdentifier;
-                const projectIdentifier = configData.projectIdentifier;
-                const pipelineIdentifier = configData.identifier;
                 const branch = commonData.branch;
 
-                const response4 = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, pipelineIdentifier, branch });
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_INPUT_SETS, { data, accountIdentifier, branch });
             } else if (type === "pipeline"){
-                const inputSetData = generatedData;
+                const data = generatedData;
                 const accountIdentifier = commonData.accountIdentifier;
-                const orgIdentifier = configData.orgIdentifier;
-                const projectIdentifier = configData.projectIdentifier;
                 const branch = commonData.branch;
 
-                const response5 = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, { inputSetData, accountIdentifier, orgIdentifier, projectIdentifier, branch });
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_PIPELINE, { data, accountIdentifier, branch });
+            } else if (type === "execute-pipeline-inputset"){
+                const data = generatedData;
+                const accountIdentifier = commonData.accountIdentifier;
+                const branch = commonData.branch;
+
+                const response = await axios.post(API_POST_ENDPOINT_HARNESS_EXECUTE_PIPELINE, { data, accountIdentifier, branch });
             } else {
                 setLoading(false);
                 return;
@@ -175,7 +166,7 @@ export default function Harness() {
         }
     }
 
-    // GET - CONFIG FILE NAME LIST
+    // GET - CONFIG FILE NAME LIST & ENV NAME LIST
     async function fetchFileNameList() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
@@ -183,8 +174,10 @@ export default function Harness() {
     
             const selectedKey = application;
             const fileNames = Object.values(data[selectedKey] as Record<string, string[]>).flat();
-    
             setConfigurationFileNameList(fileNames);
+
+            const environments = Object.keys(data[selectedKey]);
+            setEnvNameList(environments);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -203,12 +196,13 @@ export default function Harness() {
                                 onChange={(e) => setType(e.target.value)} 
                             >
                                 <option value="">Select Type</option>
-                                <option value="infra">Infra</option>
                                 <option value="env">ENV</option>
+                                <option value="infra">Infra</option>
                                 <option value="service">Service</option>
                                 <option value="override">Override</option>
                                 <option value="update-override">Updated Override</option>
                                 <option value="pipeline">Pipeline</option>
+                                <option value="execute-pipeline-inputset">Execute Pipeline Inputset</option>
                                 <option value="inputset">InputSet</option>
                             </select>
                         </div>
@@ -240,11 +234,17 @@ export default function Harness() {
                         </div>
                         <div>
                             <label>ENV Name</label>
-                            <input 
-                                type="text"
-                                value={envName}
-                                onChange={(e) => setEnvName(e.target.value)}
-                            />
+                            <select
+                                value={envName} 
+                                onChange={(e) => setEnvName(e.target.value)} 
+                            >
+                                <option value="">Select ENV Name</option>
+                                {[...new Set(envNameList)].map((fileName, index) => (
+                                    <option key={index} value={fileName}>
+                                        {fileName}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div>
                             <label>Module</label><br/>

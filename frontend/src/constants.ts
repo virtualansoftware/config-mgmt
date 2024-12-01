@@ -17,8 +17,11 @@ export const API_POST_ENDPOINT_COMMON = ENV_URL + "/config/common";
 export const API_GET_ENDPOINT_COMMON = ENV_URL + "/config/common";
 export const API_GET_ENDPOINT_COMMON_ALL = ENV_URL + "/config/commons";
 
+export const API_POST_ENDPOINT_HARNESS_ENV = ENV_URL + "/harness/environment";
+export const API_POST_ENDPOINT_HARNESS_INFRA = ENV_URL + "/harness/infrastructure";
 export const API_POST_ENDPOINT_HARNESS_SERVICE = ENV_URL + "/harness/service";
-export const API_POST_ENDPOINT_HARNESS_SERVICE_OVERRIDE = ENV_URL + "/harness/override";
-export const API_POST_ENDPOINT_HARNESS_UPDATE_SERVICE_OVERRIDE = ENV_URL + "/harness/update-override";
+export const API_POST_ENDPOINT_HARNESS_OVERRIDE = ENV_URL + "/harness/override";
+export const API_POST_ENDPOINT_HARNESS_UPDATE_OVERRIDE = ENV_URL + "/harness/update-override";
 export const API_POST_ENDPOINT_HARNESS_INPUT_SETS = ENV_URL + "/harness/input-sets";
 export const API_POST_ENDPOINT_HARNESS_PIPELINE = ENV_URL + "/harness/pipeline";
+export const API_POST_ENDPOINT_HARNESS_EXECUTE_PIPELINE = ENV_URL + "/harness/execute-pipeline-inputset";

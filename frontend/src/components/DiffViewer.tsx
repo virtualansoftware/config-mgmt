@@ -119,6 +119,7 @@ const highlightDiff = (oldLine: string | null, newLine: string | null) => {
             oldIdx++;
         }
     }
+    
     if(newIdx) {
         while (newIdx < safeNewLine.length) {
             result.push({ text: safeNewLine[newIdx], type: 'added' });
