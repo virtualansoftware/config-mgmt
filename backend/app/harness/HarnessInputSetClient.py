@@ -34,7 +34,7 @@ class HarnessInputSetClient:
             raise ValueError(e)
 
 
-def create_harness_input_set( account_id, branch, data):
+def create_harness_input_set(account_id, branch, data):
 
         client = HarnessInputSetClient(
             base_url=settings.HARNESS_BASE_URL,
@@ -46,7 +46,7 @@ def create_harness_input_set( account_id, branch, data):
         response_data = client.create_input_set(
             org_identifier=data['orgIdentifier'],
             project_identifier=data['projectIdentifier'],
-            pipeline_identifier=data['pipelineIdentifier'],
+            pipeline_identifier=data['pipeline']['Identifier'],
             branch=branch,
             data=data
         )
