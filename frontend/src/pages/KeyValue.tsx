@@ -178,7 +178,7 @@ export default function KeyValue(){
             });
     
             const uploadData = JSON.stringify(uploadResponse.data);
-            const regex = /\{\{[a-zA-Z0-9]+\}\}/g;
+            const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
             const matches = uploadData.match(regex);
     
             // Fetch common data

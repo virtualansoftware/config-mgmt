@@ -70,8 +70,15 @@ export default function GenerateConfig() {
             let oldDisplayData = typeof response.data === 'object' 
                 ? JSON.stringify(response.data, null, 4) 
                 : response.data.toString();
-            
-            const responsePreview = await axios.post(API_POST_ENDPOINT_GENERATE_PREVIEW, {
+            setOldFileContent(oldDisplayData);
+        } catch (error) {
+            setOldFileContent(error);
+            toast.error("Failed to fetch data");
+            setLoading(false);
+        }
+
+        try{
+            const responsePreview = await axios.post(API_POST_ENDPOINT_GENERATE_PREVIEW,  {
                 application_name: applicationName,
                 env_name: envName,
                 configuration_file_name: configurationFileName
@@ -82,16 +89,13 @@ export default function GenerateConfig() {
             let newDisplayData = typeof responsePreview.data === 'object' 
                 ? JSON.stringify(responsePreview.data, null, 4) 
                 : responsePreview.data.toString();
-
-            setOldFileContent(oldDisplayData);
-            setNewFileContent(newDisplayData);
-            setShowDiffViewer(true);
-            setLoading(false);
+                setNewFileContent(newDisplayData);
+                console.log(newDisplayData);
         } catch (error) {
-            console.error("Error fetching pairs:", error);
-            toast.error("Failed to fetch data");
-            setLoading(false);
-        }
+            setNewFileContent(error);
+        } 
+        setShowDiffViewer(true);
+        setLoading(false);
     }
 
     // POST METHOD - GENERATE TEMPLATE
