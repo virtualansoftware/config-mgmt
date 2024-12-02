@@ -1,6 +1,7 @@
 import requests
 from settings import settings
-
+import json
+from fastapi import HTTPException
 class HarnessEnvironmentClient:
     def __init__(self, base_url, account_id, api_key):
         self.base_url = base_url
@@ -30,7 +31,7 @@ class HarnessEnvironmentClient:
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                raise ValueError(response.text)
+                raise HTTPException(status_code=response.status_code, detail={"error": json.loads(response.text)['message']})
         except requests.RequestException as e:
             print("An error occurred:", e)
             raise ValueError(e)

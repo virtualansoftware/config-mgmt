@@ -1,6 +1,7 @@
 import json
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import JSONResponse
 from botocore.exceptions import ClientError
 
 from utils.log import log
@@ -25,16 +26,22 @@ router = APIRouter(
 )
 
 
+
 @router.post("/service", response_model=dict)
 def harness_service(serviceObject: ServiceSchema):
     try:
         HarnessAPIClient.create_harness_service(serviceObject.accountIdentifier, json.loads(serviceObject.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise error
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -45,16 +52,21 @@ def harness_service(serviceObject: ServiceSchema):
 
 
 @router.post("/override", response_model=dict)
-def harness_service(overrideSchema: OverrideSchema):
+def harness_override(overrideSchema: OverrideSchema):
     try:
         HarnessOverrideClient.create_harness_service_override(overrideSchema.accountIdentifier,
                                                               json.loads(overrideSchema.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise error
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -65,16 +77,21 @@ def harness_service(overrideSchema: OverrideSchema):
 
 
 @router.post("/update-override", response_model=dict)
-def harness_service(overrideSchema: OverrideSchema):
+def harness_update_override(overrideSchema: OverrideSchema):
     try:
         HarnessOverrideClient.update_service_override(overrideSchema.accountIdentifier,
                                                       json.loads(overrideSchema.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise error
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -89,11 +106,16 @@ def harness_inputsets(inputsetObject: InputSchema):
     try:
         HarnessInputSetClient.create_harness_input_set(inputsetObject.accountIdentifier, inputsetObject.branch, json.loads(inputsetObject.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise error
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -112,11 +134,16 @@ def harness_execute_pipeline(inputsetObject: InputSchema):
                                                                       inputsetObject.pipelineIdentifier,
                                                                       json.loads(inputsetObject.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise error
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -132,11 +159,16 @@ def harness_pipeline(inputsetObject: PipelineSchema):
         HarnessPipelineClient.create_the_pipeline(inputsetObject.accountIdentifier, inputsetObject.branch,
                                                   json.loads(inputsetObject.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise error
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -152,11 +184,17 @@ def harness_environment(inputsetObject: PipelineSchema):
         HarnessEnvironmentClient.create_harness_environment(inputsetObject.accountIdentifier,
                                                             json.loads(inputsetObject.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise HTTPException(status_code=json.loads(error.args[0])['message'].split[0],
+                            detail={"error": json.loads(error.args[0])['message']})
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')
@@ -172,11 +210,17 @@ def harness_infrastructure(inputsetObject: ServiceSchema):
         HarnessInfrastructureClient.create_harness_infrastructure(inputsetObject.accountIdentifier,
                                                                   json.loads(inputsetObject.data))
     except UndefinedError as e:
-        print("Error Occurred and Handled" + e.message)
-        raise "Error Occurred and Handled" + e.message
+        print("Error Occurred and Handled" + json.loads(e.args[0])['message'])
+        raise "Error Occurred and Handled" + json.loads(e.args[0])['message']
+    except HTTPException as exc:
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={"message": f"Error: {exc.detail}"}
+        )
     except Exception as error:
         traceback.print_exception(error)
-        raise "Error Occurred and Handled" + error.message
+        raise HTTPException(status_code=json.loads(error.args[0])['message'].split[0],
+                            detail={"error": json.loads(error.args[0])['message']})
     except ClientError as ex:
         if ex.response['Error']['Code'] == 'NoSuchKey':
             log.info('No object found - returning empty')

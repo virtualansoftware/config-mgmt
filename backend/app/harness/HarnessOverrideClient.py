@@ -1,5 +1,8 @@
 import requests
+import json
+from fastapi import HTTPException
 from settings import settings
+
 
 class HarnessOverrideClient:
     def __init__(self, base_url, account_id, api_key):
@@ -28,7 +31,7 @@ class HarnessOverrideClient:
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                raise ValueError(response.text)
+                raise HTTPException(status_code=response.status_code, detail={"error": json.loads(response.text)['message']})
         except requests.RequestException as e:
             print("An error occurred:", e)
             raise ValueError(e)
@@ -44,7 +47,7 @@ class HarnessOverrideClient:
             else:
                 print(f"Request failed with status code: {response.status_code}")
                 print("Response content:", response.text)
-                raise ValueError(response.text)
+                raise HTTPException(status_code=response.status_code, detail={"error": json.loads(response.text)['message']})
         except requests.RequestException as e:
             print("An error occurred:", e)
             raise ValueError(e)
