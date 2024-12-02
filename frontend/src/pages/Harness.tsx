@@ -149,7 +149,7 @@ export default function Harness() {
         } catch(error:any){
             console.error("Error sending data: ", error);
             const errorMessage = error.response?.data || error.message;
-            toast.error(`Failed to send data: ${errorMessage}`);
+            toast.error(`Failed to send data: ${JSON.stringify(errorMessage)}`);
             setLoading(false);
         }
     }
