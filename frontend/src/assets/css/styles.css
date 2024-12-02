@@ -34,7 +34,8 @@ html body{
 }
 .toaster {
   font-size: 14px;
-  width: 300px !important;
+  min-width: 22% !important;
+  width: auto !important;
 }
 /* Login & Register*/
 .login-page, .register-page{
@@ -445,7 +446,7 @@ html body{
 .textArea-container .copyButton {
   position: absolute;
   top: 30px;
-  right: 10px;
+  right: 20px;
   z-index: 1;
 }
 .textArea-container .copyButton button{
@@ -661,7 +662,6 @@ html body{
 @media (min-width: 768px) {
   .config .form-group {
     width: 70%;
-    /* height: 500px; */
   }
 }
 

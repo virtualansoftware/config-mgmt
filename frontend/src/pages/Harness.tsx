@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_GET_ENDPOINT, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_CONFIG_ALL, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_OVERRIDE, API_POST_ENDPOINT_HARNESS_ENV, API_POST_ENDPOINT_HARNESS_INFRA, API_POST_ENDPOINT_HARNESS_EXECUTE_PIPELINE } from '../constants';
+import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_OVERRIDE, API_POST_ENDPOINT_HARNESS_ENV, API_POST_ENDPOINT_HARNESS_INFRA, API_POST_ENDPOINT_HARNESS_EXECUTE_PIPELINE, API_GET_ENDPOINT_GENERATE_ALL } from '../constants';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 
@@ -62,7 +62,7 @@ export default function Harness() {
                 params: {
                     application_name: application,
                     env_name: envName,
-                    configuration_file_name: configurationFileName.replace('.json', '')
+                    configuration_file_name: configurationFileName
                 }
             });
             const data = response.data;
@@ -146,10 +146,11 @@ export default function Harness() {
             setEnvName("");
             setModule("");
             setLoading(false);
-        } catch(error:any){
+        } catch (error: any) {
             console.error("Error sending data: ", error);
-            const errorMessage = error.response?.data || error.message;
-            toast.error(`Failed to send data: ${JSON.stringify(errorMessage)}`);
+            const rawErrorMessage = error.response?.data || error.message;
+            const errorMessage = typeof rawErrorMessage === "object" ? JSON.stringify(rawErrorMessage) : rawErrorMessage;
+            toast.error(`Failed to send data: ${errorMessage}`);
             setLoading(false);
         }
     }
@@ -169,7 +170,7 @@ export default function Harness() {
     // GET - CONFIG FILE NAME LIST & ENV NAME LIST
     async function fetchFileNameList() {
         try {
-            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE_ALL);
             const data = response.data;
 
             const selectedKey = application;
