@@ -153,7 +153,7 @@ export default function KeyValue(){
         }
       
         return match.replace(/\{\{|\}\}/g, '').trim();
-      }    
+    }
 
     // GET - GET ALL CONFIG DATA
     async function allMenus() {
@@ -211,11 +211,13 @@ export default function KeyValue(){
                     value: commonData[key]
                 }));
                 setExistingKeyPairs(existingPairs);
+                existingKeyPairs.length ? toast.info("This key already exists. Do you want to overwrite the value?") : null;
             }
 
             const pairs: { key: string; value: string | null }[] = [];
             const keysSet = new Set<string>();
     
+            // Get the value from `commonData` or `configData`
             if (matches) {
                 for (let match of matches) {
                     let keyStr =  extractKey(match);
@@ -229,6 +231,7 @@ export default function KeyValue(){
                 }
             }
 
+            // Add unmatched keys from `configData`
             if(configData){
                 // Add unmatched keys from `configData`
                 for (const key of Object.keys(configData)) {
@@ -248,9 +251,8 @@ export default function KeyValue(){
             }
     
             const sortedPairs = pairs.filter(item => item && typeof item.key === "string").sort((a, b) => a.key.localeCompare(b.key));
-    
+        
             setPairs(sortedPairs);
-            toast.info("This key already exists. Do you want to overwrite the value?");
             setIsDataFetched(true);
         } catch (error) {
             console.error("Error fetching keys:", error);

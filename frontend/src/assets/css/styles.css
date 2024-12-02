@@ -275,23 +275,44 @@ html body{
   font-weight: bold;
   text-decoration: none;
 }
+.sidebar .sublist{
+  margin-top: 10px;
+}
 .sidebar .sublist li{
   font-size: 12px;
-  margin: 15px 0;
   text-align: left;
+  margin: 0;
+  padding: 5px 0;
 }
 .sidebar .sublist li a{
   color: #004080;
   text-decoration: none;
 }
-.sidebar ul li.selected{
-  width: 130%;
-  display: block;
+.sidebar .sublist li.selected{
+  display: inline-block;
   background-color: #004080;
   padding: 2px 5px;
   border-radius: 5px;
+  margin: 5px 0;
 }
-.sidebar ul li.selected a{
+.sidebar .sublist li.selected a{
+  color: white;
+}
+.sidebar .lastlist{
+  margin-top: 10px;
+}
+.sidebar .lastlist li{
+  margin: 0;
+  padding: 5px 0;
+}
+.sidebar .lastlist li.selected{
+  display: inline-block;
+  background-color: #004080;
+  padding: 2px 5px;
+  border-radius: 5px;
+  margin: 5px 0;
+}
+.sidebar .lastlist li.selected a{
   color: white;
 }
 /* Config, Generate, Upload, Common & Harness */
@@ -659,19 +680,8 @@ html body{
   font-weight: bold;
 }
 /* Responsive Design */
-@media (min-width: 768px) {
-  .config .form-group {
-    width: 70%;
-  }
-}
-
-@media (min-width: 1024px) {
-  .config .form-group {
-    width: 50%;
-  }
-}
-
 @media (min-width: 1500px) {
+  /* Login & Register*/
   .login-page, .register-page{
     height: 900px;
   }
@@ -730,5 +740,183 @@ html body{
   }
   .login-container .rights, .register-container .rights{
     font-size: 16px;
+  }
+  /* Header */
+  .nav{
+    padding: 20px;
+  }
+  .nav .logo img{
+    width: 70px;
+  }
+  .nav .logo h4{
+    font-size: 35px;
+  }
+  .nav .profile i{
+    font-size: 45px;
+  }
+  .nav .profile .profile-menu {
+    top: 110px;
+    padding: 20px;
+  }
+  .nav .profile .profile-menu li {
+    padding: 10px;
+    font-size: 20px;
+  }
+  .nav .profile .profile-menu li i{
+    margin-right: 5px;
+    font-size: 20px;
+  }
+  /* Side Bar */
+  .sidebar .sidebarSpinner{
+    width: 60px;
+    margin: 10px 0 0 30px;
+  }
+  .sidebar ul li{
+    font-size: 22px;
+    margin-top: 50px;
+  }
+  .sidebar .sublist li{
+    font-size: 20px;
+    margin-left: 10px;
+  }
+  .sidebar .sublist li a{
+    font-size: 18px;
+  }
+  /* Config, Generate, Upload, Common & Harness */
+  .config {
+    padding: 40px;
+  }
+  .config .form-group{
+    padding: 40px;
+    min-height: 550px;
+  }
+  .config .form-group h5{
+    font-size: 30px;
+  }
+  .config .input-container{
+    margin: 0 20px 20px 20px;
+  }
+  .config .input-container div{
+    margin-top: 15px;
+  }
+  .config .input-container label{
+    font-size: 20px;
+    margin-bottom: 5px;
+  }
+  .config .input-container input{
+    padding: 10px;
+    font-size: 20px;
+  }
+  .config .keyValue-group input {
+    padding: 8px;
+    font-size: 20px;
+  }
+  .config img{
+    width: 40px;
+  }
+  .config .spin-con .spinner{
+    width: 100px;
+  }
+  .config .cards li {
+    font-size: 18px;
+    padding: 8px 0;
+    margin-left: 20px;
+  }
+  .config .cards .card{
+    padding: 10px;
+    margin: 0 18px 0 0;
+  }
+  .config .cards .editable{
+    padding: 8px;
+  }
+  .config .cards .editable input{
+    width: 100%;
+    padding: 8px;
+  }
+  .config .existingPairs{
+    left: 71%;
+  }
+  .config .existingPairs div i{
+    padding: 10px;
+  }
+  .config .textarea{
+    font-size: 18px;
+  }
+  .textArea-container .copyButton button{
+    width: 110px;
+    font-size: 14px;
+  }
+  .config select{
+    padding: 10px;
+    font-size: 18px;
+  }
+  .config .download button{
+    margin-right: 10px;
+    font-size: 18px;
+  }
+  .config .btn{
+    font-size: 18px;
+  }
+  /* Preview popup window */
+  .modal-head{
+    padding: 10px 20px;
+  }
+  .modal-head h4{
+    font-size: 30px;
+  }
+  .modal-head i{
+    font-size: 30px;
+  }
+  .modal-content .btn{
+    font-size: 20px;
+    padding: 10px;
+  }
+  /* Diff Viewer */
+  .diff-column h3 {
+    padding: 20px;
+    font-size: 22px;
+  }
+  .diff-line div{
+    padding: 6px 0;
+    font-size: 20px;
+  }
+  .line-number {
+    font-size: 14px;
+    width: 60px;
+    height: 42px;
+  }
+  /* Profile */
+  .profile-head h5{
+    font-size: 30px;
+  }
+  .profile-head i{
+    font-size: 25px;
+  }
+  .profile-content img{
+    width: 15%;
+    margin: 10px;
+  }
+  .profile-content p{
+    font-size: 22px;
+  }
+  .profile-details .detail-row label {
+    font-size: 18px;
+  }
+  .profile-details .detail-row input{
+    padding: 8px;
+    font-size: 18px;
+    margin: 15px 0;
+  }
+  .profile-details .btn{
+    font-size: 18px;
+  }
+  /* Footer */
+  .footer{
+    padding: 10px 0;
+    font-size: 14px;
+  }
+  .footer img{
+    width: 30px;
+    padding-right: 8px;
   }
 }

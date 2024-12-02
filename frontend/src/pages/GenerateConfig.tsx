@@ -94,6 +94,7 @@ export default function GenerateConfig() {
         } catch (error) {
             setNewFileContent(error);
         } 
+        
         setShowDiffViewer(true);
         setLoading(false);
     }

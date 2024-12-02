@@ -1,8 +1,9 @@
 import React from 'react';
 
 const getLineDiff = (oldText: string, newText: string) => {
-    const oldLines = oldText.split('\n');
-    const newLines = newText.split('\n');
+    const oldLines = (typeof oldText === 'string' ? oldText : '').split('\n'); 
+    const newLines = (typeof newText === 'string' ? newText : '').split('\n');
+
     const diffArray: { oldLine: string | null; newLine: string | null }[] = [];
 
     let oldIdx = 0, newIdx = 0;
