@@ -20,7 +20,7 @@ export default function Harness() {
         fetchAPPList();
         fetchFileNameList();
     }, [application]);
-    
+
     // CLEAR ALL FIELDS
     useEffect(() => {
         const authResult = new URLSearchParams(window.location.search);
@@ -43,13 +43,13 @@ export default function Harness() {
     }, [window.location.search]);
 
     // GET - COMMON
-    async function fetchCommon() { 
+    async function fetchCommon() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_COMMON, {
                 params: { env_name:envName }
             });
             const data = response.data.commonMap;
-            return data; 
+            return data;
         } catch (error) {
             console.error("Error fetching pairs:", error);
         }
@@ -72,7 +72,7 @@ export default function Harness() {
             } else {
                 displayData = data.toString();
             }
-            return displayData; 
+            return displayData;
         } catch (error) {
             console.error("Error fetching pairs:", error);
         }
@@ -171,7 +171,7 @@ export default function Harness() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
             const data = response.data;
-    
+
             const selectedKey = application;
             const fileNames = Object.values(data[selectedKey] as Record<string, string[]>).flat();
             setConfigurationFileNameList(fileNames);
@@ -191,9 +191,9 @@ export default function Harness() {
                     <div className="input-container">
                         <div>
                             <label>Type</label>
-                            <select 
-                                value={type} 
-                                onChange={(e) => setType(e.target.value)} 
+                            <select
+                                value={type}
+                                onChange={(e) => setType(e.target.value)}
                             >
                                 <option value="">Select Type</option>
                                 <option value="env">ENV</option>
@@ -208,9 +208,9 @@ export default function Harness() {
                         </div>
                         <div>
                             <label>Application</label>
-                            <select 
-                                value={application} 
-                                onChange={(e) => setApplication(e.target.value)} 
+                            <select
+                                value={application}
+                                onChange={(e) => setApplication(e.target.value)}
                             >
                                 <option value="">Select App</option>
                                 {applicationList.map((app, index) => (
@@ -221,8 +221,8 @@ export default function Harness() {
                         <div>
                             <label>Configuration File Name</label>
                             <select
-                                value={configurationFileName} 
-                                onChange={(e) => setConfigurationFileName(e.target.value)} 
+                                value={configurationFileName}
+                                onChange={(e) => setConfigurationFileName(e.target.value)}
                             >
                                 <option value="">Select File Name</option>
                                 {[...new Set(configurationFileNameList)].map((fileName, index) => (
@@ -235,8 +235,8 @@ export default function Harness() {
                         <div>
                             <label>ENV Name</label>
                             <select
-                                value={envName} 
-                                onChange={(e) => setEnvName(e.target.value)} 
+                                value={envName}
+                                onChange={(e) => setEnvName(e.target.value)}
                             >
                                 <option value="">Select ENV Name</option>
                                 {[...new Set(envNameList)].map((fileName, index) => (

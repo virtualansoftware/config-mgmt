@@ -147,6 +147,14 @@ export default function KeyValue(){
         }
     }
     
+    function extractKey(match: string) {
+        if (typeof match !== 'string') {
+          throw new Error("Input must be a string");
+        }
+      
+        return match.replace(/\{\{|\}\}/g, '').trim();
+      }    
+
     // GET - GET ALL CONFIG DATA
     async function allMenus() {
         try {
@@ -210,13 +218,13 @@ export default function KeyValue(){
     
             if (matches) {
                 for (let match of matches) {
-                    const key = match.replace(/\{\{|\}\}/g, '').trim();
+                    let keyStr =  extractKey(match);
     
                     // Get the value from `commonData` or `configData`
-                    const value = commonData[key] || configData[key] || null;
-                    if (!keysSet.has(key)) {
-                        pairs.push({ key, value });
-                        keysSet.add(key);
+                    const value = (commonData && commonData[keyStr]) || (configData && configData[keyStr]) || null;
+                    if (!keysSet.has(keyStr)) {
+                        pairs.push({ key : keyStr, value : value });
+                        keysSet.add(keyStr);
                     }
                 }
             }
@@ -225,21 +233,21 @@ export default function KeyValue(){
                 // Add unmatched keys from `configData`
                 for (const key of Object.keys(configData)) {
                     if (!keysSet.has(key)) {
-                        pairs.push({ key, value: configData[key] });
+                        pairs.push({ key : key, value: configData[key] });
                         keysSet.add(key);
                     }
                 }
             }
 
             // Add unmatched keys from `commonData`
-            for (const key of Object.keys(commonData)) {
-                if (!keysSet.has(key)) {
-                    pairs.push({ key, value: commonData[key] });
-                    keysSet.add(key);
+            for (const keyId of Object.keys(commonData)) {
+                if (!keysSet.has(keyId)) {
+                    pairs.push({ key: keyId, value: commonData[keyId] });
+                    keysSet.add(keyId);
                 }
             }
     
-            const sortedPairs = pairs.sort((a, b) => a.key.localeCompare(b.key));
+            const sortedPairs = pairs.filter(item => item && typeof item.key === "string").sort((a, b) => a.key.localeCompare(b.key));
     
             setPairs(sortedPairs);
             toast.info("This key already exists. Do you want to overwrite the value?");
