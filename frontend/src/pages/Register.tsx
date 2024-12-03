@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
 
 export default function Register(){
     const[username, setUsername] = useState("");
@@ -24,13 +25,16 @@ export default function Register(){
         }
     };
 
-    const handleGoogleSuccess = () => {
-        toast.success('Google login successful!');
+    const handleGoogleSuccess = (response:any) => {
+        const token = response.credential;
+        const user = jwtDecode(token);
+        localStorage.setItem("user-details", JSON.stringify(user));
         navigate('/config-mgmt');
+        toast.success('Google sign up successful!');
     };
     
     const handleGoogleFailure = () => {
-        toast.error('Google login failed!');
+        toast.error('Google sign up failed!');
     };
     
     return (

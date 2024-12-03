@@ -40,6 +40,7 @@ export default function Header() {
     }
 
     function handleLogout() {
+        localStorage.removeItem("user-details");
         navigate("/login");
         closeMenu();
     }

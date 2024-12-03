@@ -20,7 +20,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 
-const clientId = "YOUR_GOOGLE_CLIENT_ID";
+const clientId = "350206748559-h2osb5q8uos0nl8kohkijmnr649a93de.apps.googleusercontent.com";
 
 const router = createBrowserRouter([
   {
