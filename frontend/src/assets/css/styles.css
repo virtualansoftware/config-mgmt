@@ -405,17 +405,81 @@ html body{
 }
 .config .cards .editable{
   width: 47%;
-  margin: -5px 7px -5px -5px;
-  color: #004080;
+  margin: -5px 4px -5px -2px;
   text-align: left;
-  padding: 6px;
+  padding: 7px 6px;
   border-radius: 4px;
   word-wrap: break-word;
   display: inline-block;
 }
 .config .cards .editable input{
   width: 100%;
-  padding: 4px;
+  padding: 5px;
+  margin-top: 2px;
+}
+.config .cards .editable .default{
+  border: 1px solid gray;
+  background-color: white;
+}
+.upload-key.editable {
+  background-color: lightcyan;
+  border: 1px solid gray;
+}
+.config-key.editable {
+  background-color: #ffd9d9;
+  border: 1px solid gray;
+}
+.common-key.editable {
+  background-color: #f7ffe2;
+  border: 1px solid gray;
+}
+.config-value.editable {
+  background-color: #ffd9d9;
+  border: 1px solid gray;
+}
+.common-value.editable {
+  background-color: #f7ffe2;
+  border: 1px solid gray;
+}
+.help{
+  display: inline-block;
+  text-align: left;
+  border-radius: 4px;
+  background-color: white;
+  box-shadow: 0 0 10px #e7e5e5;
+  position: fixed;
+  top: 16%;
+  right: 4%;
+  z-index: -1;
+}
+.help div{
+  text-align: left;
+}
+.help p{
+  font-weight: bold;
+  font-size: 12px;
+  margin: 15px;
+}
+.help .upload span{
+  padding: 0 8px;
+  margin-right: 10px;
+  background-color: lightcyan;
+  border: 1px solid black;
+}
+.help .common span{
+  padding: 0 8px;
+  margin-right: 10px;
+  background-color: #f7ffe2;
+  border: 1px solid black;
+}
+.help .config{
+  padding: 0;
+}
+.help .config span{
+  padding: 0 8px;
+  margin-right: 10px;
+  background-color: #ffd9d9;
+  border: 1px solid black;
 }
 .config .existingPairs{
   position: absolute;
@@ -797,20 +861,23 @@ html body{
     font-size: 20px;
   }
   /* Side Bar */
+  .sidebar{
+    width: 16%;
+    height: 150%;
+  }
   .sidebar .sidebarSpinner{
     width: 60px;
-    margin: 10px 0 0 30px;
+    margin: 10px 0 0 20px;
   }
   .sidebar ul li{
-    font-size: 22px;
-    margin-top: 50px;
+    margin: 40px 0;
+    font-size: 20px;
+  }
+  .sidebar .sublist{
+    margin: 10px 0 0 10px;
   }
   .sidebar .sublist li{
-    font-size: 20px;
-    margin-left: 10px;
-  }
-  .sidebar .sublist li a{
-    font-size: 18px;
+    font-size: 16px;
   }
   /* Config, Generate, Upload, Common & Harness */
   .config {
@@ -850,7 +917,7 @@ html body{
   .config .cards li {
     font-size: 18px;
     padding: 8px 0;
-    margin-left: 20px;
+    margin-left: 10px;
   }
   .config .cards .card{
     padding: 10px;
@@ -862,6 +929,19 @@ html body{
   .config .cards .editable input{
     width: 100%;
     padding: 8px;
+  }
+  .help p{
+    font-size: 18px;
+    margin: 25px;
+  }
+  .help .upload span{
+    padding: 0 12px;
+  }
+  .help .common span{
+    padding: 0 12px;
+  }
+  .help .config span{
+    padding: 0 12px;
   }
   .config .existingPairs{
     left: 71%;

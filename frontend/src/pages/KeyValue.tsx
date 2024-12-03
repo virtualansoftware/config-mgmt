@@ -24,6 +24,7 @@ export default function KeyValue(){
     const[editablePairs, setEditablePairs] = useState(false);
     const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
     const[existingKeyPairs, setExistingKeyPairs] = useState<{ key: string; value: any }[]>([]);
+    const[showHelp, setShowHelp] = useState(false);
 
     // CLEAR ALL FIELDS
     useEffect(() => {
@@ -49,7 +50,7 @@ export default function KeyValue(){
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
         if(key || value){
-            const newPairs = [...pairs, {key, value}];
+            const newPairs = [...pairs, {key, value, source: "default", valueSource: "default"}];
             setPairs(newPairs);
             setKey("");
             setValue("");
@@ -132,7 +133,7 @@ export default function KeyValue(){
             });
             const configData = configResponse.data.configMap;
             const newPairs = configData ? Object.entries(configData)
-                .map(([key, value]) => ({ key, value }))
+                .map(([key, value]) => ({ key, value, source: "default", valueSource: "default" }))
                 .sort((a, b) => a.key.localeCompare(b.key))
             : [];
             setPairs(newPairs);
@@ -168,7 +169,7 @@ export default function KeyValue(){
     // GET - GET UPLOADED TEMPLATE
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
-    
+
         if (
             Array.isArray(subMenuData[application_name]) &&
             subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
@@ -208,36 +209,25 @@ export default function KeyValue(){
                 .filter(key => (key && (commonData[key] !== configData[key]) && key in configData))
                 .map(key => ({
                     key,
-                    value: commonData[key]
+                    value: configData[key]
                 }));
                 setExistingKeyPairs(existingPairs);
-                existingKeyPairs.length ? toast.info("This key already exists. Do you want to overwrite the value?") : null;
+                if (existingKeyPairs.length && editablePairs) {
+                    toast.info("This key already exists. Do you want to overwrite the value?");
+                }
             }
 
-            const pairs: { key: string; value: string | null }[] = [];
+            const pairs: { key: string; value: string | null; source: string; valueSource: string }[] = [];
             const keysSet = new Set<string>();
     
             // Get the value from `commonData` or `configData`
             if (matches) {
                 for (let match of matches) {
                     let keyStr =  extractKey(match);
-    
-                    // Get the value from `commonData` or `configData`
                     const value = (commonData && commonData[keyStr]) || (configData && configData[keyStr]) || null;
                     if (!keysSet.has(keyStr)) {
-                        pairs.push({ key : keyStr, value : value });
+                        pairs.push({ key: keyStr, value: value, source: "upload", valueSource: value && commonData[keyStr] ? "common" : "config" });
                         keysSet.add(keyStr);
-                    }
-                }
-            }
-
-            // Add unmatched keys from `configData`
-            if(configData){
-                // Add unmatched keys from `configData`
-                for (const key of Object.keys(configData)) {
-                    if (!keysSet.has(key)) {
-                        pairs.push({ key : key, value: configData[key] });
-                        keysSet.add(key);
                     }
                 }
             }
@@ -245,15 +235,26 @@ export default function KeyValue(){
             // Add unmatched keys from `commonData`
             for (const keyId of Object.keys(commonData)) {
                 if (!keysSet.has(keyId)) {
-                    pairs.push({ key: keyId, value: commonData[keyId] });
+                    pairs.push({ key: keyId, value: commonData[keyId], source: "common", valueSource: "common" });
                     keysSet.add(keyId);
                 }
             }
-    
+
+            // Add unmatched keys from `configData`
+            if(configData){
+                for (const key of Object.keys(configData)) {
+                    if (!keysSet.has(key)) {
+                        pairs.push({ key: key, value: configData[key], source: "config", valueSource: "config" });
+                        keysSet.add(key);
+                    }
+                }
+            }
+
             const sortedPairs = pairs.filter(item => item && typeof item.key === "string").sort((a, b) => a.key.localeCompare(b.key));
-        
+
             setPairs(sortedPairs);
             setIsDataFetched(true);
+            setShowHelp(true);
         } catch (error) {
             console.error("Error fetching keys:", error);
             toast.error("Failed to fetch data");
@@ -275,7 +276,7 @@ export default function KeyValue(){
         setEditablePairs(!editablePairs);
     };
 
-    function handleCheckClick(existingPair: { key: string; value: any }, index: number) {
+    function handleConfirmValue(existingPair: { key: string; value: any }, index: number) {
         const newPairs = [...pairs];
         const pairIndex = newPairs.findIndex(pair => pair.key === existingPair.key);
         if (pairIndex !== -1) {
@@ -287,7 +288,7 @@ export default function KeyValue(){
         setExistingKeyPairs(updatedKeyPairs);
     }
 
-    function handleXmarkClick(key: string) {
+    function handleRejectValue(key: string) {
         const updatedKeyPairs = existingKeyPairs.filter(pair => pair.key !== key);
         setExistingKeyPairs(updatedKeyPairs);
     }
@@ -338,7 +339,10 @@ export default function KeyValue(){
                                     <li key={index}>
                                         <div className={editablePairs ? "editable" : "card"}>
                                             {editablePairs ? (
-                                                <input type="text" value={pair.key} 
+                                                <input 
+                                                    type="text" 
+                                                    value={pair.key} 
+                                                    className={`${pair.source === "upload" ? "upload-key" : pair.source === "config" ? "config-key" : pair.source === "common" ? "common-key" : "default"} editable`}
                                                     onChange={(e) => {
                                                         const newPairs = [...pairs];
                                                         newPairs[index].key = e.target.value;
@@ -351,7 +355,10 @@ export default function KeyValue(){
                                         </div>  
                                         <div className={editablePairs ? "editable" : "card"}>
                                             {editablePairs ? (
-                                                <input type="text" value={pair.value}
+                                                <input 
+                                                    type="text" 
+                                                    value={pair.value}
+                                                    className={`${pair.valueSource === "config" ? "config-value" : pair.valueSource === "common" ? "common-value" : "default"} editable`}
                                                     onChange={(e) => {
                                                         const newPairs = [...pairs];
                                                         newPairs[index].value = e.target.value;
@@ -363,15 +370,15 @@ export default function KeyValue(){
                                             )}
                                         </div>
                                         <div className="existingPairs">
-                                            {existingKeyPairs && (
+                                            {existingKeyPairs && editablePairs &&(
                                                 <>
                                                     {existingKeyPairs
                                                         .filter((existingPair) => existingPair.key === pair.key)
                                                         .map((existingPair, idx) => (
                                                             <div key={existingPair.key}>
                                                                 <li>{existingPair.value}</li>
-                                                                <i className="fa-solid fa-check" onClick={() => handleCheckClick(existingPair, idx)}></i>
-                                                                <i className="fa-solid fa-xmark" onClick={() => handleXmarkClick(existingPair.key)}></i>
+                                                                <i className="fa-solid fa-check" onClick={() => handleConfirmValue(existingPair, idx)}></i>
+                                                                <i className="fa-solid fa-xmark" onClick={() => handleRejectValue(existingPair.key)}></i>
                                                             </div>
                                                         ))
                                                     }
@@ -406,6 +413,19 @@ export default function KeyValue(){
                             <button className='btn btn-success me-2' onClick={submit}>Submit</button>
                             <button className='btn btn-primary' onClick={toggleEditMode}>{editablePairs ? "Save Changes" : "Edit"}</button>
                         </>
+                    )}
+                    {showHelp && editablePairs &&(
+                        <div className="help">
+                            <div className="upload">
+                                <p><span></span> Template Key</p>
+                            </div>
+                            <div className="common">
+                                <p><span></span> Common Value</p>
+                            </div>
+                            <div className="config">
+                                <p><span></span> Config Value</p>
+                            </div>
+                        </div>
                     )}
                 </div>
             </div>
