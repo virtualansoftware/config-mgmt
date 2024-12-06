@@ -545,13 +545,67 @@ html body{
 .textArea-container .copyButton button i{
   padding-right: 5px;
 }
-.config select{
-  width: 100%;
-  padding: 5px;
-  border: 1px solid gray;
-  border-radius: 4px;
+.config .service-container{
   text-align: left;
+  margin: 0;
+}
+ .config .service-container .label {
+  color: gray;
   font-size: 14px;
+  font-weight: bold;
+  transform: translate(14px, 8px) scale(1);
+  transition: transform 0.2s ease-in-out, font-size 0.2s ease-in-out;
+}
+.config .service-container .label.MuiInputLabel-shrink {
+  color: #126ac1;
+  transform: translate(13px, -7px) scale(0.75) !important;
+}
+.config .service-container .select {
+  width: 100%;
+  height: 35px !important;
+  font-size: 14px !important;
+  overflow-y: hidden !important;
+}
+.MuiMenuItem-root {
+  font-size: 14px !important;
+  padding: 8px 16px !important;
+  color: #333 !important;
+}
+.module {
+  position: relative;
+  margin: 30px 0;
+}
+.input-label {
+  color: gray;
+  font-size: 14px;
+  font-weight: bold;
+  position: absolute;
+  top: 50%;
+  left: 16px;
+  transform: translateY(-50%);
+  transition: all 0.2s ease-in-out;
+  pointer-events: none;
+}
+.input-field:focus ~ .input-label,
+.input-field:not(:placeholder-shown) ~ .input-label {
+  top: 0;
+  left: 8px;
+  font-size: 12px;
+  color: #126ac1;
+  font-weight: bold;
+  padding: 0 4px;
+  background-color: white;
+}
+.input-field {
+  width: 100%;
+  padding: 4px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  outline: none;
+}
+.input-field:focus {
+  border: 2px solid #126ac1;
 }
 .config .download{
   text-align: center;

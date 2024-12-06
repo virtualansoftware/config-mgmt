@@ -101,11 +101,6 @@ export default function GenerateConfig() {
 
     // POST METHOD - GENERATE TEMPLATE
     async function generateConfig(){
-        if (!applicationName || !envName || !configurationFileName) {
-            toast.error("Please fill in all the fields");
-            return;
-        }
-
         if (oldFileContent === newFileContent){
             toast.error("No changes to generate");
             return;

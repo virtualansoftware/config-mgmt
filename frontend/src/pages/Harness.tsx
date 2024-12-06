@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_GENERATE, API_GET_ENDPOINT_UPLOAD_ALL, API_POST_ENDPOINT_HARNESS_INPUT_SETS, API_POST_ENDPOINT_HARNESS_PIPELINE, API_POST_ENDPOINT_HARNESS_SERVICE, API_POST_ENDPOINT_HARNESS_OVERRIDE, API_POST_ENDPOINT_HARNESS_UPDATE_OVERRIDE, API_POST_ENDPOINT_HARNESS_ENV, API_POST_ENDPOINT_HARNESS_INFRA, API_POST_ENDPOINT_HARNESS_EXECUTE_PIPELINE, API_GET_ENDPOINT_GENERATE_ALL } from '../constants';
 import { toast } from 'react-toastify';
-import { useLocation } from 'react-router-dom';
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 
 export default function Harness() {
-    const location = useLocation();
     const[type, setType] = useState("");
     const[applicationList, setApplicationList] = useState<string[]>([]);
     const[application, setApplication] = useState("");
@@ -20,27 +19,6 @@ export default function Harness() {
         fetchAPPList();
         fetchFileNameList();
     }, [application]);
-
-    // CLEAR ALL FIELDS
-    useEffect(() => {
-        const authResult = new URLSearchParams(window.location.search);
-        const application_name = authResult.get('application_name');
-        const env_name = authResult.get('env_name');
-
-        if (application_name && type && application && env_name && module) {
-            setType(type);
-            setApplication(application);
-            setConfigurationFileName(configurationFileName);
-            setEnvName(env_name);
-            setModule(module);
-        } else if (location.pathname === "/harness") {
-            setType("");
-            setApplication("");
-            setConfigurationFileName("");
-            setEnvName("");
-            setModule("");
-        }
-    }, [window.location.search]);
 
     // GET - COMMON
     async function fetchCommon() {
@@ -189,71 +167,75 @@ export default function Harness() {
             <div className="config">
                 <div className="form-group">
                     <h5>Harness</h5>
-                    <div className="input-container">
-                        <div>
-                            <label>Type</label>
-                            <select
+                    <div className="service-container">
+                        <FormControl fullWidth sx={{ mt: 1 }}>
+                            <InputLabel className="label">Select Type</InputLabel>
+                            <Select
                                 value={type}
                                 onChange={(e) => setType(e.target.value)}
+                                className="select"
+                                label="Select Type"
                             >
-                                <option value="">Select Type</option>
-                                <option value="env">ENV</option>
-                                <option value="infra">Infra</option>
-                                <option value="service">Service</option>
-                                <option value="override">Override</option>
-                                <option value="update-override">Updated Override</option>
-                                <option value="pipeline">Pipeline</option>
-                                <option value="execute-pipeline-inputset">Execute Pipeline Inputset</option>
-                                <option value="inputset">InputSet</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Application</label>
-                            <select
+                                <MenuItem value="env">ENV</MenuItem>
+                                <MenuItem value="infra">Infra</MenuItem>
+                                <MenuItem value="service">Service</MenuItem>
+                                <MenuItem value="override">Override</MenuItem>
+                                <MenuItem value="update-override">Updated Override</MenuItem>
+                                <MenuItem value="pipeline">Pipeline</MenuItem>
+                                <MenuItem value="execute-pipeline-inputset">Execute Pipeline Inputset</MenuItem>
+                                <MenuItem value="inputset">InputSet</MenuItem>
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 4 }}>
+                            <InputLabel className="label" id="demo-simple-select-label">Select App Name</InputLabel>
+                            <Select
                                 value={application}
                                 onChange={(e) => setApplication(e.target.value)}
+                                className="select"
+                                label="Select App Name"
                             >
-                                <option value="">Select App</option>
                                 {applicationList.map((app, index) => (
-                                <option key={index} value={app}>{app}</option>
-                            ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label>Configuration File Name</label>
-                            <select
+                                    <MenuItem key={index} value={app}>{app}</MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 4 }}>
+                            <InputLabel className="label" id="demo-simple-select-label">Select File Name</InputLabel>
+                            <Select
                                 value={configurationFileName}
                                 onChange={(e) => setConfigurationFileName(e.target.value)}
+                                className="select"
+                                label="Select File Name"
                             >
-                                <option value="">Select File Name</option>
+                                {!application && <MenuItem>No options</MenuItem>}
                                 {[...new Set(configurationFileNameList)].map((fileName, index) => (
-                                    <option key={index} value={fileName}>
-                                        {fileName}
-                                    </option>
+                                    <MenuItem key={index} value={fileName}>{fileName}</MenuItem>
                                 ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label>ENV Name</label>
-                            <select
+                            </Select>
+                        </FormControl>
+                        <FormControl fullWidth sx={{ mt: 4 }}>
+                        <InputLabel className="label" id="demo-simple-select-label">Select ENV Name</InputLabel>
+                            <Select
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
+                                className="select"
+                                label="Select ENV Name"
                             >
-                                <option value="">Select ENV Name</option>
-                                {[...new Set(envNameList)].map((fileName, index) => (
-                                    <option key={index} value={fileName}>
-                                        {fileName}
-                                    </option>
+                                {!application && <MenuItem>No options</MenuItem>}
+                                {[...new Set(envNameList)].map((envName, index) => (
+                                    <MenuItem key={index}  value={envName}>{envName}</MenuItem>
                                 ))}
-                            </select>
-                        </div>
-                        <div>
-                            <label>Module</label><br/>
-                            <input 
+                            </Select>
+                        </FormControl>
+                        <div className="module">
+                            <input
                                 type="text"
+                                className="input-field"
+                                placeholder=" "
                                 value={module}
                                 onChange={(e) => setModule(e.target.value)}
                             />
+                            <label className="input-label">Module</label>
                         </div>
                     </div>
                     {loading && (

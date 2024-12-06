@@ -28,6 +28,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [subMenuDataUpload, setSubMenuDataUpload] = useState<UploadMenuItem>({});
     const [subMenuDataCommon, setSubMenuDataCommon] = useState<UploadMenuItem>({});
     const [subMenuDataHarness, setSubMenuDataHarness] = useState(null);
+    const [subMenuDataService, setSubMenuDataService] = useState(null);
 
     useEffect(() => { 
         if (location.pathname === "/config") { 
@@ -44,6 +45,8 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             buildCommonMenu(); 
         } else if (location.pathname === "/harness") { 
             setSubMenu("Harness"); 
+        } else if (location.pathname === "/service") { 
+            setSubMenu("Service"); 
         } 
     }, [location.pathname]);
     
@@ -53,6 +56,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
         setSecondSubMenu(null);
         setThirdSubMenu(null); 
         setSubMenuDataHarness(null);
+        setSubMenuDataService(null);
 
         if (item === "Config") {
             buildConfigMenu();
@@ -64,6 +68,8 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             buildCommonMenu();
         } else if (item === "Harness") {
             setSubMenuDataHarness(subMenuDataHarness === null ? "Harness" : null);
+        } else if (item === "Service") {
+            setSubMenuDataService(subMenuDataService === null ? "Service" : null);
         }
     };
 
@@ -337,6 +343,12 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                 </li>
                             </ul>
                         )}
+                    </li>
+                    {/* Service Menu */}
+                    <li onClick={(e) => toggleSubMenu("Service")}>
+                        <Link to="/service">
+                            <i className={`fa-solid ${subMenu === "Service" ? "fa-caret-down" : "fa-caret-right"}`}></i> Service
+                        </Link>
                     </li>
                 </ul>
             </div>

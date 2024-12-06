@@ -19,6 +19,7 @@ import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Service from './pages/Service';
 
 const clientId = "350206748559-h2osb5q8uos0nl8kohkijmnr649a93de.apps.googleusercontent.com";
 
@@ -128,6 +129,17 @@ const router = createBrowserRouter([
         <Header/>
         <Sidebar onRetrieve={() => {}} />
         <Harness />
+        <Footer/>
+      </>
+    ),
+  },
+  {
+    path: "/service",
+    element: (
+      <>
+        <Header/>
+        <Sidebar onRetrieve={() => {}} />
+        <Service />
         <Footer/>
       </>
     ),
