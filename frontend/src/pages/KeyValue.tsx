@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON } from '../constants';
+import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_COMMON_ALL } from '../constants';
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
@@ -9,6 +9,10 @@ interface SubMenuData {
     [applicationName: string]: {
         [envName: string]: string[];
     };
+}
+
+interface CommonMenuData {
+        [envName: string]: string[];
 }
 
 export default function KeyValue(){
@@ -23,6 +27,7 @@ export default function KeyValue(){
     const[isDataFetched, setIsDataFetched] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
     const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
+    const[commonMenuData, setCommonMenuData] = useState<CommonMenuData>({})
     const[existingKeyPairs, setExistingKeyPairs] = useState<{ key: string; value: any }[]>([]);
     const[showHelp, setShowHelp] = useState(false);
 
@@ -50,7 +55,7 @@ export default function KeyValue(){
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
         if(key || value){
-            const newPairs = [...pairs, {key, value, source: "default", valueSource: "default"}];
+            const newPairs = [...pairs, {key, value, source: "default" }];
             setPairs(newPairs);
             setKey("");
             setValue("");
@@ -133,7 +138,7 @@ export default function KeyValue(){
             });
             const configData = configResponse.data.configMap;
             const newPairs = configData ? Object.entries(configData)
-                .map(([key, value]) => ({ key, value, source: "default", valueSource: "default" }))
+                .map(([key, value]) => ({ key, value, source: "default" }))
                 .sort((a, b) => a.key.localeCompare(b.key))
             : [];
             setPairs(newPairs);
@@ -156,8 +161,8 @@ export default function KeyValue(){
         return match.replace(/\{\{|\}\}/g, '').trim();
     }
 
-    // GET - GET ALL CONFIG DATA
-    async function allMenus() {
+    // GET - ALL UPLOAD TEMPLATE MENU
+    async function allTemplateMenus() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
             setSubMenuData(response.data);
@@ -166,20 +171,33 @@ export default function KeyValue(){
         }
     }
 
+    // GET - ALL COMMON MENU
+    async function allCommonMenus() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_COMMON_ALL);
+            setCommonMenuData(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
     // GET - GET UPLOADED TEMPLATE
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
-
-        if (
-            Array.isArray(subMenuData[application_name]) &&
-            subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
-        ) {
-            setLoading(true);
-            setEditablePairs(true);
+    
+        if(Array.isArray(commonMenuData[env_name])){
+            if (Array.isArray(subMenuData[application_name]) && subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
+                setLoading(true);
+                setEditablePairs(true);
+            } else {
+                toast.info("Env name or File name does not exist in Template");
+                return;
+            }
         } else {
+            toast.info("Env name does not exist in common");
             return;
         }
-    
+
         try {
             // Fetch upload data
             const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
@@ -204,54 +222,61 @@ export default function KeyValue(){
     
             const configData = configResponse.data.configMap;
     
-            if(configData){
-                const existingPairs = Object.keys(commonData)
-                .filter(key => (key && (commonData[key] !== configData[key]) && key in configData))
-                .map(key => ({
-                    key,
-                    value: configData[key]
-                }));
-                setExistingKeyPairs(existingPairs);
-                if (existingKeyPairs.length && editablePairs) {
-                    toast.info("This key already exists. Do you want to overwrite the value?");
-                }
+            // Store matched key-value pairs
+            const existingPairs = Object.keys(commonData)
+                .filter(key => key in configData && commonData[key] !== configData[key])
+                .map(key => ({ key, value: configData[key] }));
+    
+            setExistingKeyPairs(existingPairs);
+            if (existingPairs.length && editablePairs) {
+                toast.info("This key already exists. Do you want to overwrite the value?");
             }
-
-            const pairs: { key: string; value: string | null; source: string; valueSource: string }[] = [];
+    
+            // Initialize pairs and keys set
+            const pairs: { key: string; value: string | null; source: string }[] = [];
             const keysSet = new Set<string>();
     
-            // Get the value from `commonData` or `configData`
+            // Match keys from upload data with commonData
             if (matches) {
                 for (let match of matches) {
-                    let keyStr =  extractKey(match);
-                    const value = (commonData && commonData[keyStr]) || (configData && configData[keyStr]) || null;
-                    if (!keysSet.has(keyStr)) {
-                        pairs.push({ key: keyStr, value: value, source: "upload", valueSource: value && commonData[keyStr] ? "common" : "config" });
+                    const keyStr = extractKey(match);
+                    const configValue = configData[keyStr];
+                    const commonValue = commonData[keyStr];
+            
+                    if (commonValue !== undefined && !keysSet.has(keyStr)) {
+                        pairs.push({ key: keyStr, value: commonValue, source: "common" });
+                        keysSet.add(keyStr);
+                    }
+            
+                    if (configValue !== undefined && !keysSet.has(keyStr)) {
+                        pairs.push({ key: keyStr, value: configValue, source: "upload" });
                         keysSet.add(keyStr);
                     }
                 }
             }
 
-            // Add unmatched keys from `commonData`
-            for (const keyId of Object.keys(commonData)) {
+            // Add unmatched keys from commonData
+            Object.keys(commonData).forEach(keyId => {
                 if (!keysSet.has(keyId)) {
-                    pairs.push({ key: keyId, value: commonData[keyId], source: "common", valueSource: "common" });
+                    pairs.push({ key: keyId, value: commonData[keyId], source: "" });
                     keysSet.add(keyId);
                 }
-            }
-
-            // Add unmatched keys from `configData`
-            if(configData){
-                for (const key of Object.keys(configData)) {
+            });
+    
+            // Add unmatched keys from configData
+            if (configData) {
+                Object.keys(configData).forEach(key => {
                     if (!keysSet.has(key)) {
-                        pairs.push({ key: key, value: configData[key], source: "config", valueSource: "config" });
+                        pairs.push({ key: key, value: configData[key], source: "" });
                         keysSet.add(key);
                     }
-                }
+                });
             }
-
-            const sortedPairs = pairs.filter(item => item && typeof item.key === "string").sort((a, b) => a.key.localeCompare(b.key));
-
+    
+            // Sort pairs and set them
+            const sortedPairs = pairs.filter(item => item && typeof item.key === "string")
+                .sort((a, b) => a.key.localeCompare(b.key));
+    
             setPairs(sortedPairs);
             setIsDataFetched(true);
             setShowHelp(true);
@@ -263,13 +288,20 @@ export default function KeyValue(){
         }
     }
 
-    // CALLING FUNCTIONS
+    // CALLING FUNCTION
     async function handleInputs() {
-        allMenus();
-        if (configurationFileName) {
+        if (applicationName && envName && configurationFileName) {
             await fetchUploadTemplate(applicationName, envName, configurationFileName);
         }
     }
+    
+    // CALLING FUNCTIONS
+    useEffect(() => {
+        if (applicationName && envName && configurationFileName) {
+            allTemplateMenus();
+            allCommonMenus();
+        }
+    }, [applicationName, envName, configurationFileName]);
 
     // ENABLE EDITABLE PAIRS
     const toggleEditMode = () => {
@@ -336,13 +368,15 @@ export default function KeyValue(){
                         <div className="cards">
                             <ul className="list-unstyled">
                                 {pairs.map((pair, index) => (
-                                    <li key={index}>
+                                    <li 
+                                        key={index} 
+                                        style={!editablePairs ? { backgroundColor: "white" } : {}} 
+                                    >
                                         <div className={editablePairs ? "editable" : "card"}>
                                             {editablePairs ? (
                                                 <input 
                                                     type="text" 
                                                     value={pair.key} 
-                                                    className={`${pair.source === "upload" ? "upload-key" : pair.source === "config" ? "config-key" : pair.source === "common" ? "common-key" : "default"} editable`}
                                                     onChange={(e) => {
                                                         const newPairs = [...pairs];
                                                         newPairs[index].key = e.target.value;
@@ -358,7 +392,6 @@ export default function KeyValue(){
                                                 <input 
                                                     type="text" 
                                                     value={pair.value}
-                                                    className={`${pair.valueSource === "config" ? "config-value" : pair.valueSource === "common" ? "common-value" : "default"} editable`}
                                                     onChange={(e) => {
                                                         const newPairs = [...pairs];
                                                         newPairs[index].value = e.target.value;
@@ -385,7 +418,15 @@ export default function KeyValue(){
                                                 </>
                                             )}
                                         </div>
-                                        <img src="/images/minus-img.png" alt="minus" onClick={() => handleRemove(index)} />
+                                        <img src="/images/minus-img.png" alt="minus" onClick={() => handleRemove(index)}
+                                            className={`${editablePairs ? (
+                                                pair.source === "upload" ? "bg-white" : 
+                                                pair.source === "common" ? "bg-green" : 
+                                                pair.source === "default" ? "bg-white": "bg-red" 
+                                            ) : ( 
+                                                "bg-white"
+                                            )}`}
+                                        />
                                     </li>
                                 ))}
                             </ul>
@@ -416,14 +457,11 @@ export default function KeyValue(){
                     )}
                     {showHelp && editablePairs &&(
                         <div className="help">
-                            <div className="upload">
-                                <p><span></span> Template Key</p>
-                            </div>
                             <div className="common">
-                                <p><span></span> Common Value</p>
+                                <p><span></span> Common Pairs</p>
                             </div>
-                            <div className="config">
-                                <p><span></span> Config Value</p>
+                            <div className="unWanted">
+                                <p><span></span> Unused Pairs</p>
                             </div>
                         </div>
                     )}

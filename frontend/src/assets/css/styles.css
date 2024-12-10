@@ -305,6 +305,22 @@ html body{
   margin: 0;
   padding: 5px 0;
 }
+.sidebar .lastlist li input{
+  padding: 3px;
+  display: inline-block;
+  border: 2px solid #ccc;
+  border-radius: 25px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.sidebar .lastlist li input:focus {
+  border-color: #004080;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+.sidebar .lastlist li input::placeholder {
+  color: #aaa;
+  font-style: italic;
+}
 .sidebar .lastlist li.selected{
   display: inline-block;
   background-color: #004080;
@@ -358,22 +374,32 @@ html body{
   text-align: left;
   font-size: 14px;
 }
+.config .keyValue-group{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 10px 0;
+}
 .config .keyValue-group input {
   width: 45%;
-  margin: -10px 10px 10px 0;
   padding: 4px;
+  margin: 0 0 0 10px;
   border: 1px solid gray;
   border-radius: 4px;
   text-align: left;
 }
-.config input:focus{
-  outline-color: #004080;
+.config .keyValue-group input:first-child {
+  margin: 0 0 0 5px;
 }
-.config img{
+.config .keyValue-group img {
   width: 30px;
-  margin: -2px 5px 0 -10px;
+  margin: 0 10px 0 0;
+  padding: 2px 0;
   cursor: pointer;
   align-self: center;
+}
+.config input:focus{
+  outline-color: #004080;
 }
 .config .spin-con{
   text-align: center;
@@ -387,11 +413,28 @@ html body{
   padding: 8px 0;
   display: flex;
   align-items: stretch;
-  margin-left: 5px;
+}
+.config .cards li img{
+  width: 25px;
+  margin: 2px 0 0 -6px;
+  padding: 0;
+  cursor: pointer;
+  align-self: center;
+  display: inline-block;
+  border-radius: 50%;
+}
+.bg-white{
+  background-color: white;
+}
+.bg-green{
+  background-color: #B5E61D;
+}
+.bg-red{
+  background-color: #800040ab;
 }
 .config .cards .card{
   width: 45%;
-  margin: 0 13px 0 0;
+  margin: 6px 10px 0 4px;
   color: #004080;
   background-color: #c0d3e2;
   text-align: left;
@@ -402,6 +445,9 @@ html body{
 }
 .config .cards .card span{
   font-weight: bold;
+}
+.config .cards .card img{
+  background-color: white;
 }
 .config .cards .editable{
   width: 47%;
@@ -416,30 +462,6 @@ html body{
   width: 100%;
   padding: 5px;
   margin-top: 2px;
-}
-.config .cards .editable .default{
-  border: 1px solid gray;
-  background-color: white;
-}
-.upload-key.editable {
-  background-color: lightcyan;
-  border: 1px solid gray;
-}
-.config-key.editable {
-  background-color: #ffd9d9;
-  border: 1px solid gray;
-}
-.common-key.editable {
-  background-color: #f7ffe2;
-  border: 1px solid gray;
-}
-.config-value.editable {
-  background-color: #ffd9d9;
-  border: 1px solid gray;
-}
-.common-value.editable {
-  background-color: #f7ffe2;
-  border: 1px solid gray;
 }
 .help{
   display: inline-block;
@@ -460,25 +482,16 @@ html body{
   font-size: 12px;
   margin: 15px;
 }
-.help .upload span{
-  padding: 0 8px;
-  margin-right: 10px;
-  background-color: lightcyan;
-  border: 1px solid black;
-}
 .help .common span{
   padding: 0 8px;
   margin-right: 10px;
-  background-color: #f7ffe2;
+  background-color: #B5E61D;
   border: 1px solid black;
 }
-.help .config{
-  padding: 0;
-}
-.help .config span{
+.help .unWanted span{
   padding: 0 8px;
   margin-right: 10px;
-  background-color: #ffd9d9;
+  background-color: #800040ab;
   border: 1px solid black;
 }
 .config .existingPairs{
