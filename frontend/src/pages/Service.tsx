@@ -1,60 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOINT_GENERATE_PREVIEW, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_GENERATE_ALL } from '../constants';
+import { API_POST_ENDPOINT_GENERATE, API_GET_ENDPOINT_GENERATE, API_POST_ENDPOINT_GENERATE_PREVIEW } from '../constants';
+import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 import DiffViewer from '../components/DiffViewer';
-import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 
-export default function GenerateConfig() {
-    const[applicationList, setApplicationList] = useState<string[]>([]);
-    const[application, setApplication] = useState("");
-    const[configurationFileNameList, setConfigurationFileNameList] = useState<string[]>([]);
-    const[configurationFileName, setConfigurationFileName] = useState("");
-    const[envNameList, setEnvNameList] = useState<string[]>([]);
+export default function Service() {
+    const location = useLocation();
+    const[applicationName, setApplicationName] = useState("");
     const[envName, setEnvName] = useState("");
+    const[configurationFileName, setConfigurationFileName] = useState("");
+    const[textArea, setTextArea] = useState("");
+    const[loading, setLoading] = useState(false);
+    const[isDisabled, setIsDisabled] = useState(false);
     const[showDiffViewer, setShowDiffViewer] = useState(false);
     const[oldFileContent, setOldFileContent] = useState("");
     const[newFileContent, setNewFileContent] = useState("");
-    const[loading, setLoading] = useState(false);
+    const[copyButtonText, setCopyButtonText] = useState("Copy Text");
 
+    // CLEAR ALL FIELDS
     useEffect(() => {
-        fetchAPPList();
-        fetchFileNameList();
-    }, [application]);
+        const authResult = new URLSearchParams(window.location.search);
+        const application_name = authResult.get('application_name');
+        const env_name = authResult.get('env_name');
+        const configuration_file_name = authResult.get('configuration_file_name');
 
-    // GET - APPLICATION NAME LIST
-    async function fetchAPPList() {
-        try {
-            const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
-            const data = response.data;
-            const appNames = Object.keys(data);
-            setApplicationList(appNames);
-        } catch (error) {
-            console.error("Error fetching data:", error);
+        if (application_name && env_name && configuration_file_name) {
+            setApplicationName(application_name);
+            setEnvName(env_name);
+            setConfigurationFileName(configuration_file_name);
+        } else if (location.pathname === "/generate-config") {
+            setApplicationName("");
+            setEnvName("");
+            setConfigurationFileName("");
+            setTextArea("");
         }
-    }
+    }, [window.location.search]);
 
-    // GET - CONFIG FILE NAME LIST & ENV NAME LIST
-    async function fetchFileNameList() {
-        try {
-            const response = await axios.get(API_GET_ENDPOINT_GENERATE_ALL);
-            const data = response.data;
-
-            const selectedKey = application;
-            const fileNames = Object.values(data[selectedKey] as Record<string, string[]>).flat();
-            setConfigurationFileNameList(fileNames);
-
-            const environments = Object.keys(data[selectedKey]);
-            setEnvNameList(environments);
-        } catch (error) {
-            console.error("Error fetching data:", error);
-        }
-    }
+    const handleCopy = () => {
+        navigator.clipboard
+            .writeText(textArea)
+            .then(() => {
+                setCopyButtonText("Copied!");
+                setTimeout(() => setCopyButtonText("Copy Text"), 2000);
+            })
+            .catch(() => {
+                toast.error("Failed to copy text");
+            });
+    };
 
     // GET METHOD - DISPLAY PREVIEW TEMPLATE
     async function previewConfig(){
-        if (!application || !envName || !configurationFileName) {
-            toast.error("Please select all the fields");
+        if (!applicationName || !envName || !configurationFileName) {
+            toast.error("Please fill in all the fields");
             return;
         }
 
@@ -62,7 +61,7 @@ export default function GenerateConfig() {
             setLoading(true);
             const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
                 params: {
-                    application_name: application,
+                    application_name: applicationName,
                     env_name: envName,
                     configuration_file_name: configurationFileName
                 }
@@ -80,7 +79,7 @@ export default function GenerateConfig() {
 
         try{
             const responsePreview = await axios.post(API_POST_ENDPOINT_GENERATE_PREVIEW,  {
-                application_name: application,
+                application_name: applicationName,
                 env_name: envName,
                 configuration_file_name: configurationFileName
             }, {
@@ -91,6 +90,7 @@ export default function GenerateConfig() {
                 ? JSON.stringify(responsePreview.data, null, 4) 
                 : responsePreview.data.toString();
                 setNewFileContent(newDisplayData);
+                console.log(newDisplayData);
         } catch (error) {
             setNewFileContent(error);
         } 
@@ -99,8 +99,8 @@ export default function GenerateConfig() {
         setLoading(false);
     }
 
-    // POST METHOD - GENERATE SERVICE
-    async function generateService(){
+    // POST METHOD - GENERATE TEMPLATE
+    async function generateConfig(){
         if (oldFileContent === newFileContent){
             toast.error("No changes to generate");
             return;
@@ -109,17 +109,19 @@ export default function GenerateConfig() {
         try{
             setLoading(true);
             const response = await axios.post(API_POST_ENDPOINT_GENERATE, {
-                application_name: application,
+                application_name: applicationName,
                 env_name: envName,
                 configuration_file_name: configurationFileName
             }, {
                 headers: { "Content-Type": "application/json" },
             });
             toast.success("Data generated successfully");
-            setApplication("");
+            setApplicationName("");
             setConfigurationFileName("");
             setEnvName("");
+            setTextArea("");
             setLoading(false);
+            setIsDisabled(false);
             setShowDiffViewer(false);
         } catch(error){
             console.error("Error sending data: ", error);
@@ -128,64 +130,126 @@ export default function GenerateConfig() {
         }
     }
 
+    // GET METHOD - GET GENERATED TEMPLATE
+    async function retrieve() {
+        const authResult = new URLSearchParams(window.location.search);
+        const application_name = authResult.get('application_name')
+        const env_name = authResult.get('env_name')
+        const configuration_file_name = authResult.get('configuration_file_name');
+
+        setApplicationName(application_name);
+        setEnvName(env_name);
+        setConfigurationFileName(configuration_file_name);
+
+        try {
+            setLoading(true);
+            const response = await axios.get(API_GET_ENDPOINT_GENERATE, {
+                params: {
+                    application_name,
+                    env_name,
+                    configuration_file_name
+                }
+            });
+            let displayData;
+
+            if (typeof response.data === 'object') {
+                displayData = JSON.stringify(response.data, null, 4);
+            } else {
+                displayData = response.data.toString();
+            }
+
+            setTextArea(displayData);
+            toast.success("Data fetched successfully");
+            setLoading(false);
+            setIsDisabled(true);
+        } catch (error) {
+            console.error("Error fetching pairs:", error);
+            toast.error("Failed to fetch data");
+            setLoading(false);
+        }
+    }
+
+    // DOWNLOADING GENERATED TEMPLATE
+    function downloadFile() {
+        const blob = new Blob([textArea], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `${configurationFileName}.txt`;
+        link.click();
+    };
+
     function close() {
         setShowDiffViewer(false);
     };
 
     return (
         <>
+            <Sidebar onRetrieve={retrieve}/>
             <div className="config">
                 <div className="form-group">
                     <h5>Service</h5>
-                    <div className="service-container">
-                        <FormControl fullWidth sx={{ mt: 4 }}>
-                            <InputLabel className="label" id="demo-simple-select-label">Select App Name</InputLabel>
-                            <Select
-                                value={application}
-                                onChange={(e) => setApplication(e.target.value)}
-                                className="select"
-                                label="Select App Name"
-                            >
-                                {applicationList.map((app, index) => (
-                                    <MenuItem key={index} value={app}>{app}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth sx={{ mt: 4 }}>
-                            <InputLabel className="label" id="demo-simple-select-label">Select File Name</InputLabel>
-                            <Select
-                                value={configurationFileName}
-                                onChange={(e) => setConfigurationFileName(e.target.value)}
-                                className="select"
-                                label="Select File Name"
-                            >
-                                {!application && <MenuItem>No options</MenuItem>}
-                                {[...new Set(configurationFileNameList)].map((fileName, index) => (
-                                    <MenuItem key={index} value={fileName}>{fileName}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl fullWidth sx={{ mt: 4 }}>
-                        <InputLabel className="label" id="demo-simple-select-label">Select ENV Name</InputLabel>
-                            <Select
+                    <div className="input-container">
+                        <div>
+                            <label>Application Name</label>
+                            <input 
+                                type="text"
+                                value={applicationName}
+                                onChange={(e) => setApplicationName(e.target.value)}
+                                disabled={isDisabled}
+                            />
+                        </div>
+                        <div>
+                            <label>ENV Name</label>
+                            <input 
+                                type="text"
                                 value={envName}
                                 onChange={(e) => setEnvName(e.target.value)}
-                                className="select"
-                                label="Select ENV Name"
-                            >
-                                {!application && <MenuItem>No options</MenuItem>}
-                                {[...new Set(envNameList)].map((envName, index) => (
-                                    <MenuItem key={index}  value={envName}>{envName}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                    </div>
-                    {loading && (
-                        <div className='spin-con'>
-                            <img className="spinner" src='/images/spinner.svg' alt='spinner'/>
+                                disabled={isDisabled}
+                            />
                         </div>
+                        <div>
+                            <label>Configuration File Name</label><br/>
+                            <input 
+                                type="text"
+                                value={configurationFileName}
+                                onChange={(e) => setConfigurationFileName(e.target.value)}
+                                disabled={isDisabled}
+                            />
+                        </div>
+                        {loading ? (
+                            <div className='spin-con'>
+                                <img className="spinner" src='/images/spinner.svg' alt='spinner'/>
+                            </div>
+                        ) : (
+                            <>
+                                {textArea && (
+                                    <div className="textArea-container">
+                                        <label>Text Template</label><br/>
+                                        <textarea
+                                            className="textarea"
+                                            rows={20}
+                                            value={textArea}
+                                            onChange={(e) => setTextArea(e.target.value)}
+                                            disabled={isDisabled}
+                                        />
+                                        <div className="copyButton">
+                                            <button onClick={handleCopy}>
+                                                <i className={`fa-solid ${copyButtonText === "Copied!" ? "fa-check" : "fa-copy"}`}></i>
+                                                {copyButtonText}
+                                            </button>
+                                        </div>
+                                        <div className="download">
+                                            <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
+                                            <button className='btn btn-success' onClick={downloadFile}>Download</button>
+                                        </div>
+                                    </div>
+                                )}
+                            </>
+                        )}
+                    </div>
+                    {!isDisabled && (
+                        <button className='btn btn-primary' onClick={previewConfig}>Preview</button>
                     )}
-                    <button className='btn btn-primary mt-2' onClick={previewConfig}>Preview</button>
                     { showDiffViewer && (
                         <div className="modal-overlay">
                             <div className="modal-content">
@@ -194,9 +258,9 @@ export default function GenerateConfig() {
                                     <i className="fa-solid fa-xmark" onClick={close}></i>
                                 </div>
                                 <div className="modal-body">
-                                    <DiffViewer oldText={oldFileContent} newText={newFileContent} />
+                                   <DiffViewer oldText={oldFileContent} newText={newFileContent} />
                                 </div>
-                                <button className='btn btn-success' onClick={generateService}>Generate</button>
+                                <button className='btn btn-success' onClick={generateConfig}>Generate</button>
                             </div>
                         </div>
                     )}
