@@ -28,7 +28,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
     const [subMenuDataUpload, setSubMenuDataUpload] = useState<UploadMenuItem>({});
     const [subMenuDataCommon, setSubMenuDataCommon] = useState<UploadMenuItem>({});
     const [subMenuDataHarness, setSubMenuDataHarness] = useState(null);
-    const [subMenuDataService, setSubMenuDataService] = useState<MenuItem>({});
     const [searchTerm, setSearchTerm] = useState("");
     const [searchResults, setSearchResults] = useState<string[]>([]);
 
@@ -47,10 +46,7 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             buildCommonMenu(); 
         } else if (location.pathname === "/harness") { 
             setSubMenu("Harness"); 
-        } else if (location.pathname === "/service") { 
-            setSubMenu("Service"); 
-            buildGenerateMenu(); 
-        } 
+        }
     }, [location.pathname]);
 
     const toggleSubMenu = (item: string) => {
@@ -59,7 +55,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
         setSecondSubMenu(null);
         setThirdSubMenu(null); 
         setSubMenuDataHarness(null);
-        setSubMenuDataService(null);
 
         if (item === "Config") {
             buildConfigMenu();
@@ -71,8 +66,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             buildCommonMenu();
         } else if (item === "Harness") {
             setSubMenuDataHarness(subMenuDataHarness === null ? "Harness" : null);
-        } else if (item === "Service") {
-            buildGenerateMenu();
         }
     };
 
@@ -152,7 +145,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             setLoading(true);
             const response = await axios.get(API_GET_ENDPOINT_GENERATE_ALL);
             setSubMenuDataGenerate(response.data);
-            setSubMenuDataService(response.data);
             setLoading(false);
         } catch (error) {
             console.error("Error fetching data:", error);
@@ -362,27 +354,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                                         ))}
                                                     </ul>
                                                 )}
-                                                {/* {firstSubMenu === key && (
-                                                    <ul className="lastlist">
-                                                        <li>
-                                                            <input
-                                                                type="text"
-                                                                placeholder="Search files..."
-                                                                value={searchTerm}
-                                                                onChange={handleSearch}
-                                                                onClick={(e) => e.stopPropagation()}
-                                                                className="search-input"
-                                                            />
-                                                        </li>
-                                                        {searchResults.map((result, resultIndex) => (
-                                                            <li key={resultIndex} onClick={(e) => toggleThirdSubMenu(result, e)} className={thirdSubMenu === result ? "selected" : ""}>
-                                                                <Link to={{ pathname: "/common-config", search: `?env_name=${key}&configuration_file_name=${result.replace(/\.json$/, "")}` }}>
-                                                                    {result}
-                                                                </Link>
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )} */}
                                             </li>
                                         ))}
                                     </>
@@ -438,68 +409,6 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
                                         </ul>
                                     )}
                                 </li>
-                            </ul>
-                        )}
-                    </li>
-                    {/* Service Menu */}
-                    <li onClick={(e) => toggleSubMenu("Service")}>
-                        <Link to="/service">
-                            <i className={`fa-solid ${subMenu === "Service" ? "fa-caret-down" : "fa-caret-right"}`}></i> Service <i className="fa-solid fa-pen-to-square"></i>
-                        </Link>
-                        {/* First Sub Menu */}
-                        {subMenu === "Service" && (
-                            <ul className="sublist">
-                                {loading ? (
-                                    <img className="sidebarSpinner" src='/images/spinner.svg' alt='spinner'/>
-                                ) : (
-                                    <>
-                                        {Object.keys(subMenuDataService).map((key) => (
-                                            <li key={key} onClick={(e) => toggleFirstSubMenu(key, e)}>
-                                                <i className={`fa-solid ${firstSubMenu === key ? "fa-caret-down" : "fa-caret-right"}`}></i> {key}
-                                                {/* Second Sub Menu */}
-                                                {firstSubMenu === key && (
-                                                    <ul className="sublist">
-                                                        {Object.entries(subMenuDataService[key]).map(([env_name, links], index) => (
-                                                            <li key={env_name} onClick={(e) => toggleSecondSubMenu(index, env_name, e)}>
-                                                                <i className={`fa-solid ${secondSubMenu === index ? "fa-caret-down" : "fa-caret-right"}`}></i> {env_name}
-                                                                {/* Third Sub Menu */}
-                                                                {/* {secondSubMenu === index && (
-                                                                    <ul className="lastlist">
-                                                                        {links.map((link, linkIndex) => (
-                                                                            <li key={linkIndex} onClick={(e) => toggleThirdSubMenu(link, e)} className={thirdSubMenu === link ? "selected" : ""}>
-                                                                                <Link to={{ pathname: "/service", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${link}` }}>{link}</Link>
-                                                                            </li>
-                                                                        ))}
-                                                                    </ul>
-                                                                )} */}
-                                                                {secondSubMenu === index && (
-                                                                    <ul className="lastlist">
-                                                                        <li>
-                                                                            <input
-                                                                                type="text"
-                                                                                placeholder="Search files..."
-                                                                                value={searchTerm}
-                                                                                onChange={handleSearch}
-                                                                                className="search-input"
-                                                                            />
-                                                                        </li>
-                                                                        {searchResults.map((result, resultIndex) => (
-                                                                            <li key={resultIndex} onClick={(e) => toggleThirdSubMenu(result, e)} className={thirdSubMenu === result ? "selected" : ""}>
-                                                                                <Link to={{ pathname: "/service", search: `?env_name=${env_name}&application_name=${key}&configuration_file_name=${result.replace(/\.json$/, "")}` }}>
-                                                                                    {result}
-                                                                                </Link>
-                                                                            </li>
-                                                                        ))}
-                                                                    </ul>
-                                                                )}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                )}
-                                            </li>
-                                        ))}
-                                    </>
-                                )}
                             </ul>
                         )}
                     </li>

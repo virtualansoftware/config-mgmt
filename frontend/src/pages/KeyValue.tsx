@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_COMMON_ALL } from '../constants';
+import { API_POST_ENDPOINT, API_GET_ENDPOINT, API_GET_ENDPOINT_UPLOAD, API_GET_ENDPOINT_UPLOAD_ALL, API_GET_ENDPOINT_COMMON, API_GET_ENDPOINT_COMMON_ALL, API_GET_ENDPOINT_CONFIG_ALL } from '../constants';
 import Sidebar from '../components/Sidebar';
 import { toast } from 'react-toastify';
 import { useLocation } from 'react-router-dom';
 
-interface SubMenuData {
-    [applicationName: string]: {
-        [envName: string]: string[];
-    };
+interface uploadMenuData {
+    [application_name: string]: string[]
 }
 
-interface CommonMenuData {
-        [envName: string]: string[];
+interface commonMenuData {
+    [envName: string]: string[];
+}
+
+interface configMenuData {
+    [application_name: string]: {
+        [env_name: string]: string[];
+      };
 }
 
 export default function KeyValue(){
@@ -26,8 +30,9 @@ export default function KeyValue(){
     const[loading, setLoading] = useState(false);
     const[isDataFetched, setIsDataFetched] = useState(false);
     const[editablePairs, setEditablePairs] = useState(false);
-    const[subMenuData, setSubMenuData] = useState<SubMenuData>({})
-    const[commonMenuData, setCommonMenuData] = useState<CommonMenuData>({})
+    const[uploadMenuData, setUploadMenuData] = useState<uploadMenuData>({})
+    const[commonMenuData, setCommonMenuData] = useState<commonMenuData>({})
+    const[configMenuData, setConfigMenuData] = useState<configMenuData>({})
     const[existingKeyPairs, setExistingKeyPairs] = useState<{ key: string; value: any }[]>([]);
     const[showHelp, setShowHelp] = useState(false);
 
@@ -43,15 +48,31 @@ export default function KeyValue(){
             setEnvName(env_name);
             setConfigurationFileName(configuration_file_name);
         } else if (location.pathname === "/config") {
-            setApplicationName("");
-            setEnvName("");
-            setConfigurationFileName("");
-            setPairs([]);
-            setKey("");
-            setValue("");
+            // setApplicationName("");
+            // setEnvName("");
+            // setConfigurationFileName("");
+            // setPairs([]);
+            // setKey("");
+            // setValue("");
         }
     }, [window.location.search, location.pathname]);
     
+    // CALLING FUNCTION
+    async function handleInputs() {
+        if (applicationName && envName && configurationFileName) {
+            await fetchUploadTemplate(applicationName, envName, configurationFileName);
+        }
+    }
+    
+    // CALLING FUNCTIONS
+    useEffect(() => {
+        if (applicationName && envName && configurationFileName) {
+            allUploadMenus();
+            allCommonMenus();
+            allConfigMenus();
+        }
+    }, [applicationName, envName, configurationFileName]);
+
     // ADDING KEY & VALUE PAIRS
     function handleAdd(){
         if(key || value){
@@ -162,10 +183,10 @@ export default function KeyValue(){
     }
 
     // GET - ALL UPLOAD TEMPLATE MENU
-    async function allTemplateMenus() {
+    async function allUploadMenus() {
         try {
             const response = await axios.get(API_GET_ENDPOINT_UPLOAD_ALL);
-            setSubMenuData(response.data);
+            setUploadMenuData(response.data);
         } catch (error) {
             console.error("Error fetching data:", error);
         }
@@ -181,127 +202,412 @@ export default function KeyValue(){
         }
     }
 
+    // GET - ALL COMMON MENU
+    async function allConfigMenus() {
+        try {
+            const response = await axios.get(API_GET_ENDPOINT_CONFIG_ALL);
+            setConfigMenuData(response.data);
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+    }
+
     // GET - GET UPLOADED TEMPLATE
+    // async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
+    //     if (!application_name || !env_name || !configuration_file_name) return;
+    
+    //     if(!Array.isArray(commonMenuData[env_name])) {
+    //         setPairs([]);
+    //         toast.info("Env name does not exist in common");
+    //     }
+
+    //     if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
+    //         setLoading(true);
+    //         setEditablePairs(true);
+    //     } else {
+    //         setPairs([]);
+    //         toast.info("File name does not exist in Template");
+    //         return;
+    //     }
+
+    //     try {
+    //         // Fetch upload data
+    //         const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+    //             params: { application_name, configuration_file_name },
+    //         });
+    
+    //         const uploadData = JSON.stringify(uploadResponse.data);
+    //         const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
+    //         const matches = uploadData.match(regex);
+    
+    //         // Fetch common data
+    //         const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
+    //             params: { env_name },
+    //         });
+    
+    //         const commonData = commonResponse.data.commonMap;
+    
+    //         // Fetch config data
+    //         const configResponse = await axios.get(API_GET_ENDPOINT, {
+    //             params: { application_name, env_name, configuration_file_name },
+    //         });
+    
+    //         const configData = configResponse.data.configMap;
+    
+    //         // Store matched key-value pairs
+    //         const existingPairs = Object.keys(commonData)
+    //             .filter(key => key in configData && commonData[key] !== configData[key])
+    //             .map(key => ({ key, value: configData[key] }));
+    
+    //         setExistingKeyPairs(existingPairs);
+    //         if (existingPairs.length && editablePairs) {
+    //             toast.info("This key already exists. Do you want to overwrite the value?");
+    //         }
+    
+    //         // Initialize pairs and keys set
+    //         const pairs: { key: string; value: string | null; source: string }[] = [];
+    //         const keysSet = new Set<string>();
+    
+    //         // Match keys from upload data with commonData
+    //         if (matches) {
+    //             for (let match of matches) {
+    //                 const keyStr = extractKey(match);
+    //                 const configValue = configData[keyStr];
+    //                 const commonValue = commonData[keyStr];
+            
+    //                 if (commonValue !== undefined && !keysSet.has(keyStr)) {
+    //                     pairs.push({ key: keyStr, value: commonValue, source: "common" });
+    //                     keysSet.add(keyStr);
+    //                 }
+            
+    //                 if (configValue !== undefined && !keysSet.has(keyStr)) {
+    //                     pairs.push({ key: keyStr, value: configValue, source: "upload" });
+    //                     keysSet.add(keyStr);
+    //                 }
+    //             }
+    //         }
+
+    //         // Add unmatched keys from commonData
+    //         Object.keys(commonData).forEach(keyId => {
+    //             if (!keysSet.has(keyId)) {
+    //                 pairs.push({ key: keyId, value: commonData[keyId], source: "" });
+    //                 keysSet.add(keyId);
+    //             }
+    //         });
+    
+    //         // Add unmatched keys from configData
+    //         if (configData) {
+    //             Object.keys(configData).forEach(key => {
+    //                 if (!keysSet.has(key)) {
+    //                     pairs.push({ key: key, value: configData[key], source: "" });
+    //                     keysSet.add(key);
+    //                 }
+    //             });
+    //         }
+
+    //         // Sort pairs and set them
+    //         const sortedPairs = pairs
+    //             .filter(item => item && typeof item.key === "string")
+    //             .sort((a, b) => a.key.localeCompare(b.key));
+    
+    //         setPairs(sortedPairs);
+    //         setIsDataFetched(true);
+    //         setShowHelp(true);
+    //     } catch (error) {
+    //         console.error("Error fetching keys:", error);
+    //         toast.error("Failed to fetch data");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // }
+
     async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
     
-        if(Array.isArray(commonMenuData[env_name])){
-            if (Array.isArray(subMenuData[application_name]) && subMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
+        // IF (UPLOAD, COMMON, CONFIG) IS EXIST
+        if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
+            && Array.isArray(configMenuData[application_name][env_name]) && configMenuData[application_name][env_name].some(file => file.replace(/\.json$/, '') === configuration_file_name)
+            && Array.isArray(commonMenuData[env_name])
+        ){
+            try {
                 setLoading(true);
                 setEditablePairs(true);
-            } else {
-                toast.info("Env name or File name does not exist in Template");
-                return;
-            }
-        } else {
-            toast.info("Env name does not exist in common");
-            return;
-        }
-
-        try {
-            // Fetch upload data
-            const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
-                params: { application_name, configuration_file_name },
-            });
-    
-            const uploadData = JSON.stringify(uploadResponse.data);
-            const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
-            const matches = uploadData.match(regex);
-    
-            // Fetch common data
-            const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
-                params: { env_name },
-            });
-    
-            const commonData = commonResponse.data.commonMap;
-    
-            // Fetch config data
-            const configResponse = await axios.get(API_GET_ENDPOINT, {
-                params: { application_name, env_name, configuration_file_name },
-            });
-    
-            const configData = configResponse.data.configMap;
-    
-            // Store matched key-value pairs
-            const existingPairs = Object.keys(commonData)
-                .filter(key => key in configData && commonData[key] !== configData[key])
-                .map(key => ({ key, value: configData[key] }));
-    
-            setExistingKeyPairs(existingPairs);
-            if (existingPairs.length && editablePairs) {
-                toast.info("This key already exists. Do you want to overwrite the value?");
-            }
-    
-            // Initialize pairs and keys set
-            const pairs: { key: string; value: string | null; source: string }[] = [];
-            const keysSet = new Set<string>();
-    
-            // Match keys from upload data with commonData
-            if (matches) {
-                for (let match of matches) {
-                    const keyStr = extractKey(match);
-                    const configValue = configData[keyStr];
-                    const commonValue = commonData[keyStr];
-            
-                    if (commonValue !== undefined && !keysSet.has(keyStr)) {
-                        pairs.push({ key: keyStr, value: commonValue, source: "common" });
-                        keysSet.add(keyStr);
-                    }
-            
-                    if (configValue !== undefined && !keysSet.has(keyStr)) {
-                        pairs.push({ key: keyStr, value: configValue, source: "upload" });
-                        keysSet.add(keyStr);
+                // Fetch upload data
+                const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+                    params: { application_name, configuration_file_name },
+                });
+        
+                const uploadData = JSON.stringify(uploadResponse.data);
+                const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
+                const matches = uploadData.match(regex);
+        
+                // Fetch common data
+                const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
+                    params: { env_name },
+                });
+        
+                const commonData = commonResponse.data.commonMap;
+        
+                // Fetch config data
+                const configResponse = await axios.get(API_GET_ENDPOINT, {
+                    params: { application_name, env_name, configuration_file_name },
+                });
+        
+                const configData = configResponse.data.configMap;
+        
+                // Store matched key-value pairs
+                const existingPairs = Object.keys(commonData)
+                    .filter(key => key in configData && commonData[key] !== configData[key])
+                    .map(key => ({ key, value: configData[key] }));
+        
+                setExistingKeyPairs(existingPairs);
+                if (existingPairs.length && editablePairs) {
+                    toast.info("This key already exists. Do you want to overwrite the value?");
+                }
+        
+                // Initialize pairs and keys set
+                const pairs: { key: string; value: string | null; source: string }[] = [];
+                const keysSet = new Set<string>();
+        
+                // Match keys from upload data with commonData
+                if (matches) {
+                    for (let match of matches) {
+                        const keyStr = extractKey(match);
+                        const configValue = configData[keyStr];
+                        const commonValue = commonData[keyStr];
+                
+                        if (commonValue !== undefined && !keysSet.has(keyStr)) {
+                            pairs.push({ key: keyStr, value: commonValue, source: "common" });
+                            keysSet.add(keyStr);
+                        }
+                
+                        if (configValue !== undefined && !keysSet.has(keyStr)) {
+                            pairs.push({ key: keyStr, value: configValue, source: "upload" });
+                            keysSet.add(keyStr);
+                        }
                     }
                 }
-            }
-
-            // Add unmatched keys from commonData
-            Object.keys(commonData).forEach(keyId => {
-                if (!keysSet.has(keyId)) {
-                    pairs.push({ key: keyId, value: commonData[keyId], source: "" });
-                    keysSet.add(keyId);
-                }
-            });
     
-            // Add unmatched keys from configData
-            if (configData) {
-                Object.keys(configData).forEach(key => {
-                    if (!keysSet.has(key)) {
-                        pairs.push({ key: key, value: configData[key], source: "" });
-                        keysSet.add(key);
+                // Add unmatched keys from commonData
+                if (commonData) {
+                    Object.keys(commonData).forEach(keyId => {
+                        if (!keysSet.has(keyId)) {
+                            pairs.push({ key: keyId, value: commonData[keyId], source: "" });
+                            keysSet.add(keyId);
+                        }
+                    });
+                }
+        
+                // Add unmatched keys from configData
+                if (configData) {
+                    Object.keys(configData).forEach(key => {
+                        if (!keysSet.has(key)) {
+                            pairs.push({ key: key, value: configData[key], source: "" });
+                            keysSet.add(key);
+                        }
+                    });
+                }
+    
+                // Sort pairs and set them
+                const sortedPairs = pairs
+                    .filter(item => item && typeof item.key === "string")
+                    .sort((a, b) => a.key.localeCompare(b.key));
+        
+                setPairs(sortedPairs);
+                setIsDataFetched(true);
+                setShowHelp(true);
+            } catch (error) {
+                console.error("Error fetching keys:", error);
+                toast.error("Failed to fetch data");
+            } finally {
+                setLoading(false);
+            }
+        // IF ONLY (UPLOAD, CONFIG) IS EXIST
+        } else if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
+            && Array.isArray(configMenuData[application_name][env_name]) && configMenuData[application_name][env_name].some(file => file.replace(/\.json$/, '') === configuration_file_name)
+        ) {
+            try {
+                setLoading(true);
+                setEditablePairs(true);
+                // Fetch upload data
+                const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+                    params: { application_name, configuration_file_name },
+                });
+        
+                const uploadData = JSON.stringify(uploadResponse.data);
+                const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
+                const matches = uploadData.match(regex);
+        
+                // Fetch config data
+                const configResponse = await axios.get(API_GET_ENDPOINT, {
+                    params: { application_name, env_name, configuration_file_name },
+                });
+        
+                const configData = configResponse.data.configMap;
+        
+                // Initialize pairs and keys set
+                const pairs: { key: string; value: string | null; source: string }[] = [];
+                const keysSet = new Set<string>();
+        
+                // Match keys from upload data with configData
+                if (matches) {
+                    matches.forEach((match) => {
+                        const keyStr = match.replace(/\{\{|\}\}/g, "").trim();
+                        let configValue = configData[keyStr];
+
+                        if (configValue === undefined) {
+                            configValue = "";
+                        }
+
+                        if (configValue !== undefined && !keysSet.has(keyStr)) {
+                            const source = configValue === "" ? "upload" : "common";
+                            pairs.push({ key: keyStr, value: configValue, source: source });
+                            keysSet.add(keyStr);
+                        }
+                    });
+                }
+        
+                // Add unmatched keys from configData
+                if (configData) {
+                    Object.keys(configData).forEach(key => {
+                        if (!keysSet.has(key)) {
+                            pairs.push({ key: key, value: configData[key], source: "" });
+                            keysSet.add(key);
+                        }
+                    });
+                }
+    
+                // Sort pairs and set them
+                const sortedPairs = pairs
+                    .filter(item => item && typeof item.key === "string")
+                    .sort((a, b) => a.key.localeCompare(b.key));
+        
+                setPairs(sortedPairs);
+                setIsDataFetched(true);
+                setShowHelp(true);
+            } catch (error) {
+                console.error("Error fetching keys:", error);
+                toast.error("Failed to fetch data");
+            } finally {
+                setLoading(false);
+            }
+        // IF ONLY (UPLOAD, COMMON) IS EXIST
+        } else if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
+            && Array.isArray(commonMenuData[env_name])
+        ) {
+            try {
+                setLoading(true);
+                setEditablePairs(true);
+                // Fetch upload data
+                const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+                    params: { application_name, configuration_file_name },
+                });
+        
+                const uploadData = JSON.stringify(uploadResponse.data);
+                const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
+                const matches = uploadData.match(regex);
+        
+                // Fetch common data
+                const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
+                    params: { env_name },
+                });
+        
+                const commonData = commonResponse.data.commonMap;
+        
+                // Initialize pairs and keys set
+                const pairs: { key: string; value: string | null; source: string }[] = [];
+                const keysSet = new Set<string>();
+        
+                // Match keys from upload data with commonData
+                if (matches) {
+                    matches.forEach((match) => {
+                        const keyStr = match.replace(/\{\{|\}\}/g, "").trim();
+                        let commonValue = commonData[keyStr];
+
+                        if (commonValue === undefined) {
+                            commonValue = "";
+                        }
+
+                        if (commonValue !== undefined && !keysSet.has(keyStr)) {
+                            const source = commonValue === "" ? "upload" : "common";
+                            pairs.push({ key: keyStr, value: commonValue, source: source });
+                            keysSet.add(keyStr);
+                        }
+                    });
+                }
+        
+                // Add unmatched keys from commonData
+                Object.keys(commonData).forEach(keyId => {
+                    if (!keysSet.has(keyId)) {
+                        pairs.push({ key: keyId, value: commonData[keyId], source: "" });
+                        keysSet.add(keyId);
                     }
                 });
+        
+                // Sort pairs and set them
+                const sortedPairs = pairs
+                    .filter(item => item && typeof item.key === "string")
+                    .sort((a, b) => a.key.localeCompare(b.key));
+        
+                setPairs(sortedPairs);
+                setIsDataFetched(true);
+                setShowHelp(true);
+            } catch (error) {
+                console.error("Error fetching keys:", error);
+                toast.error("Failed to fetch data");
+            } finally {
+                setLoading(false);
             }
-    
-            // Sort pairs and set them
-            const sortedPairs = pairs.filter(item => item && typeof item.key === "string")
-                .sort((a, b) => a.key.localeCompare(b.key));
-    
-            setPairs(sortedPairs);
-            setIsDataFetched(true);
-            setShowHelp(true);
-        } catch (error) {
-            console.error("Error fetching keys:", error);
-            toast.error("Failed to fetch data");
-        } finally {
-            setLoading(false);
+        // IF ONLY (UPLOAD) IS EXIST
+        } else if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
+            try {
+                setLoading(true);
+                setEditablePairs(true);
+                // Fetch upload data
+                const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
+                    params: { application_name, configuration_file_name },
+                });
+        
+                const uploadData = JSON.stringify(uploadResponse.data);
+                const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
+                const matches = uploadData.match(regex);
+        
+                // Initialize pairs and keys set
+                const pairs: { key: string; value: string | null; source: string }[] = [];
+                const keysSet = new Set<string>();
+        
+                // Match keys from upload data
+                if (matches) {
+                    for (let match of matches) {
+                        const keyStr = extractKey(match);
+        
+                        if (!keysSet.has(keyStr)) {
+                            pairs.push({ key: keyStr, value: null, source: "upload" });
+                            keysSet.add(keyStr);
+                        }
+                    }
+                }
+        
+                // Sort pairs and set them
+                const sortedPairs = pairs
+                    .filter(item => item && typeof item.key === "string")
+                    .sort((a, b) => a.key.localeCompare(b.key));
+        
+                setPairs(sortedPairs);
+                setIsDataFetched(true);
+                setShowHelp(true);
+            } catch (error) {
+                console.error("Error fetching upload keys:", error);
+                toast.error("Failed to fetch data");
+            } finally {
+                setLoading(false);
+            }
+        // IF NOTHING IS EXIST
+        } else {
+            setPairs([]);
+            toast.info("Env name or File name does not exist");
         }
     }
-
-    // CALLING FUNCTION
-    async function handleInputs() {
-        if (applicationName && envName && configurationFileName) {
-            await fetchUploadTemplate(applicationName, envName, configurationFileName);
-        }
-    }
-    
-    // CALLING FUNCTIONS
-    useEffect(() => {
-        if (applicationName && envName && configurationFileName) {
-            allTemplateMenus();
-            allCommonMenus();
-        }
-    }, [applicationName, envName, configurationFileName]);
 
     // ENABLE EDITABLE PAIRS
     const toggleEditMode = () => {
