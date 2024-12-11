@@ -60,7 +60,7 @@ export default function KeyValue(){
     // CALLING FUNCTION
     async function handleInputs() {
         if (applicationName && envName && configurationFileName) {
-            await fetchUploadTemplate(applicationName, envName, configurationFileName);
+            await fetchKeyValuePairs(applicationName, envName, configurationFileName);
         }
     }
     
@@ -212,116 +212,7 @@ export default function KeyValue(){
         }
     }
 
-    // GET - GET UPLOADED TEMPLATE
-    // async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
-    //     if (!application_name || !env_name || !configuration_file_name) return;
-    
-    //     if(!Array.isArray(commonMenuData[env_name])) {
-    //         setPairs([]);
-    //         toast.info("Env name does not exist in common");
-    //     }
-
-    //     if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
-    //         setLoading(true);
-    //         setEditablePairs(true);
-    //     } else {
-    //         setPairs([]);
-    //         toast.info("File name does not exist in Template");
-    //         return;
-    //     }
-
-    //     try {
-    //         // Fetch upload data
-    //         const uploadResponse = await axios.get(API_GET_ENDPOINT_UPLOAD, {
-    //             params: { application_name, configuration_file_name },
-    //         });
-    
-    //         const uploadData = JSON.stringify(uploadResponse.data);
-    //         const regex = /\{\{[a-zA-Z0-9 _]+\}\}/g;
-    //         const matches = uploadData.match(regex);
-    
-    //         // Fetch common data
-    //         const commonResponse = await axios.get(API_GET_ENDPOINT_COMMON, {
-    //             params: { env_name },
-    //         });
-    
-    //         const commonData = commonResponse.data.commonMap;
-    
-    //         // Fetch config data
-    //         const configResponse = await axios.get(API_GET_ENDPOINT, {
-    //             params: { application_name, env_name, configuration_file_name },
-    //         });
-    
-    //         const configData = configResponse.data.configMap;
-    
-    //         // Store matched key-value pairs
-    //         const existingPairs = Object.keys(commonData)
-    //             .filter(key => key in configData && commonData[key] !== configData[key])
-    //             .map(key => ({ key, value: configData[key] }));
-    
-    //         setExistingKeyPairs(existingPairs);
-    //         if (existingPairs.length && editablePairs) {
-    //             toast.info("This key already exists. Do you want to overwrite the value?");
-    //         }
-    
-    //         // Initialize pairs and keys set
-    //         const pairs: { key: string; value: string | null; source: string }[] = [];
-    //         const keysSet = new Set<string>();
-    
-    //         // Match keys from upload data with commonData
-    //         if (matches) {
-    //             for (let match of matches) {
-    //                 const keyStr = extractKey(match);
-    //                 const configValue = configData[keyStr];
-    //                 const commonValue = commonData[keyStr];
-            
-    //                 if (commonValue !== undefined && !keysSet.has(keyStr)) {
-    //                     pairs.push({ key: keyStr, value: commonValue, source: "common" });
-    //                     keysSet.add(keyStr);
-    //                 }
-            
-    //                 if (configValue !== undefined && !keysSet.has(keyStr)) {
-    //                     pairs.push({ key: keyStr, value: configValue, source: "upload" });
-    //                     keysSet.add(keyStr);
-    //                 }
-    //             }
-    //         }
-
-    //         // Add unmatched keys from commonData
-    //         Object.keys(commonData).forEach(keyId => {
-    //             if (!keysSet.has(keyId)) {
-    //                 pairs.push({ key: keyId, value: commonData[keyId], source: "" });
-    //                 keysSet.add(keyId);
-    //             }
-    //         });
-    
-    //         // Add unmatched keys from configData
-    //         if (configData) {
-    //             Object.keys(configData).forEach(key => {
-    //                 if (!keysSet.has(key)) {
-    //                     pairs.push({ key: key, value: configData[key], source: "" });
-    //                     keysSet.add(key);
-    //                 }
-    //             });
-    //         }
-
-    //         // Sort pairs and set them
-    //         const sortedPairs = pairs
-    //             .filter(item => item && typeof item.key === "string")
-    //             .sort((a, b) => a.key.localeCompare(b.key));
-    
-    //         setPairs(sortedPairs);
-    //         setIsDataFetched(true);
-    //         setShowHelp(true);
-    //     } catch (error) {
-    //         console.error("Error fetching keys:", error);
-    //         toast.error("Failed to fetch data");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // }
-
-    async function fetchUploadTemplate(application_name: string, env_name: string, configuration_file_name: string) {
+    async function fetchKeyValuePairs(application_name: string, env_name: string, configuration_file_name: string) {
         if (!application_name || !env_name || !configuration_file_name) return;
     
         // IF (UPLOAD, COMMON, CONFIG) IS EXIST
@@ -634,7 +525,7 @@ export default function KeyValue(){
     return (
         <>
             <Sidebar onRetrieve={retrieve}/>
-            <div className="config">    
+            <div className="config">
                 <div className="form-group">
                     <h5>{isDataFetched ? "Re-Configuration" : "Configuration"}</h5>
                     <div className="input-container">
