@@ -109,19 +109,12 @@ export default function Sidebar({ onRetrieve }: SidebarProps) {
             if (subMenu === "Config") {
                 results = subMenuDataConfig[firstSubMenu][Object.keys(subMenuDataConfig[firstSubMenu])[secondSubMenu]]
                     .filter((item: string) => item.toLowerCase().includes(term.toLowerCase()));
-            } else if (subMenu === "Generate" || "Service") {
+            } else if (subMenu === "Generate") {
                 results = subMenuDataGenerate[firstSubMenu][Object.keys(subMenuDataGenerate[firstSubMenu])[secondSubMenu]]
                     .filter((item: string) => item.toLowerCase().includes(term.toLowerCase()));
             } else if (subMenu === "Upload") {
-                const appData = subMenuDataUpload[firstSubMenu];
-                if (appData) {
-                    results = appData.filter((item: string) => item.toLowerCase().includes(term.toLowerCase()));
-                }
-            } else if (subMenu === "Common") {
-                const envData = subMenuDataCommon[firstSubMenu];
-                if (envData) {
-                    results = envData.filter((item: string) => item.toLowerCase().includes(term.toLowerCase()));
-                }
+                results = subMenuDataUpload[firstSubMenu]
+                    .filter((item: string) => item.toLowerCase().includes(term.toLowerCase()));
             }
         }
         setSearchResults(results);
