@@ -48,12 +48,12 @@ export default function KeyValue(){
             setEnvName(env_name);
             setConfigurationFileName(configuration_file_name);
         } else if (location.pathname === "/config") {
-            // setApplicationName("");
-            // setEnvName("");
-            // setConfigurationFileName("");
-            // setPairs([]);
-            // setKey("");
-            // setValue("");
+            setApplicationName("");
+            setEnvName("");
+            setConfigurationFileName("");
+            setPairs([]);
+            setKey("");
+            setValue("");
         }
     }, [window.location.search, location.pathname]);
     
