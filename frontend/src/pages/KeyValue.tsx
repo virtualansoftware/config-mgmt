@@ -450,7 +450,8 @@ export default function KeyValue(){
                 setLoading(false);
             }
         // IF ONLY (UPLOAD) IS EXIST
-        } else if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)) {
+        } else if (Array.isArray(uploadMenuData[application_name]) && uploadMenuData[application_name].some(file => file.replace(/\.tpl$/, '') === configuration_file_name)
+        ) {
             try {
                 setLoading(true);
                 setEditablePairs(true);
@@ -496,6 +497,7 @@ export default function KeyValue(){
         // IF NOTHING IS EXIST
         } else {
             setPairs([]);
+            setShowHelp(false);
             toast.info("Env name or File name does not exist");
         }
     }
