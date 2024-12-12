@@ -1,5 +1,10 @@
 let ENV_URL = "http://localhost:8000/api/v1";
 
+export const API_POST_ENDPOINT_LOGIN = ENV_URL + "/auth/github-login";
+export const GITHUB_CLIENT_ID = "Ov23liLN6AyVjg1wgua6"
+export const GITHUB_API_URL = "http://localhost:8000/github-login";
+export const GITHUB_REDIRECT_URI = "http://localhost:5173/auth/callback"
+
 export const API_POST_ENDPOINT = ENV_URL + "/config";
 export const API_GET_ENDPOINT = ENV_URL + "/config";
 export const API_GET_ENDPOINT_CONFIG_ALL = ENV_URL + "/config/configs";

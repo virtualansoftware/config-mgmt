@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../constants';
 
 export default function Login(){
     const[username, setUsername] = useState("");
     const[password, setPassword] = useState("");
     const[errorMessage, setErrorMessage] = useState("");
-    const [showPassword, setShowPassword] = useState(false);
+    const[showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = (e:any) => {
@@ -22,16 +21,12 @@ export default function Login(){
         }
     };
 
-    const handleGoogleSuccess = (response:any) => {
-        const token = response.credential;
-        const user = jwtDecode(token);
-        localStorage.setItem("user-details", JSON.stringify(user));
-        navigate('/config-mgmt');
-        toast.success('Google login successful!');
-    };
-
-    const handleGoogleFailure = () => {
-        toast.error('Google login failed!');
+    const handleGitHubLogin = () => {
+        const clientId = GITHUB_CLIENT_ID;
+        const redirectUri = encodeURIComponent(GITHUB_REDIRECT_URI);
+        const scope = "read:user user:email";
+        const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+        window.location.href = githubAuthUrl;
     };
 
     return (
@@ -71,9 +66,9 @@ export default function Login(){
                     </div>
                     <button className="btn btn-primary">Login</button><hr/>
                 </form>
-                <div className="googleLogin">
-                    <GoogleLogin containerProps={{ style: { margin: '-40px 135px' } }} onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} useOneTap />
-                </div><br/><br/>
+                <div className="githubLogin">
+                    <button onClick={handleGitHubLogin}><i className="fa-brands fa-github"></i> Sign in with Github</button>
+                </div>
                 <p className="register">
                     Don't have an account?
                     <Link to="/register">Sign Up</Link>

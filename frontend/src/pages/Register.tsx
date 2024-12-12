@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { GITHUB_CLIENT_ID, GITHUB_REDIRECT_URI } from '../constants';
 
 export default function Register(){
     const[username, setUsername] = useState("");
@@ -25,16 +24,12 @@ export default function Register(){
         }
     };
 
-    const handleGoogleSuccess = (response:any) => {
-        const token = response.credential;
-        const user = jwtDecode(token);
-        localStorage.setItem("user-details", JSON.stringify(user));
-        navigate('/config-mgmt');
-        toast.success('Google sign up successful!');
-    };
-    
-    const handleGoogleFailure = () => {
-        toast.error('Google sign up failed!');
+    const handleGitHubLogin = () => {
+        const clientId = GITHUB_CLIENT_ID;
+        const redirectUri = encodeURIComponent(GITHUB_REDIRECT_URI);
+        const scope = "read:user user:email";
+        const githubAuthUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scope}`;
+        window.location.href = githubAuthUrl;
     };
     
     return (
@@ -90,9 +85,9 @@ export default function Register(){
                     </div>
                     <button className="btn btn-primary">Sign up</button><hr/>
                 </form>
-                <div className="googleLogin">
-                    <GoogleLogin containerProps={{ style: { margin: '-40px 135px' } }} onSuccess={handleGoogleSuccess} onError={handleGoogleFailure} useOneTap />
-                </div><br/><br/>
+                <div className="githubLogin">
+                    <button onClick={handleGitHubLogin}><i className="fa-brands fa-github"></i> Sign in with Github</button>
+                </div>
                 <p className="login">
                     Already have an account?
                     <Link to="/login">Login</Link>

@@ -18,10 +18,7 @@ import Common from './pages/Common';
 import Harness from './pages/Harness';
 import Footer from './components/Footer';
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import { GoogleOAuthProvider } from '@react-oauth/google';
-
-
-const clientId = "350206748559-h2osb5q8uos0nl8kohkijmnr649a93de.apps.googleusercontent.com";
+import AuthCallback from './pages/AuthCallback';
 
 const router = createBrowserRouter([
   {
@@ -133,22 +130,24 @@ const router = createBrowserRouter([
       </>
     ),
   },
+  {
+    path: "/auth/callback",
+    element: <AuthCallback />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <GoogleOAuthProvider clientId={clientId}>
-      <RouterProvider router={router} />
-      <ToastContainer 
-        className="toaster" 
-        theme="dark" 
-        position="top-center" 
-        autoClose={3000}
-        hideProgressBar={false}
-        closeOnClick={true}
-        pauseOnHover={true}
-        draggable={true}
-      />
-    </GoogleOAuthProvider>
+    <RouterProvider router={router} />
+    <ToastContainer 
+      className="toaster" 
+      theme="dark" 
+      position="top-center" 
+      autoClose={3000}
+      hideProgressBar={false}
+      closeOnClick={true}
+      pauseOnHover={true}
+      draggable={true}
+    />
   </React.StrictMode>
 );

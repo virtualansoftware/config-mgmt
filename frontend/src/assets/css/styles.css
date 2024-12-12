@@ -17,6 +17,13 @@
   font-style: normal;
   font-display: swap; 
 }
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  src: url('src/assets/icons/fa-brands-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap; 
+}
 html body{
   background-color: #dee9f980;
 }
@@ -149,8 +156,22 @@ html body{
 .login-container hr, .register-container hr{
   border: 1px solid black;
 }
-.login-container .googleLogin, .register-container .googleLogin{
-  margin: 60px 0 0 0;
+.login-container .githubLogin button, .register-container .githubLogin button{
+  width: 50%;
+  padding: 8px;
+  color: #676666;
+  font-size: 14px;
+  font-weight: bold;
+  background-color: white;
+  border: 1px solid skyblue;
+}
+/* .login-container .githubLogin button:hover, .register-container .githubLogin button:hover{
+  background-color: #b6b4b4;
+} */
+.login-container .githubLogin button i, .register-container .githubLogin button i{
+  margin-right: 10px;
+  font-size: 18px;
+  color: black;
 }
 .login-container .register, .register-container .login{
   color: black;

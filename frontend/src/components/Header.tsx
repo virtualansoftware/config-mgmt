@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function Header() {
     const location = useLocation();
@@ -43,6 +44,7 @@ export default function Header() {
         localStorage.removeItem("user-details");
         navigate("/login");
         closeMenu();
+        toast.success("Logout successful!");
     }
 
     return (
